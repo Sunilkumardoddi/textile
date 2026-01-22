@@ -73,14 +73,33 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          
+          {/* Manufacturer Module with nested routes */}
           <Route 
-            path="/dashboard/manufacturer" 
+            path="/manufacturer" 
             element={
               <ProtectedRoute allowedRoles={['manufacturer']}>
-                <ManufacturerDashboard />
+                <ManufacturerLayout />
               </ProtectedRoute>
-            } 
+            }
+          >
+            <Route index element={<ManufacturerOverview />} />
+            <Route path="profile" element={<FactoryProfile />} />
+            <Route path="capabilities" element={<ProductionCapabilities />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="traceability" element={<TraceabilityFlow />} />
+            <Route path="certifications" element={<Certifications />} />
+            <Route path="documents" element={<Documents />} />
+            <Route path="audits" element={<AuditResponses />} />
+            <Route path="alerts" element={<Alerts />} />
+          </Route>
+          
+          {/* Legacy manufacturer dashboard redirect */}
+          <Route 
+            path="/dashboard/manufacturer" 
+            element={<Navigate to="/manufacturer" replace />}
           />
+          
           <Route 
             path="/dashboard/auditor" 
             element={
