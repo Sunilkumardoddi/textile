@@ -8,9 +8,20 @@ import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
 import RoleSelectionPage from "@/pages/RoleSelectionPage";
 import SignUpPage from "@/pages/SignUpPage";
 import BrandDashboard from "@/pages/dashboards/BrandDashboard";
-import ManufacturerDashboard from "@/pages/dashboards/ManufacturerDashboard";
 import AuditorDashboard from "@/pages/dashboards/AuditorDashboard";
 import AdminDashboard from "@/pages/dashboards/AdminDashboard";
+
+// Manufacturer Module
+import ManufacturerLayout from "@/pages/manufacturer/ManufacturerLayout";
+import ManufacturerOverview from "@/pages/manufacturer/ManufacturerOverview";
+import FactoryProfile from "@/pages/manufacturer/FactoryProfile";
+import ProductionCapabilities from "@/pages/manufacturer/ProductionCapabilities";
+import Orders from "@/pages/manufacturer/Orders";
+import TraceabilityFlow from "@/pages/manufacturer/TraceabilityFlow";
+import Certifications from "@/pages/manufacturer/Certifications";
+import Documents from "@/pages/manufacturer/Documents";
+import AuditResponses from "@/pages/manufacturer/AuditResponses";
+import Alerts from "@/pages/manufacturer/Alerts";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
