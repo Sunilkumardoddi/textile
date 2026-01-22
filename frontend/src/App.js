@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/sonner";
 // Pages
 import LoginPage from "@/pages/LoginPage";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
+import RoleSelectionPage from "@/pages/RoleSelectionPage";
+import SignUpPage from "@/pages/SignUpPage";
 import BrandDashboard from "@/pages/dashboards/BrandDashboard";
 import ManufacturerDashboard from "@/pages/dashboards/ManufacturerDashboard";
 import AuditorDashboard from "@/pages/dashboards/AuditorDashboard";
@@ -45,6 +47,8 @@ function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/roles" element={<RoleSelectionPage />} />
+          <Route path="/signup/:role" element={<SignUpPage />} />
           
           {/* Dashboard Router */}
           <Route path="/dashboard" element={<DashboardRouter />} />
