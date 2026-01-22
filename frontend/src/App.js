@@ -18,6 +18,7 @@ import FactoryProfile from "@/pages/manufacturer/FactoryProfile";
 import ProductionCapabilities from "@/pages/manufacturer/ProductionCapabilities";
 import Orders from "@/pages/manufacturer/Orders";
 import TraceabilityFlow from "@/pages/manufacturer/TraceabilityFlow";
+import TraceabilityTree from "@/pages/manufacturer/TraceabilityTree";
 import Certifications from "@/pages/manufacturer/Certifications";
 import Documents from "@/pages/manufacturer/Documents";
 import AuditResponses from "@/pages/manufacturer/AuditResponses";
