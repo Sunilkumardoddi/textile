@@ -1,40 +1,39 @@
-import { useEffect } from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "@/components/ui/sonner";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// Pages
+import LoginPage from "@/pages/LoginPage";
+import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
+import BrandDashboard from "@/pages/dashboards/BrandDashboard";
+import ManufacturerDashboard from "@/pages/dashboards/ManufacturerDashboard";
+import AuditorDashboard from "@/pages/dashboards/AuditorDashboard";
+import AdminDashboard from "@/pages/dashboards/AdminDashboard";
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+// Protected Route Component
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const user = JSON.parse(localStorage.getItem('textileUser') || 'null');
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to={`/dashboard/${user.role}`} replace />;
+  }
+  
+  return children;
+};
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
+// Dashboard Router - redirects to role-specific dashboard
+const DashboardRouter = () => {
+  const user = JSON.parse(localStorage.getItem('textileUser') || 'null');
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <Navigate to={`/dashboard/${user.role}`} replace />;
 };
 
 function App() {
@@ -42,11 +41,64 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+          {/* Public Routes */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          
+          {/* Dashboard Router */}
+          <Route path="/dashboard" element={<DashboardRouter />} />
+          
+          {/* Role-based Dashboards */}
+          <Route 
+            path="/dashboard/brand" 
+            element={
+              <ProtectedRoute allowedRoles={['brand']}>
+                <BrandDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/dashboard/manufacturer" 
+            element={
+              <ProtectedRoute allowedRoles={['manufacturer']}>
+                <ManufacturerDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/dashboard/auditor" 
+            element={
+              <ProtectedRoute allowedRoles={['auditor']}>
+                <AuditorDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/dashboard/admin" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
+      
+      {/* Toast Notifications */}
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: 'hsl(var(--card))',
+            border: '1px solid hsl(var(--border))',
+            color: 'hsl(var(--foreground))',
+          },
+        }}
+      />
     </div>
   );
 }
