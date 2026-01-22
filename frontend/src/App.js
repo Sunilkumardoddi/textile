@@ -89,6 +89,7 @@ function App() {
             <Route path="capabilities" element={<ProductionCapabilities />} />
             <Route path="orders" element={<Orders />} />
             <Route path="traceability" element={<TraceabilityFlow />} />
+            <Route path="traceability-tree" element={<TraceabilityTree />} />
             <Route path="certifications" element={<Certifications />} />
             <Route path="documents" element={<Documents />} />
             <Route path="audits" element={<AuditResponses />} />
