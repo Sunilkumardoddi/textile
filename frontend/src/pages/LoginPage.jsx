@@ -251,6 +251,16 @@ export const LoginPage = () => {
                                 ))}
                             </div>
                         </div>
+
+                        {/* Sign Up Link */}
+                        <div className="mt-6 pt-6 border-t border-border text-center">
+                            <p className="text-sm text-muted-foreground">
+                                Don't have an account?{' '}
+                                <Link to="/roles" className="text-secondary hover:underline font-medium">
+                                    Create Account
+                                </Link>
+                            </p>
+                        </div>
                     </CardContent>
                 </Card>
 
