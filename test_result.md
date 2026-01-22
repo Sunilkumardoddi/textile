@@ -212,3 +212,5 @@ agent_communication:
     -message: "Starting comprehensive testing of TextileTrace portal. All main pages have been implemented. Will test in sequence: Login -> Role Selection -> Sign Up -> Forgot Password -> Brand Dashboard. Testing will focus on UI rendering, form validation, navigation flows, and authentication."
     -agent: "testing"
     -message: "TESTING COMPLETED SUCCESSFULLY: All major components of the TextileTrace portal are working properly. Login page with animated world map, role selection with 4 cards, 2-step signup form, 3-step forgot password flow, and brand dashboard all function as expected. The application provides a professional supply chain management interface with proper authentication flows and responsive design. Ready for production use."
+    -agent: "testing"
+    -message: "Starting testing of enhanced Manufacturer module. Will test manufacturer login, dashboard, factory profile, production capabilities, traceability flow, certifications, alerts, and orders & styles. Focus on UI rendering, navigation, form interactions, and data display."
