@@ -26,23 +26,22 @@ const navItems = [
 export const ManufacturerLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        const storedUser = localStorage.getItem('textileUser');
+        if (storedUser) {
+            const parsed = JSON.parse(storedUser);
+            return parsed.role === 'manufacturer' ? parsed : null;
+        }
+        return null;
+    });
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('textileUser');
-        if (storedUser) {
-            const parsed = JSON.parse(storedUser);
-            if (parsed.role !== 'manufacturer') {
-                navigate('/login');
-            } else {
-                setUser(parsed);
-            }
-        } else {
+        if (!user) {
             navigate('/login');
         }
-    }, [navigate]);
+    }, [user, navigate]);
 
     const handleLogout = () => {
         localStorage.removeItem('textileUser');
