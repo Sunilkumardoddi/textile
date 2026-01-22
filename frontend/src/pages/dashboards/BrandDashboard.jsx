@@ -104,7 +104,7 @@ export const BrandDashboard = () => {
                         Welcome back, {user.name.split(' ')[0]}!
                     </h1>
                     <p className="text-muted-foreground">
-                        Here's what's happening across your global supply chain today.
+                        Here&apos;s what&apos;s happening across your global supply chain today.
                     </p>
                 </div>
 
