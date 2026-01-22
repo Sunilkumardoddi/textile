@@ -298,10 +298,18 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Manufacturer Dashboard Implementation"
+    - "Manufacturer Layout and Navigation"
+    - "Factory Profile Management"
+    - "Production Capabilities Management"
+    - "Traceability Flow Interface"
+    - "Certifications Management"
+    - "Alerts and Notifications"
+    - "Orders and Styles Management"
   stuck_tasks: []
   test_all: false
-  test_priority: "completed"
+  test_priority: "high_first"
 
 agent_communication:
     -agent: "testing"
