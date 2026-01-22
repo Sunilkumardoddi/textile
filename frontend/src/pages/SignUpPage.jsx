@@ -566,7 +566,7 @@ export const SignUpPage = () => {
 
                 {/* Footer Note */}
                 <p className="mt-8 text-xs text-primary-foreground/40 text-center max-w-md">
-                    Your account will be reviewed by our team. You'll receive an email notification once approved.
+                    Your account will be reviewed by our team. You&apos;ll receive an email notification once approved.
                 </p>
             </div>
         </div>
