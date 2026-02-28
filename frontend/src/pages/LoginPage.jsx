@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 const mockUsers = [
     { email: 'brand@textile.com', password: 'brand123', role: 'brand', name: 'Brand Manager' },
     { email: 'manufacturer@textile.com', password: 'manu123', role: 'manufacturer', name: 'Manufacturing Lead' },
+    { email: 'buyer@textile.com', password: 'buyer123', role: 'buyer', name: 'Buyer Manager' },
     { email: 'auditor@textile.com', password: 'audit123', role: 'auditor', name: 'Quality Auditor' },
     { email: 'admin@textile.com', password: 'admin123', role: 'admin', name: 'System Admin' },
 ];
