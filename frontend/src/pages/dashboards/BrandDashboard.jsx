@@ -17,6 +17,72 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
+// Delay reason labels
+const delayReasonLabels = {
+    raw_material: 'Raw Material Shortage',
+    machine_breakdown: 'Machine Breakdown',
+    labor_shortage: 'Labor Shortage',
+    power_cut: 'Power Cut',
+    buyer_change: 'Buyer Specification Change',
+    quality_issue: 'Quality Rejection/Rework',
+    logistics: 'Logistics/Shipping Delay',
+    other: 'Other',
+};
+
+// Delay Reports Component (synced from Manufacturer)
+const DelayReportsSection = () => {
+    const [delayReports, setDelayReports] = useState([]);
+
+    useEffect(() => {
+        // Load delay reports from localStorage (synced from manufacturer)
+        const reports = JSON.parse(localStorage.getItem('brand_delay_reports') || '[]');
+        setDelayReports(reports);
+    }, []);
+
+    if (delayReports.length === 0) {
+        return (
+            <div className="text-center py-8">
+                <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-3" />
+                <p className="font-medium text-foreground">No Delay Reports</p>
+                <p className="text-sm text-muted-foreground">All manufacturers are on schedule</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-4">
+            {delayReports.map((report, idx) => (
+                <div key={idx} className="p-4 rounded-xl bg-white border border-red-200">
+                    <div className="flex items-start justify-between mb-2">
+                        <div>
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="font-mono font-bold text-foreground">{report.poNumber}</span>
+                                <Badge variant="destructive">
+                                    +{report.daysDelayed} days overdue
+                                </Badge>
+                            </div>
+                            <p className="font-medium text-foreground">{report.product}</p>
+                            <p className="text-sm text-muted-foreground">{report.buyer}</p>
+                        </div>
+                        <div className="text-right text-sm text-muted-foreground">
+                            <p>Due: {report.dueDate}</p>
+                            <p>Reported: {new Date(report.reportedAt).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <div className="mt-3 p-3 rounded-lg bg-red-100">
+                        <p className="text-sm font-medium text-red-800">
+                            Reason: {delayReasonLabels[report.delayReason] || report.delayReason}
+                        </p>
+                        {report.delayComments && (
+                            <p className="text-sm text-red-600 mt-1">"{report.delayComments}"</p>
+                        )}
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
 // Global PO Tracker Data with step completion
 const globalPOTracker = [
     { 
