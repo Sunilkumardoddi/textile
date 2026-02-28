@@ -48,7 +48,7 @@ const delayReasons = [
     { value: 'machine_breakdown', label: 'Machine Breakdown' },
     { value: 'labor_shortage', label: 'Labor Shortage' },
     { value: 'power_cut', label: 'Power Cut' },
-    { value: 'buyer_change', label: 'Buyer Specification Change' },
+    { value: 'brand_change', label: 'Brand Specification Change' },
     { value: 'quality_issue', label: 'Quality Rejection/Rework' },
     { value: 'logistics', label: 'Logistics/Shipping Delay' },
     { value: 'other', label: 'Other' },
@@ -118,7 +118,7 @@ const allPOs = [
     },
     { 
         poNumber: 'PO-2024-006', 
-        buyer: 'Sustainable Threads', 
+        brand: 'Sustainable Threads', 
         product: 'Wool Blend Sweaters',
         style: 'Cable Knit',
         quantity: 1500, 
@@ -127,7 +127,7 @@ const allPOs = [
         receivedDate: '2024-01-10',
         currentStage: 'Canceled',
         progress: 0,
-        cancelReason: 'Buyer canceled order',
+        cancelReason: 'Brand canceled order',
     },
 ];
 
@@ -263,7 +263,7 @@ export const ManufacturerOverview = () => {
         brandDelays.push({
             poNumber: po.poNumber,
             product: po.product,
-            buyer: po.buyer,
+            brand: po.brand,
             dueDate: po.dueDate,
             delayReason: reason,
             delayComments: comments,
@@ -279,7 +279,7 @@ export const ManufacturerOverview = () => {
             'PO Number': po.poNumber,
             'Style': po.style,
             'Product': po.product,
-            'Buyer': po.buyer,
+            'Brand': po.brand,
             'Quantity': `${po.quantity} ${po.unit}`,
             'Current Stage': po.currentStage,
             'Progress': `${po.progress}%`,
@@ -318,7 +318,7 @@ ${'='.repeat(80)}
 ${data.map(po => `
 PO: ${po['PO Number']}
 Style: ${po['Style']} | Product: ${po['Product']}
-Buyer: ${po['Buyer']}
+Brand: ${po['Brand']}
 Quantity: ${po['Quantity']}
 Current Stage: ${po['Current Stage']} (${po['Progress']})
 Status: ${po['Status']}
@@ -471,7 +471,7 @@ ${'-'.repeat(40)}`).join('\n')}
                                             <p className="font-medium text-foreground">{po.product}</p>
                                             <p className="text-sm text-muted-foreground">{po.style}</p>
                                             <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground flex-wrap">
-                                                <span>{po.buyer}</span>
+                                                <span>{po.brand}</span>
                                                 <span>•</span>
                                                 <span>{po.quantity.toLocaleString()} {po.unit}</span>
                                                 <span>•</span>
