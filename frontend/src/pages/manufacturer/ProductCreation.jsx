@@ -392,10 +392,10 @@ export const ProductCreation = () => {
                         </Badge>
                     </div>
                     <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
-                        Product Creation & Traceability
+                        Update Traceability
                     </h1>
                     <p className="text-muted-foreground">
-                        {poData.product} • {poData.quantity.toLocaleString()} {poData.unit} • Due: {poData.dueDate}
+                        Product Details & Supply Chain Thread for {poData.poNumber}
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
