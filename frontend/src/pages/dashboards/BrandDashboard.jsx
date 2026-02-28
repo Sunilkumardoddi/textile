@@ -426,6 +426,24 @@ export const BrandDashboard = () => {
                         </div>
                     </TabsContent>
 
+                    {/* Delay Reports Tab - NEW (synced from Manufacturer RCA) */}
+                    <TabsContent value="delays" className="space-y-6">
+                        <Card className="border-red-200 bg-red-50/50">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-red-700">
+                                    <AlertTriangle className="h-5 w-5" />
+                                    Manufacturer Delay Reports
+                                </CardTitle>
+                                <CardDescription>
+                                    Real-time delay reasons synced from manufacturers (via webhook simulation)
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <DelayReportsSection />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
                     {/* Yield Conversion Tab - NEW */}
                     <TabsContent value="yield" className="space-y-6">
                         <Card>
