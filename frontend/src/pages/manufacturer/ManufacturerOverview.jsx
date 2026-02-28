@@ -198,10 +198,10 @@ export const ManufacturerOverview = () => {
                                             </Link>
                                         </Button>
                                     ) : (
-                                        <Button variant="outline" size="sm" asChild>
+                                        <Button variant="outline" size="sm" className="border-success/50 text-success hover:bg-success/10" asChild>
                                             <Link to="/manufacturer/traceability-tree">
-                                                <GitBranch className="h-4 w-4 mr-1" />
-                                                View Traceability
+                                                <Link2 className="h-4 w-4 mr-1" />
+                                                View Linked
                                             </Link>
                                         </Button>
                                     )}
