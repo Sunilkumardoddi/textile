@@ -105,28 +105,10 @@ function App() {
             <Route path="create-product/:poId" element={<ProductCreation />} />
           </Route>
           
-          {/* Buyer Module with nested routes */}
-          <Route 
-            path="/buyer" 
-            element={
-              <ProtectedRoute allowedRoles={['buyer']}>
-                <BuyerLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<BuyerOverview />} />
-            <Route path="orders" element={<BuyerOrders />} />
-            <Route path="traceability" element={<BuyerTraceability />} />
-            <Route path="analytics" element={<BuyerAnalytics />} />
-            <Route path="delays" element={<DelayReports />} />
-            <Route path="reports" element={<BuyerReports />} />
-          </Route>
-          
-          {/* Legacy buyer dashboard redirect */}
-          <Route 
-            path="/dashboard/buyer" 
-            element={<Navigate to="/buyer" replace />}
-          />
+          {/* Buyer Routes - DEPRECATED: Redirect all to Brand Dashboard */}
+          <Route path="/buyer" element={<Navigate to="/dashboard/brand" replace />} />
+          <Route path="/buyer/*" element={<Navigate to="/dashboard/brand" replace />} />
+          <Route path="/dashboard/buyer" element={<Navigate to="/dashboard/brand" replace />} />
           
           {/* Consumer Routes (Public - QR Code Access) */}
           <Route path="/product/:productId" element={<QrStoryPage />} />
