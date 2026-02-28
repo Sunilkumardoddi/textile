@@ -89,7 +89,7 @@ export const ManufacturerOverview = () => {
     }, []);
     return (
         <div className="space-y-6">
-            {/* Welcome Section */}
+            {/* Welcome Section - Removed global Update Traceability button */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
@@ -99,11 +99,8 @@ export const ManufacturerOverview = () => {
                         Monitor your production operations and supply chain traceability.
                     </p>
                 </div>
-                <Button variant="hero" asChild>
-                    <Link to="/manufacturer/traceability">
-                        <GitBranch className="h-4 w-4 mr-2" />
-                        Update Traceability
-                    </Link>
+                <Button variant="outline" size="icon" onClick={() => window.location.reload()}>
+                    <RefreshCw className="h-4 w-4" />
                 </Button>
             </div>
 
