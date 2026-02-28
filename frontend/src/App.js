@@ -23,6 +23,19 @@ import Certifications from "@/pages/manufacturer/Certifications";
 import Documents from "@/pages/manufacturer/Documents";
 import AuditResponses from "@/pages/manufacturer/AuditResponses";
 import Alerts from "@/pages/manufacturer/Alerts";
+import ProductCreation from "@/pages/manufacturer/ProductCreation";
+
+// Buyer Module
+import BuyerLayout from "@/pages/buyer/BuyerLayout";
+import BuyerOverview from "@/pages/buyer/BuyerOverview";
+import BuyerOrders from "@/pages/buyer/BuyerOrders";
+import BuyerTraceability from "@/pages/buyer/BuyerTraceability";
+import BuyerAnalytics from "@/pages/buyer/BuyerAnalytics";
+import DelayReports from "@/pages/buyer/DelayReports";
+import BuyerReports from "@/pages/buyer/BuyerReports";
+
+// Consumer Module
+import QrStoryPage from "@/pages/consumer/QrStoryPage";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -94,7 +107,35 @@ function App() {
             <Route path="documents" element={<Documents />} />
             <Route path="audits" element={<AuditResponses />} />
             <Route path="alerts" element={<Alerts />} />
+            <Route path="create-product/:poId" element={<ProductCreation />} />
           </Route>
+          
+          {/* Buyer Module with nested routes */}
+          <Route 
+            path="/buyer" 
+            element={
+              <ProtectedRoute allowedRoles={['buyer']}>
+                <BuyerLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<BuyerOverview />} />
+            <Route path="orders" element={<BuyerOrders />} />
+            <Route path="traceability" element={<BuyerTraceability />} />
+            <Route path="analytics" element={<BuyerAnalytics />} />
+            <Route path="delays" element={<DelayReports />} />
+            <Route path="reports" element={<BuyerReports />} />
+          </Route>
+          
+          {/* Legacy buyer dashboard redirect */}
+          <Route 
+            path="/dashboard/buyer" 
+            element={<Navigate to="/buyer" replace />}
+          />
+          
+          {/* Consumer Routes (Public - QR Code Access) */}
+          <Route path="/product/:productId" element={<QrStoryPage />} />
+          <Route path="/trace/:traceId" element={<QrStoryPage />} />
           
           {/* Legacy manufacturer dashboard redirect */}
           <Route 
