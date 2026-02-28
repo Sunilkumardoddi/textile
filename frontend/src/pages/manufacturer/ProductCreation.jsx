@@ -343,16 +343,16 @@ export const ProductCreation = () => {
         existingProducts.push(productData);
         localStorage.setItem('textile_products', JSON.stringify(existingProducts));
         
-        // Update PO status
-        updatePOStatus(poId, 'traceability_linked');
+        // Update PO status to complete
+        updatePOStatus(poId, 'complete');
         
-        // Sync to Brand Dashboard (simulated)
+        // Instant sync to Brand Dashboard and QR Generator (no separate steps)
         syncToBrandDashboard(productData);
         
         setIsSubmitting(false);
         
-        toast.success('Product Created & Traceability Linked!', {
-            description: `Traceability ID: ${traceId}`,
+        toast.success('Traceability Complete!', {
+            description: `ID: ${traceId} • Synced to Brand Dashboard & QR`,
         });
         
         navigate('/manufacturer');
