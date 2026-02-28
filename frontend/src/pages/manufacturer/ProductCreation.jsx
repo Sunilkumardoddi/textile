@@ -235,7 +235,7 @@ export const ProductCreation = () => {
         setFormData(prev => ({
             ...prev,
             poNumber: po.poNumber,
-            buyerName: po.buyer,
+            brandName: po.brand,
             totalUnits: po.quantity.toString(),
             styleName: po.product,
         }));
@@ -373,7 +373,7 @@ export const ProductCreation = () => {
             traceId: productData.traceId,
             poNumber: productData.poId,
             product: productData.poData.product,
-            brand: productData.poData.buyer,
+            brand: productData.poData.brand,
             quantity: productData.poData.quantity,
             formData: productData.formData,
             yieldMetrics: productData.yieldMetrics,
@@ -402,7 +402,7 @@ export const ProductCreation = () => {
                         <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 font-mono">
                             {poData.poNumber}
                         </Badge>
-                        <Badge variant="secondary">{poData.buyer}</Badge>
+                        <Badge variant="secondary">{poData.brand}</Badge>
                         <Badge variant="outline" className="bg-secondary/10 text-secondary border-secondary/30">
                             <Clock className="h-3 w-3 mr-1" />
                             In Progress
