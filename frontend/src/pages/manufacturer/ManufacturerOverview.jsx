@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { 
     Factory, Package, TrendingUp, AlertTriangle, 
     ChevronRight, Clock, CheckCircle2, ArrowUpRight,
-    GitBranch, Award, FileCheck, ShoppingBag
+    GitBranch, Award, FileCheck, ShoppingBag, Plus,
+    ShoppingCart, Sparkles
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +17,43 @@ const mockMetrics = [
     { label: 'Production Lines', value: '8', change: '6 Active', icon: Factory, color: 'text-accent' },
     { label: 'Traceability Complete', value: '87%', change: '+5% vs last month', icon: GitBranch, color: 'text-success' },
     { label: 'Pending Actions', value: '5', change: '2 urgent', icon: AlertTriangle, color: 'text-warning' },
+];
+
+// Incoming POs from Buyers - NEW
+const incomingPOs = [
+    { 
+        poNumber: 'PO-2024-001', 
+        buyer: 'EcoWear Brands Ltd', 
+        product: 'Organic Cotton T-Shirts', 
+        quantity: 5000, 
+        unit: 'pcs',
+        dueDate: '2024-02-28',
+        receivedDate: '2024-01-15',
+        status: 'new',
+        traceabilityStatus: 'pending'
+    },
+    { 
+        poNumber: 'PO-2024-002', 
+        buyer: 'GreenStyle Fashion', 
+        product: 'Recycled Polyester Jackets', 
+        quantity: 2000, 
+        unit: 'pcs',
+        dueDate: '2024-03-15',
+        receivedDate: '2024-01-20',
+        status: 'accepted',
+        traceabilityStatus: 'in_progress'
+    },
+    { 
+        poNumber: 'PO-2024-003', 
+        buyer: 'Sustainable Threads', 
+        product: 'Hemp Blend Shirts', 
+        quantity: 3000, 
+        unit: 'pcs',
+        dueDate: '2024-03-01',
+        receivedDate: '2024-01-25',
+        status: 'accepted',
+        traceabilityStatus: 'complete'
+    },
 ];
 
 const mockActiveOrders = [
@@ -78,6 +116,91 @@ export const ManufacturerOverview = () => {
                     </Card>
                 ))}
             </div>
+
+            {/* Incoming POs from Buyers - NEW SECTION */}
+            <Card className="border-secondary/30 bg-gradient-to-r from-secondary/5 to-transparent">
+                <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-secondary/10">
+                                <ShoppingCart className="h-5 w-5 text-secondary" />
+                            </div>
+                            <div>
+                                <CardTitle className="font-heading text-lg">Incoming Purchase Orders</CardTitle>
+                                <CardDescription>POs from Buyers ready for product creation</CardDescription>
+                            </div>
+                        </div>
+                        <Badge variant="secondary" className="bg-secondary/20">
+                            {incomingPOs.filter(po => po.traceabilityStatus === 'pending').length} Pending
+                        </Badge>
+                    </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                    {incomingPOs.map((po) => (
+                        <div 
+                            key={po.poNumber} 
+                            className="p-4 rounded-xl bg-card border hover:shadow-lg transition-all"
+                            data-testid={`incoming-po-${po.poNumber}`}
+                        >
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-mono font-bold text-foreground">{po.poNumber}</span>
+                                        <Badge 
+                                            variant="outline" 
+                                            className={
+                                                po.traceabilityStatus === 'complete' 
+                                                    ? 'bg-success/10 text-success border-success/30'
+                                                    : po.traceabilityStatus === 'in_progress'
+                                                        ? 'bg-secondary/10 text-secondary border-secondary/30'
+                                                        : 'bg-warning/10 text-warning border-warning/30'
+                                            }
+                                        >
+                                            {po.traceabilityStatus === 'complete' && <CheckCircle2 className="h-3 w-3 mr-1" />}
+                                            {po.traceabilityStatus === 'in_progress' && <Clock className="h-3 w-3 mr-1" />}
+                                            {po.traceabilityStatus === 'pending' && <AlertTriangle className="h-3 w-3 mr-1" />}
+                                            {po.traceabilityStatus === 'complete' ? 'Traceability Complete' : 
+                                             po.traceabilityStatus === 'in_progress' ? 'In Progress' : 'Pending Creation'}
+                                        </Badge>
+                                    </div>
+                                    <p className="font-medium text-foreground">{po.product}</p>
+                                    <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                                        <span>{po.buyer}</span>
+                                        <span>•</span>
+                                        <span>{po.quantity.toLocaleString()} {po.unit}</span>
+                                        <span>•</span>
+                                        <span>Due: {po.dueDate}</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    {po.traceabilityStatus === 'pending' ? (
+                                        <Button variant="hero" size="sm" asChild>
+                                            <Link to={`/manufacturer/create-product/${po.poNumber}`}>
+                                                <Plus className="h-4 w-4 mr-1" />
+                                                Create Product
+                                            </Link>
+                                        </Button>
+                                    ) : po.traceabilityStatus === 'in_progress' ? (
+                                        <Button variant="secondary" size="sm" asChild>
+                                            <Link to={`/manufacturer/create-product/${po.poNumber}`}>
+                                                <Sparkles className="h-4 w-4 mr-1" />
+                                                Continue
+                                            </Link>
+                                        </Button>
+                                    ) : (
+                                        <Button variant="outline" size="sm" asChild>
+                                            <Link to="/manufacturer/traceability-tree">
+                                                <GitBranch className="h-4 w-4 mr-1" />
+                                                View Traceability
+                                            </Link>
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </CardContent>
+            </Card>
 
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
