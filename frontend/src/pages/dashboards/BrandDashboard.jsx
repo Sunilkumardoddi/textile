@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { 
     Globe, Package, TrendingUp, AlertTriangle, 
     LogOut, Bell, Search, ChevronRight, ChevronDown, ChevronUp,
-    Factory, Truck, Leaf, BarChart3, 
+    Factory, Truck, Leaf, BarChart3, Scale,
     MapPin, Clock, CheckCircle2, ArrowUpRight, Eye, X,
     Calendar, RefreshCw, Download, Filter, Layers,
     Droplets, Shirt, ArrowRight, Shield, ExternalLink
