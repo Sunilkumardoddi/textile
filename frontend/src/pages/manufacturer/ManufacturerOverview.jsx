@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
     Factory, Package, TrendingUp, AlertTriangle, 
     ChevronRight, Clock, CheckCircle2, ArrowUpRight,
     GitBranch, Award, FileCheck, ShoppingBag, Plus,
-    ShoppingCart, Sparkles
+    ShoppingCart, Sparkles, Link2
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,8 +19,8 @@ const mockMetrics = [
     { label: 'Pending Actions', value: '5', change: '2 urgent', icon: AlertTriangle, color: 'text-warning' },
 ];
 
-// Incoming POs from Buyers - NEW
-const incomingPOs = [
+// Base PO data
+const basePOs = [
     { 
         poNumber: 'PO-2024-001', 
         buyer: 'EcoWear Brands Ltd', 
@@ -29,8 +29,6 @@ const incomingPOs = [
         unit: 'pcs',
         dueDate: '2024-02-28',
         receivedDate: '2024-01-15',
-        status: 'new',
-        traceabilityStatus: 'pending'
     },
     { 
         poNumber: 'PO-2024-002', 
@@ -40,8 +38,6 @@ const incomingPOs = [
         unit: 'pcs',
         dueDate: '2024-03-15',
         receivedDate: '2024-01-20',
-        status: 'accepted',
-        traceabilityStatus: 'in_progress'
     },
     { 
         poNumber: 'PO-2024-003', 
@@ -51,8 +47,6 @@ const incomingPOs = [
         unit: 'pcs',
         dueDate: '2024-03-01',
         receivedDate: '2024-01-25',
-        status: 'accepted',
-        traceabilityStatus: 'complete'
     },
 ];
 
@@ -76,7 +70,23 @@ const mockCertifications = [
     { name: 'OCS', status: 'Expiring', expiryDays: 7 },
 ];
 
+// Helper function to get PO status from localStorage
+const getPOTraceabilityStatus = (poNumber) => {
+    const statusData = JSON.parse(localStorage.getItem('po_status') || '{}');
+    return statusData[poNumber]?.status || 'pending';
+};
+
 export const ManufacturerOverview = () => {
+    const [incomingPOs, setIncomingPOs] = useState([]);
+
+    useEffect(() => {
+        // Load PO statuses from localStorage and merge with base data
+        const updatedPOs = basePOs.map(po => ({
+            ...po,
+            traceabilityStatus: getPOTraceabilityStatus(po.poNumber),
+        }));
+        setIncomingPOs(updatedPOs);
+    }, []);
     return (
         <div className="space-y-6">
             {/* Welcome Section */}
