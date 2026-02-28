@@ -359,13 +359,30 @@ export const ProductCreation = () => {
     };
 
     const syncToBrandDashboard = (productData) => {
-        // Simulate syncing to Brand Dashboard
+        // Instant sync to Brand Dashboard
         const brandData = JSON.parse(localStorage.getItem('brand_po_data') || '[]');
         brandData.push({
             ...productData,
             syncedAt: new Date().toISOString(),
         });
         localStorage.setItem('brand_po_data', JSON.stringify(brandData));
+        
+        // Instant sync to QR Code generator - make product available for consumer view
+        const qrProducts = JSON.parse(localStorage.getItem('qr_products') || '{}');
+        qrProducts[productData.traceId] = {
+            traceId: productData.traceId,
+            poNumber: productData.poId,
+            product: productData.poData.product,
+            brand: productData.poData.buyer,
+            quantity: productData.poData.quantity,
+            formData: productData.formData,
+            yieldMetrics: productData.yieldMetrics,
+            createdAt: productData.completedAt,
+            qrUrl: `/product/${productData.traceId}`,
+        };
+        localStorage.setItem('qr_products', JSON.stringify(qrProducts));
+        
+        console.log('✅ Synced to Brand Dashboard and QR Generator:', productData.traceId);
     };
 
     if (!poData) {
