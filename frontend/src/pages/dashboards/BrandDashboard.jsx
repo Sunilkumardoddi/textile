@@ -210,10 +210,11 @@ export const BrandDashboard = () => {
                 </Card>
 
                 <Tabs defaultValue="tracker" className="space-y-6">
-                    <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-flex">
+                    <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-flex">
                         <TabsTrigger value="tracker">PO Tracker</TabsTrigger>
-                        <TabsTrigger value="leadtime">Lead Time Analysis</TabsTrigger>
-                        <TabsTrigger value="drilldown">Journey Drill-Down</TabsTrigger>
+                        <TabsTrigger value="yield">Yield Conversion</TabsTrigger>
+                        <TabsTrigger value="leadtime">Lead Time</TabsTrigger>
+                        <TabsTrigger value="drilldown">Drill-Down</TabsTrigger>
                     </TabsList>
 
                     {/* PO Tracker Tab */}
