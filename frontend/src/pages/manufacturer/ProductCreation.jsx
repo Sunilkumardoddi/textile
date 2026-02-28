@@ -332,7 +332,7 @@ export const ProductCreation = () => {
             poData,
             formData,
             yieldMetrics,
-            status: 'traceability_linked',
+            status: 'complete', // Traceability Complete
             createdAt: creationStartTime?.toISOString(),
             completedAt: completionTime.toISOString(),
             leadTimeHours,
