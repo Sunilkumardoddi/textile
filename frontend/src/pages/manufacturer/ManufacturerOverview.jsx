@@ -124,7 +124,7 @@ export const ManufacturerOverview = () => {
                 ))}
             </div>
 
-            {/* Incoming POs from Buyers - NEW SECTION */}
+            {/* Incoming POs from Buyers - PO-Level Traceability Actions */}
             <Card className="border-secondary/30 bg-gradient-to-r from-secondary/5 to-transparent">
                 <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
@@ -134,11 +134,11 @@ export const ManufacturerOverview = () => {
                             </div>
                             <div>
                                 <CardTitle className="font-heading text-lg">Incoming Purchase Orders</CardTitle>
-                                <CardDescription>POs from Buyers ready for product creation</CardDescription>
+                                <CardDescription>Update traceability for each PO from Buyers</CardDescription>
                             </div>
                         </div>
-                        <Badge variant="secondary" className="bg-secondary/20">
-                            {incomingPOs.filter(po => po.traceabilityStatus === 'pending').length} Pending
+                        <Badge variant="secondary" className="bg-warning/20 text-warning border-warning/30">
+                            {incomingPOs.filter(po => po.traceabilityStatus === 'pending').length} Pending Traceability
                         </Badge>
                     </div>
                 </CardHeader>
@@ -163,11 +163,11 @@ export const ManufacturerOverview = () => {
                                                         : 'bg-warning/10 text-warning border-warning/30'
                                             }
                                         >
-                                            {(po.traceabilityStatus === 'traceability_linked' || po.traceabilityStatus === 'complete') && <Link2 className="h-3 w-3 mr-1" />}
+                                            {(po.traceabilityStatus === 'traceability_linked' || po.traceabilityStatus === 'complete') && <CheckCircle2 className="h-3 w-3 mr-1" />}
                                             {po.traceabilityStatus === 'in_progress' && <Clock className="h-3 w-3 mr-1" />}
                                             {po.traceabilityStatus === 'pending' && <AlertTriangle className="h-3 w-3 mr-1" />}
-                                            {(po.traceabilityStatus === 'traceability_linked' || po.traceabilityStatus === 'complete') ? 'Traceability Linked' : 
-                                             po.traceabilityStatus === 'in_progress' ? 'In Progress' : 'Pending Creation'}
+                                            {(po.traceabilityStatus === 'traceability_linked' || po.traceabilityStatus === 'complete') ? 'Traceability Complete' : 
+                                             po.traceabilityStatus === 'in_progress' ? 'In Progress' : 'Pending Traceability'}
                                         </Badge>
                                     </div>
                                     <p className="font-medium text-foreground">{po.product}</p>
@@ -183,22 +183,22 @@ export const ManufacturerOverview = () => {
                                     {po.traceabilityStatus === 'pending' ? (
                                         <Button variant="hero" size="sm" asChild>
                                             <Link to={`/manufacturer/create-product/${po.poNumber}`}>
-                                                <Plus className="h-4 w-4 mr-1" />
-                                                Create Product
+                                                <Edit3 className="h-4 w-4 mr-1" />
+                                                Update Traceability
                                             </Link>
                                         </Button>
                                     ) : po.traceabilityStatus === 'in_progress' ? (
                                         <Button variant="secondary" size="sm" asChild>
                                             <Link to={`/manufacturer/create-product/${po.poNumber}`}>
                                                 <Sparkles className="h-4 w-4 mr-1" />
-                                                Continue
+                                                Continue Traceability
                                             </Link>
                                         </Button>
                                     ) : (
                                         <Button variant="outline" size="sm" className="border-success/50 text-success hover:bg-success/10" asChild>
                                             <Link to="/manufacturer/traceability-tree">
-                                                <Link2 className="h-4 w-4 mr-1" />
-                                                View Linked
+                                                <CheckCircle2 className="h-4 w-4 mr-1" />
+                                                View Complete
                                             </Link>
                                         </Button>
                                     )}
