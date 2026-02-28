@@ -1294,7 +1294,7 @@ export const ProductCreation = () => {
                         <div className="flex items-center gap-4">
                             <div className={`p-3 rounded-xl ${validationStatus.canSubmit ? 'bg-success/20' : 'bg-warning/20'}`}>
                                 {validationStatus.canSubmit ? (
-                                    <Link2 className="h-6 w-6 text-success" />
+                                    <CheckCircle2 className="h-6 w-6 text-success" />
                                 ) : (
                                     <AlertCircle className="h-6 w-6 text-warning" />
                                 )}
@@ -1302,12 +1302,12 @@ export const ProductCreation = () => {
                             <div>
                                 <p className="font-medium text-foreground">
                                     {validationStatus.canSubmit 
-                                        ? 'Ready to Create Product & Link Traceability' 
-                                        : 'Complete Required Fields to Enable Submission'
+                                        ? 'Ready to Complete Traceability' 
+                                        : 'Complete All Supply Chain Stages to Submit'
                                     }
                                 </p>
                                 <p className="text-sm text-muted-foreground">
-                                    {validationStatus.overall.filled} of {validationStatus.overall.total} mandatory fields completed
+                                    {validationStatus.overall.filled} of {validationStatus.overall.total} mandatory fields completed • Auto-syncs to Brand Dashboard & QR
                                 </p>
                             </div>
                         </div>
@@ -1321,17 +1321,17 @@ export const ProductCreation = () => {
                                 size="lg"
                                 disabled={!validationStatus.canSubmit || isSubmitting}
                                 onClick={handleSubmit}
-                                className="min-w-[200px]"
+                                className="min-w-[220px]"
                             >
                                 {isSubmitting ? (
                                     <>
                                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                        Creating...
+                                        Completing...
                                     </>
                                 ) : (
                                     <>
-                                        <Check className="h-4 w-4 mr-2" />
-                                        Create Product & Link
+                                        <CheckCircle2 className="h-4 w-4 mr-2" />
+                                        Complete Traceability
                                     </>
                                 )}
                             </Button>
