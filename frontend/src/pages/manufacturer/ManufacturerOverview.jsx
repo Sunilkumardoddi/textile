@@ -159,17 +159,17 @@ export const ManufacturerOverview = () => {
                                         <Badge 
                                             variant="outline" 
                                             className={
-                                                po.traceabilityStatus === 'complete' 
+                                                po.traceabilityStatus === 'traceability_linked' || po.traceabilityStatus === 'complete'
                                                     ? 'bg-success/10 text-success border-success/30'
                                                     : po.traceabilityStatus === 'in_progress'
                                                         ? 'bg-secondary/10 text-secondary border-secondary/30'
                                                         : 'bg-warning/10 text-warning border-warning/30'
                                             }
                                         >
-                                            {po.traceabilityStatus === 'complete' && <CheckCircle2 className="h-3 w-3 mr-1" />}
+                                            {(po.traceabilityStatus === 'traceability_linked' || po.traceabilityStatus === 'complete') && <Link2 className="h-3 w-3 mr-1" />}
                                             {po.traceabilityStatus === 'in_progress' && <Clock className="h-3 w-3 mr-1" />}
                                             {po.traceabilityStatus === 'pending' && <AlertTriangle className="h-3 w-3 mr-1" />}
-                                            {po.traceabilityStatus === 'complete' ? 'Traceability Complete' : 
+                                            {(po.traceabilityStatus === 'traceability_linked' || po.traceabilityStatus === 'complete') ? 'Traceability Linked' : 
                                              po.traceabilityStatus === 'in_progress' ? 'In Progress' : 'Pending Creation'}
                                         </Badge>
                                     </div>
