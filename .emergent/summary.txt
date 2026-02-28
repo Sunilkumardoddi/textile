@@ -1,62 +1,77 @@
 <analysis>**original_problem_statement:**
-The initial request was to design a modern and professional login page for a textile supply chain web portal. Key features included an animated world map background, a minimalistic login form, and a corporate color palette (navy blue, white, soft green).
+The initial request was to design a modern login page for a textile supply chain web portal. The project has since evolved into a full-scale, multi-stakeholder traceability platform.
 
-The project scope expanded significantly through subsequent user requests to include:
-1.  **Role Selection & Sign-Up:** A dashboard for users to select their role (Brand, Manufacturer, Auditor, Admin) and corresponding account creation forms.
-2.  **Comprehensive Manufacturer Module:** A full dashboard for manufacturers with features for managing factory profiles, production capabilities, documents, orders, certifications, and submitting traceability data through a visual node-based interface.
-3.  **Hierarchical Traceability Tree:** A more advanced, enterprise-grade, expandable tree view of the supply chain, similar to TrusTRace.
-4.  **Full Multi-Stakeholder Traceability Portal:** The current and largest task, which involves building a portal for various stakeholders (Buyers, Consumers). This includes Power BI dashboard integration for analytics, a Delay Flag feature for suppliers, and a consumer-facing Story of the Product page accessible via QR code.
+The core requirements implemented include:
+1.  **Role-Based Access**: Login, role selection (Brand, Manufacturer, Auditor, Admin), and signup flows.
+2.  **Comprehensive Manufacturer Module**: A dashboard for manufacturers to manage factory profiles, certifications, and orders. It features a PO-driven product creation wizard to build a Story of the Product by inputting data for each supply chain step (Fiber, Spinning, Fabric, etc.). This includes a Root Cause Analysis (RCA) system for reporting delays.
+3.  **Brand Master Dashboard**: A central dashboard for brands to create Purchase Orders (POs), monitor the Fiber-to-Garment journey in real-time, view lead-time analysis, see delay reasons submitted by manufacturers, and analyze yield conversion metrics.
+4.  **Consumer QR Story Page**: A mobile-responsive page showing a product's journey and sustainability impact, designed to be accessed via QR code.
+5.  **Terminology Refactor**: The most recent request is to consolidate the Buyer role into the Brand role, ensuring consistent terminology across the entire application. All functionality previously associated with Buyer should now belong to Brand.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A comprehensive React frontend prototype has been built. It features a fully designed login page with an animated world map, role-based signup and login flows, and mocked dashboards for Brand, Manufacturer, Auditor, and Admin roles. A detailed Manufacturer module is implemented with multiple pages for managing profile, certifications, traceability, and more. Two distinct traceability interfaces (a simple node flow and a complex tree view) have been created as requested. The project is fully styled with a custom design system and has routing set up for all existing pages. The agent has just begun creating the file structure for the Buyer portal.
+A comprehensive, frontend-only React prototype. It features a polished UI with a custom design system, role-based dashboards, and extensive mocked functionality. Key features include an animated login page, a detailed Manufacturer Dashboard with an interactive PO list and status filtering, a multi-step traceability wizard, a comprehensive Brand Dashboard with analytics tabs, and a consumer-facing QR story page. State is managed locally and persisted between page loads using  to simulate a logged-in experience.
 
 **Last working item**:
-*   **Last item agent was working:** The agent started implementing the Full Multi-Stakeholder Traceability Portal by creating the initial files for the Buyer's section. The specific files created are , , and .
+*   **Last item agent was working:** The agent was executing a major refactoring task to replace all instances of Buyer with Brand throughout the application to standardize terminology. The agent started by deleting the  directory, updating  to remove the Buyer login button, and was in the process of updating  to redirect old buyer routes.
 *   **Status:** IN PROGRESS
 *   **Agent Testing Done:** N
 *   **Which testing method agent to use?** Frontend testing agent
 *   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-There are no known bugs or technical issues. The main pending item is the large feature currently in development.
+*   **Issue 1: Incomplete Buyer to Brand Refactor** (Priority: P0)
+    *   **Description**: The application is in a broken state due to an incomplete refactoring of the Buyer terminology to Brand. The agent has started the process but has not finished updating all relevant files.
+    *   **Attempted fixes**: Deleted the  directory, removed the Buyer button from , and started modifying  to redirect  routes to .
+    *   **Next debug checklist**:
+        1.  Complete the modifications in  to remove old buyer routes and ensure redirects are in place.
+        2.  Thoroughly search and replace Buyer with Brand (and buyer with brand) in .
+        3.  Review and update  for any remaining Buyer references.
+        4.  Perform a global search across the entire  directory for the terms Buyer and buyer to catch any missed instances in component text, variables, or mock data.
+        5.  Once the refactor is complete, conduct a full end-to-end test of the Brand and Manufacturer flows.
+    *   **Why fix this issue and what will be achieved with the fix?**: To align the application with the user's explicit requirement for consistent terminology, which clarifies user roles and consolidates all order management and monitoring functionality under the Brand entity.
+    *   **Status:** IN PROGRESS
+    *   **Is recurring issue?** N
+    *   **Should Test frontend/backend/both after fix?** frontend
+    *   **Blocked on other issue:** No
 
 **In progress Task List**:
-*   **Task 1: Complete the Full Multi-Stakeholder Traceability Portal** (Priority: P0)
-    *   **Where to resume:** The agent needs to continue building the portal by creating the Delay Reports page for Buyers and the Consumer QR Story page. Following file creation, the agent must update  with the new routes, integrate them into the navigation, and build the UI and mock functionality for these new pages, including placeholders for the requested Power BI dashboards.
-    *   **What will be achieved with this?** This will complete the frontend prototype for the multi-stakeholder traceability platform as per the latest user request.
+*   **Task 1: Complete the Buyer to Brand Refactoring** (Priority: P0)
+    *   **Where to resume:** The agent was modifying . The next step is to finalize the route changes, then proceed to  and other files as outlined in the Pending Issue checklist.
+    *   **What will be achieved with this?** A fully functional application with consistent terminology, where Brand is the sole entity responsible for creating POs and monitoring the supply chain.
     *   **Status:** IN PROGRESS
     *   **Should Test frontend/backend/both after fix?** frontend
     *   **Blocked on something:** No
 
 **Upcoming and Future Tasks**
 *   **Upcoming Tasks:**
-    *   **P0:** Create the Buyer Delay Reports page ().
-    *   **P0:** Create the Consumer QR Story page ().
-    *   **P0:** Integrate new routes for Buyer and Consumer pages into .
-    *   **P1:** Add placeholder components in  to simulate the embedded Power BI dashboards.
-    *   **P1:** Implement mock logic for Purchase Order (PO) linking and unit conversion (KG to Meters) within the traceability components.
+    *   **P0**: Implement and test the unified reporting/exporting feature (Excel/PDF) from the Brand and Manufacturer dashboards, ensuring the column is labeled Brand Name.
+    *   **P1**: Verify that all generated outputs (like the QR code page) correctly feature the Brand's name.
 *   **Future Tasks:**
-    *   Full backend integration to replace all mocked data and logic.
+    *   Full backend integration to replace all mocked data, logic, and  state management.
     *   Implementation of a secure, production-ready authentication system.
-    *   Development of the email-based password reset flow.
+    *   Development of an email-based password reset flow.
     *   Implementation of admin approval workflows for data submissions.
+    *   Integration with actual webhooks for real-time data sync instead of the current simulation.
 
 **Completed work in this session**
-*   **Core Application Flow:**
-    *   Created , , , and .
-*   **Role-Based Dashboards (Mocked):**
-    *   Created , , , and .
-*   **Comprehensive Manufacturer Module:**
-    *   Created a full suite of components including , , , , , , , , and .
-    *   Developed two traceability UIs:  (node-based) and  (hierarchical tree).
-*   **Design System and UI:**
-    *   Established the complete design system in  and  with the specified corporate color palette.
-    *   Created the  component for the animated login background.
-*   **Testing & Verification:**
-    *   Successfully ran the frontend testing agent to validate the initial portal and the manufacturer module.
-    *   Verified the UI and responsiveness of all key pages using screenshots.
+*   **Full Multi-Stakeholder Portal**: Created and integrated the Buyer (now Brand) and Consumer portal pages.
+*   **Advanced Manufacturer Dashboard**:
+    *   Implemented a Root Cause Analysis (RCA) modal for reporting order delays.
+    *   Created interactive, clickable status boxes for filtering the PO list.
+    *   Added an Export Report feature placeholder.
+    *   Refined the UI to place action buttons at the individual PO level, removing the global Update Traceability button.
+*   **Advanced Brand Dashboard**:
+    *   Added a Delay Reports tab to view RCA data synced from manufacturers.
+    *   Added a Yield Conversion Metrics tab to visualize material conversion efficiency for each PO.
+*   **Unified Product Creation Wizard**:
+    *   Redesigned the wizard into a seamless, single-page experience with tabs.
+    *   Added a Smart Engine feature to simulate API auto-fill from saved suppliers.
+    *   Integrated a live-updating yield conversion tracker directly into the wizard.
+*   **Testing and Bug Fixes**:
+    *   Used the frontend testing agent and extensive screenshot-based verification for all major features.
+    *   Fixed a bug where the Buyer role button was missing from the login page.
 
 **Earlier issues found/mentioned but not fixed**
 *   None.
@@ -69,9 +84,9 @@ There are no known bugs or technical issues. The main pending item is the large 
 
 **Key Technical Concepts**
 *   **Frontend:** React, Tailwind CSS, shadcn/ui
-*   **UI/UX:** Design System First, Token-based styling (HSL), Glassmorphism, Node-based visualization, Hierarchical tree view.
-*   **Animation:** Custom animated world map background.
-*   **Architecture:** Mocked frontend prototype with component-based, role-based views.
+*   **State Management:** Component-level state with  for mock session persistence.
+*   **UI/UX:** Design System First, Token-based styling (HSL), Glassmorphism, Wizard-style forms, Dynamic filtering, Conditional rendering based on mock state.
+*   **Mocking:** All application data, API calls (simulated with ), and user roles are mocked in the frontend.
 
 **key DB schema**
 *   N/A. This is a frontend-only project with no database connection.
@@ -80,52 +95,56 @@ There are no known bugs or technical issues. The main pending item is the large 
 *   None.
 
 **All files of reference**
-*   : Defines the core design system and color palette.
-*   : Contains all application routing logic.
-*   : The most recently requested complex traceability interface.
-*   : The main entry point of the application.
-*   : The directory for the new Buyer portal currently under construction.
+*   : Contains all application routing logic (currently being refactored).
+*   : Entry point and role selection (updated to remove Buyer).
+*   : Core dashboard for manufacturers, showing POs from Brands (needs refactoring).
+*   : The unified wizard for product and traceability data entry.
+*   : The master view for Brands, consolidating previous Buyer functionality.
+*   : The product requirements document, updated after each major feature completion.
 
 **Areas that need refactoring**:
-*   The application currently has two separate traceability components ( and ). These could potentially be consolidated once the final direction is confirmed.
-*   State is managed locally within components. As the application grows, introducing a global state management solution (like Context API) would improve maintainability, especially for user authentication state.
+*   **State Management:** The reliance on  is a temporary solution for mocking. Introducing a global state management library (like Context API or Redux Toolkit) is necessary for future backend integration and scalability.
+*   **Mock Data:** Mock data is currently defined within the components that use it. Consolidating all mock data into a separate, centralized module () would improve organization and maintainability.
 
 **key api endpoints**
-*   N/A. All data is mocked; no APIs are being called.
+*   N/A. All API calls are simulated with timeouts.
 
 **Critical Info for New Agent**
-*   **MOCK PROTOTYPE:** This is a frontend-only application. All data, authentication, and state are mocked. Do not attempt to implement backend logic.
-*   **SESSION STATE:** The user session is not persisted. To test any protected page (e.g., a dashboard), you must navigate through the login page first in every testing sequence.
-*   **DESIGN SYSTEM:** All styling MUST use the design tokens defined in . Adherence to the HSL format for colors is critical.
-*   **MULTIPLE TRACEABILITY VIEWS:** The user requested and received two distinct traceability UIs. The latest work is focused on the more complex Tree view, but both exist in the codebase.
+*   **Refactoring in Progress:** Your immediate priority is to complete the Buyer to Brand refactor. The application is currently in a non-functional state. Follow the checklist in the  to complete this task.
+*   **MOCK PROTOTYPE:** This is a frontend-only application. All data, authentication, and state are mocked. Do not attempt to implement backend logic. State is persisted in  to simulate user sessions.
+*   **Design System:** All styling must use the design tokens and HSL color variables defined in .
 
 **documents and test reports created in this job**
 *   
-*   
+*    (updated multiple times)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User (Latest):** Requested a comprehensive multi-stakeholder Traceability Portal with Buyer/Consumer roles, Power BI integration, and a QR story feature. (Status: In Progress)
-2.  **User:** Requested an advanced, TrusTRace-style hierarchical traceability tree interface. (Status: Completed)
-3.  **User:** Requested a detailed Manufacturer module with a visual node-based traceability UI. (Status: Completed)
-4.  **User:** Requested a role-selection dashboard and signup flow. (Status: Completed)
-5.  **User:** Approved the agent's plan to proceed with default assumptions. (Status: Completed)
-6.  **User:** Initial problem statement for the login page. (Status: Completed)
+1.  **User (Latest):** Requested a full refactor to consolidate Buyer into Brand across the UI, logic, and reporting. (Status: In Progress)
+2.  **User:** Requested an RCA system for manufacturers to report delay reasons, interactive dashboard KPIs, and an export feature. (Status: Completed)
+3.  **Agent:** Finished implementation of the RCA and reporting features and updated PRD. (Status: Completed)
+4.  **User:** Requested UI refinements for the Manufacturer Dashboard, including removing a global button and making PO-level actions more explicit. (Status: Completed)
+5.  **Agent:** Finished the UI refinement task and updated PRD. (Status: Completed)
+6.  **User:** Requested a unified product creation wizard that combines product identity and traceability into a single flow with live yield conversion metrics. (Status: Completed)
+7.  **Agent:** Finished implementation of the unified wizard and updated PRD. (Status: Completed)
+8.  **Agent:** Fixed the missing Buyer role button on the login page found by the testing agent. (Status: Completed)
+9.  **Agent:** Ran the testing agent, which found two minor issues. (Status: Completed)
+10. **User:** Provided a detailed feature expansion for a PO-driven product creation flow with a sequential step-by-step build and Power BI dashboard integration. (Status: Completed)
 
 **Project Health Check:**
-*   **Broken:** None
+*   **Broken:** The application is currently broken due to the incomplete Buyer to Brand refactor.
 *   **Mocked:** The entire application is a mock. This includes authentication, all data displayed on dashboards, API calls, and form submissions.
 
 **3rd Party Integrations**
-*   **Power BI:** Requested for the Buyer Analytics dashboard but not yet implemented. It will be added as a placeholder/mock integration.
+*   **Power BI:** Requested for the Brand Analytics dashboard but not yet implemented. It exists as a mocked placeholder/notice in the UI.
 
 **Testing status**
 *   **Testing agent used after significant changes:** YES
 *   **Troubleshoot agent used after agent stuck in loop:** NO
 *   **Test files created:** []
-*   **Known regressions:** []
+*   **Known regressions:** The entire application flow related to Brand (formerly Buyer) is currently broken due to the in-progress refactor.
 
 **Credentials to test flow:**
-*   No specific credentials are needed. The login flow is mocked. Enter any text into the email/password fields and select a role from the dropdown to proceed to the corresponding dashboard.
+*   No specific credentials are needed. The login flow is mocked. After the refactor is complete, clicking the role buttons on the login page (Brand, Manufacturer, Auditor, Admin) will pre-fill mock credentials and allow access to the corresponding dashboard.
 
 **What agent forgot to execute**
-*   The agent has not forgotten any tasks but is in the middle of a large feature implementation. The immediate next steps are to create the Delay Reports and Consumer QR Story pages, which are part of the last user request.</analysis>
+*   The agent did not forget any tasks but stopped mid-execution of the large Buyer to Brand refactoring. This task needs to be completed as the highest priority.</analysis>
