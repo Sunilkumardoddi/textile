@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
     Leaf, Factory, Package, Droplets, Sparkles, Shirt, 
     ChevronRight, ChevronLeft, Check, Save, AlertCircle,
     Plus, Trash2, Search, Building2, FileText, Calendar,
-    ArrowRight, Shield, QrCode, Copy, ExternalLink
+    ArrowRight, Shield, QrCode, Copy, ExternalLink, Loader2,
+    TrendingUp, Scale, Zap, CheckCircle2, Clock, Link2
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,62 +16,83 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
-// Mock PO Data (would come from Buyer's PO)
+// Mock PO Data (would come from Buyer's PO via API)
 const mockPOData = {
     'PO-2024-001': {
         poNumber: 'PO-2024-001',
         buyer: 'EcoWear Brands Ltd',
+        buyerContact: 'Sarah Johnson',
         product: 'Organic Cotton T-Shirts',
         category: 'T-Shirt',
         quantity: 5000,
         unit: 'pcs',
         dueDate: '2024-02-28',
         specifications: 'White, Size M-XL, 180 GSM Jersey',
+        pricePerUnit: 9.00,
     },
     'PO-2024-002': {
         poNumber: 'PO-2024-002',
         buyer: 'GreenStyle Fashion',
+        buyerContact: 'Michael Chen',
         product: 'Recycled Polyester Jackets',
         category: 'Jacket',
         quantity: 2000,
         unit: 'pcs',
         dueDate: '2024-03-15',
         specifications: 'Navy Blue, Size S-XXL, Waterproof',
+        pricePerUnit: 34.00,
+    },
+    'PO-2024-003': {
+        poNumber: 'PO-2024-003',
+        buyer: 'Sustainable Threads',
+        buyerContact: 'Emma Wilson',
+        product: 'Hemp Blend Shirts',
+        category: 'Shirt',
+        quantity: 3000,
+        unit: 'pcs',
+        dueDate: '2024-03-01',
+        specifications: 'Natural, Size S-XXL, 120 GSM',
+        pricePerUnit: 17.50,
     },
 };
 
-// Mock saved suppliers for auto-fill
+// Mock saved suppliers with API data simulation
 const savedSuppliers = {
     fiber: [
-        { id: 'SUP-F1', name: 'Organic Farms Co-op', location: 'Gujarat, India', certification: 'GOTS' },
-        { id: 'SUP-F2', name: 'EcoFiber Mills', location: 'Tamil Nadu, India', certification: 'OCS' },
+        { id: 'SUP-F1', name: 'Organic Farms Co-op', location: 'Gujarat, India', certification: 'GOTS', 
+          latestLot: 'LOT-F-2024-0892', availableStock: '2,500 KG', lastDelivery: '2024-01-28' },
+        { id: 'SUP-F2', name: 'EcoFiber Mills', location: 'Tamil Nadu, India', certification: 'OCS',
+          latestLot: 'LOT-F-2024-0756', availableStock: '1,800 KG', lastDelivery: '2024-01-25' },
     ],
     spinning: [
-        { id: 'SUP-S1', name: 'SpinWell Textiles', location: 'Coimbatore, India', certification: 'GOTS' },
-        { id: 'SUP-S2', name: 'YarnCraft Industries', location: 'Tirupur, India', certification: 'ISO 9001' },
+        { id: 'SUP-S1', name: 'SpinWell Textiles', location: 'Coimbatore, India', certification: 'GOTS',
+          latestLot: 'LOT-Y-2024-1045', yarnCount: '30s Combed', currentCapacity: '85%' },
+        { id: 'SUP-S2', name: 'YarnCraft Industries', location: 'Tirupur, India', certification: 'ISO 9001',
+          latestLot: 'LOT-Y-2024-0998', yarnCount: '40s Ring', currentCapacity: '70%' },
     ],
     fabric: [
-        { id: 'SUP-FA1', name: 'KnitCraft Industries', location: 'Tirupur, India', certification: 'GOTS' },
-        { id: 'SUP-FA2', name: 'WeaveMaster Textiles', location: 'Erode, India', certification: 'OEKO-TEX' },
+        { id: 'SUP-FA1', name: 'KnitCraft Industries', location: 'Tirupur, India', certification: 'GOTS',
+          latestLot: 'LOT-FB-2024-0567', gsm: '180', fabricType: 'Jersey' },
+        { id: 'SUP-FA2', name: 'WeaveMaster Textiles', location: 'Erode, India', certification: 'OEKO-TEX',
+          latestLot: 'LOT-FB-2024-0512', gsm: '160', fabricType: 'Poplin' },
     ],
     processing: [
-        { id: 'SUP-P1', name: 'ColorEco Processing', location: 'Tirupur, India', certification: 'ZDHC' },
-        { id: 'SUP-P2', name: 'GreenDye Solutions', location: 'Ahmedabad, India', certification: 'GOTS' },
+        { id: 'SUP-P1', name: 'ColorEco Processing', location: 'Tirupur, India', certification: 'ZDHC',
+          approvedShades: ['Natural White', 'Sky Blue', 'Forest Green'], avgLeadTime: '5 days' },
+        { id: 'SUP-P2', name: 'GreenDye Solutions', location: 'Ahmedabad, India', certification: 'GOTS',
+          approvedShades: ['Organic White', 'Earth Brown', 'Navy'], avgLeadTime: '4 days' },
     ],
 };
 
-// Step definitions
-const steps = [
-    { id: 'product', title: 'Product Identity', icon: FileText, description: 'Basic product & company info' },
-    { id: 'fiber', title: 'Fiber Details', icon: Leaf, description: 'Raw material sourcing' },
-    { id: 'spinning', title: 'Spinning', icon: Factory, description: 'Yarn production details' },
-    { id: 'fabric', title: 'Fabric Production', icon: Package, description: 'Weaving/Knitting details' },
-    { id: 'processing', title: 'Processing/Dyeing', icon: Droplets, description: 'Dyeing & finishing' },
-    { id: 'value', title: 'Value Addition', icon: Sparkles, description: 'Embroidery/Printing' },
-    { id: 'final', title: 'Final Construction', icon: Shirt, description: 'Assembly & QC' },
-];
+// Yield conversion factors (industry standard)
+const yieldFactors = {
+    fiberToYarn: 0.92, // 8% loss in spinning
+    yarnToFabric: 5.4, // 1 KG yarn = 5.4 meters fabric (180 GSM)
+    fabricToGarment: 1.44, // 1.44 meters per T-shirt
+};
 
 // Generate unique Traceability ID
 const generateTraceId = () => {
@@ -82,125 +104,184 @@ const generateTraceId = () => {
 export const ProductCreation = () => {
     const { poId } = useParams();
     const navigate = useNavigate();
-    const [currentStep, setCurrentStep] = useState(0);
     const [poData, setPoData] = useState(null);
     const [traceId, setTraceId] = useState('');
-    const [showSupplierSearch, setShowSupplierSearch] = useState(null);
+    const [creationStartTime, setCreationStartTime] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [apiLoading, setApiLoading] = useState({});
     
-    // Form data state
+    // Form data state - unified for entire journey
     const [formData, setFormData] = useState({
-        // Step 0: Product Identity
+        // Section 1: Core Product Identity (Auto-populated + Manual)
+        poNumber: '',
+        buyerName: '',
         styleName: '',
         styleNumber: '',
-        sku: '',
-        category: '',
-        invoiceNumber: '',
         totalUnits: '',
-        deliveryDate: '',
+        invoiceNumber: '',
         manufacturerName: '',
-        factoryAddress: '',
-        certifications: [],
+        factoryLocation: '',
         
-        // Step 1: Fiber Details
-        fiberType: '',
-        fiberSource: '',
+        // Section 2: Fiber (Upstream)
         fiberSupplier: '',
-        fiberSupplierLocation: '',
+        fiberLocation: '',
+        fiberType: '',
         fiberLotNumber: '',
-        baleWeight: '',
+        fiberBaleWeight: '',
         fiberCertification: '',
-        fiberNotes: '',
+        fiberDate: '',
         
-        // Step 2: Spinning
+        // Section 3: Spinning (Upstream)
         spinningMill: '',
         spinningLocation: '',
         yarnCount: '',
         tpi: '',
-        spinningWeight: '',
+        spinningWeightKg: '',
         spinningLotNumber: '',
         spinningCertification: '',
-        spinningNotes: '',
+        spinningDate: '',
         
-        // Step 3: Fabric
-        fabricType: '',
+        // Section 4: Fabric (Upstream)
         fabricSupplier: '',
         fabricLocation: '',
-        gsm: '',
-        fabricWidth: '',
-        totalMeters: '',
+        fabricType: '',
+        fabricGsm: '',
+        fabricMeters: '',
         fabricLotNumber: '',
         fabricCertification: '',
-        fabricNotes: '',
+        fabricDate: '',
         
-        // Step 4: Processing
+        // Section 5: Processing/Dyeing (Upstream)
         dyeingHouse: '',
         dyeingLocation: '',
         dyeType: '',
         shadeNumber: '',
         chemicalLogs: '',
         shadeApproval: false,
-        waterUsage: '',
         processingCertification: '',
-        processingNotes: '',
+        processingDate: '',
         
-        // Step 5: Value Addition
+        // Section 6: Value Addition
         hasEmbroidery: false,
         embroideryDetails: '',
         embroideryUnits: '',
         hasPrinting: false,
         printingDetails: '',
         printingUnits: '',
-        hasWashing: false,
-        washingDetails: '',
-        valueAdditionNotes: '',
+        valueAddDate: '',
         
-        // Step 6: Final Construction
-        cmtFactory: '',
-        cmtLocation: '',
-        cuttingDate: '',
-        sewingDate: '',
-        finishingDate: '',
-        qcDate: '',
+        // Section 7: Final QC
+        finalQcDate: '',
         packedUnits: '',
         defectRate: '',
         finalNotes: '',
     });
 
+    // Calculate yield metrics in real-time
+    const yieldMetrics = useMemo(() => {
+        const fiberKg = parseFloat(formData.fiberBaleWeight) || 0;
+        const yarnKg = parseFloat(formData.spinningWeightKg) || fiberKg * yieldFactors.fiberToYarn;
+        const fabricMeters = parseFloat(formData.fabricMeters) || yarnKg * yieldFactors.yarnToFabric;
+        const garmentUnits = Math.floor(fabricMeters / yieldFactors.fabricToGarment);
+        
+        return {
+            fiberKg: fiberKg.toFixed(0),
+            yarnKg: yarnKg.toFixed(0),
+            fabricMeters: fabricMeters.toFixed(0),
+            garmentUnits: garmentUnits,
+            targetUnits: parseInt(formData.totalUnits) || 0,
+            efficiency: formData.totalUnits ? Math.round((garmentUnits / parseInt(formData.totalUnits)) * 100) : 0,
+        };
+    }, [formData.fiberBaleWeight, formData.spinningWeightKg, formData.fabricMeters, formData.totalUnits]);
+
+    // Validation - check if all mandatory fields are filled
+    const validationStatus = useMemo(() => {
+        const mandatoryFields = {
+            productIdentity: ['styleName', 'totalUnits', 'manufacturerName', 'factoryLocation'],
+            fiber: ['fiberSupplier', 'fiberType', 'fiberLotNumber', 'fiberBaleWeight'],
+            spinning: ['spinningMill', 'yarnCount', 'spinningWeightKg', 'spinningLotNumber'],
+            fabric: ['fabricSupplier', 'fabricType', 'fabricGsm', 'fabricMeters'],
+            processing: ['dyeingHouse', 'shadeNumber', 'shadeApproval'],
+        };
+        
+        const status = {};
+        let totalFilled = 0;
+        let totalRequired = 0;
+        
+        Object.entries(mandatoryFields).forEach(([section, fields]) => {
+            const filled = fields.filter(f => {
+                if (f === 'shadeApproval') return formData[f] === true;
+                return formData[f] && formData[f].toString().trim() !== '';
+            }).length;
+            status[section] = { filled, total: fields.length, complete: filled === fields.length };
+            totalFilled += filled;
+            totalRequired += fields.length;
+        });
+        
+        status.overall = { filled: totalFilled, total: totalRequired, percentage: Math.round((totalFilled / totalRequired) * 100) };
+        status.canSubmit = totalFilled === totalRequired;
+        
+        return status;
+    }, [formData]);
+
     useEffect(() => {
-        // Load PO data
+        // Load PO data and start creation timer
         const po = mockPOData[poId] || mockPOData['PO-2024-001'];
         setPoData(po);
         setTraceId(generateTraceId());
+        setCreationStartTime(new Date());
         
-        // Pre-fill from PO
+        // Auto-populate from PO
         setFormData(prev => ({
             ...prev,
-            category: po.category,
+            poNumber: po.poNumber,
+            buyerName: po.buyer,
             totalUnits: po.quantity.toString(),
-            deliveryDate: po.dueDate,
+            styleName: po.product,
         }));
+        
+        // Update status in localStorage (simulating API call)
+        updatePOStatus(poId, 'in_progress');
     }, [poId]);
+
+    const updatePOStatus = (poNumber, status) => {
+        const statusData = JSON.parse(localStorage.getItem('po_status') || '{}');
+        statusData[poNumber] = { status, updatedAt: new Date().toISOString() };
+        localStorage.setItem('po_status', JSON.stringify(statusData));
+    };
 
     const updateFormData = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    const selectSavedSupplier = (type, supplier) => {
+    // Simulate API call to fetch supplier data
+    const fetchSupplierData = async (type, supplier) => {
+        setApiLoading(prev => ({ ...prev, [type]: true }));
+        
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
         const fieldMappings = {
             fiber: {
                 fiberSupplier: supplier.name,
-                fiberSupplierLocation: supplier.location,
+                fiberLocation: supplier.location,
                 fiberCertification: supplier.certification,
+                fiberLotNumber: supplier.latestLot,
             },
             spinning: {
                 spinningMill: supplier.name,
                 spinningLocation: supplier.location,
                 spinningCertification: supplier.certification,
+                spinningLotNumber: supplier.latestLot,
+                yarnCount: supplier.yarnCount || '',
             },
             fabric: {
                 fabricSupplier: supplier.name,
                 fabricLocation: supplier.location,
                 fabricCertification: supplier.certification,
+                fabricLotNumber: supplier.latestLot,
+                fabricGsm: supplier.gsm || '',
+                fabricType: supplier.fabricType || '',
             },
             processing: {
                 dyeingHouse: supplier.name,
@@ -210,26 +291,11 @@ export const ProductCreation = () => {
         };
         
         setFormData(prev => ({ ...prev, ...fieldMappings[type] }));
-        setShowSupplierSearch(null);
-        toast.success(`${supplier.name} selected and data auto-filled`);
-    };
-
-    const sendVerificationNotification = (supplierName) => {
-        toast.success(`Digital handshake sent to ${supplierName}`, {
-            description: 'Supplier will receive notification to verify data',
+        setApiLoading(prev => ({ ...prev, [type]: false }));
+        
+        toast.success(`Supplier data synced via API`, {
+            description: `Latest lot: ${supplier.latestLot || 'N/A'}`,
         });
-    };
-
-    const handleNext = () => {
-        if (currentStep < steps.length - 1) {
-            setCurrentStep(currentStep + 1);
-        }
-    };
-
-    const handlePrevious = () => {
-        if (currentStep > 0) {
-            setCurrentStep(currentStep - 1);
-        }
     };
 
     const handleSaveDraft = () => {
@@ -237,22 +303,39 @@ export const ProductCreation = () => {
             traceId,
             poId,
             formData,
-            currentStep,
             savedAt: new Date().toISOString(),
+            creationStartTime: creationStartTime?.toISOString(),
         };
         localStorage.setItem(`product_draft_${poId}`, JSON.stringify(draft));
         toast.success('Draft saved successfully');
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        if (!validationStatus.canSubmit) {
+            toast.error('Please complete all mandatory fields');
+            return;
+        }
+        
+        setIsSubmitting(true);
+        
+        // Simulate API submission
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        const completionTime = new Date();
+        const leadTimeMs = completionTime - creationStartTime;
+        const leadTimeHours = Math.round(leadTimeMs / (1000 * 60 * 60) * 10) / 10;
+        
         // Save complete product data
         const productData = {
             traceId,
             poId,
             poData,
             formData,
-            status: 'complete',
-            createdAt: new Date().toISOString(),
+            yieldMetrics,
+            status: 'traceability_linked',
+            createdAt: creationStartTime?.toISOString(),
+            completedAt: completionTime.toISOString(),
+            leadTimeHours,
         };
         
         // Store in localStorage (would be API call in production)
@@ -260,39 +343,59 @@ export const ProductCreation = () => {
         existingProducts.push(productData);
         localStorage.setItem('textile_products', JSON.stringify(existingProducts));
         
-        toast.success('Product created successfully!', {
+        // Update PO status
+        updatePOStatus(poId, 'traceability_linked');
+        
+        // Sync to Brand Dashboard (simulated)
+        syncToBrandDashboard(productData);
+        
+        setIsSubmitting(false);
+        
+        toast.success('Product Created & Traceability Linked!', {
             description: `Traceability ID: ${traceId}`,
         });
         
-        navigate('/manufacturer/traceability-tree');
+        navigate('/manufacturer');
     };
 
-    const progress = ((currentStep + 1) / steps.length) * 100;
+    const syncToBrandDashboard = (productData) => {
+        // Simulate syncing to Brand Dashboard
+        const brandData = JSON.parse(localStorage.getItem('brand_po_data') || '[]');
+        brandData.push({
+            ...productData,
+            syncedAt: new Date().toISOString(),
+        });
+        localStorage.setItem('brand_po_data', JSON.stringify(brandData));
+    };
 
     if (!poData) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
         );
     }
 
     return (
-        <div className="space-y-6" data-testid="product-creation-page">
-            {/* Header with PO Info */}
+        <div className="space-y-6" data-testid="product-creation-wizard">
+            {/* Header with PO Info - Auto-populated */}
             <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 font-mono">
                             {poData.poNumber}
                         </Badge>
                         <Badge variant="secondary">{poData.buyer}</Badge>
+                        <Badge variant="outline" className="bg-secondary/10 text-secondary border-secondary/30">
+                            <Clock className="h-3 w-3 mr-1" />
+                            In Progress
+                        </Badge>
                     </div>
                     <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">
-                        Product Creation Engine
+                        Product Creation & Traceability
                     </h1>
                     <p className="text-muted-foreground">
-                        {poData.product} • {poData.quantity.toLocaleString()} {poData.unit}
+                        {poData.product} • {poData.quantity.toLocaleString()} {poData.unit} • Due: {poData.dueDate}
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -303,93 +406,178 @@ export const ProductCreation = () => {
                 </div>
             </div>
 
-            {/* Traceability ID Card */}
-            <Card className="bg-gradient-to-r from-secondary/10 to-primary/10 border-secondary/30">
-                <CardContent className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-secondary/20">
-                            <QrCode className="h-5 w-5 text-secondary" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-muted-foreground">Unique Traceability ID</p>
-                            <p className="font-mono font-bold text-lg text-foreground">{traceId}</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => {
-                                navigator.clipboard.writeText(traceId);
-                                toast.success('Copied to clipboard');
-                            }}
-                        >
-                            <Copy className="h-4 w-4" />
-                        </Button>
-                        <Badge variant="outline" className="bg-success/10 text-success border-success/30">
-                            <Shield className="h-3 w-3 mr-1" />
-                            Blockchain Ready
-                        </Badge>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Progress Steps */}
-            <Card>
+            {/* Traceability ID & Progress Card */}
+            <Card className="bg-gradient-to-r from-secondary/10 via-primary/5 to-accent/10 border-secondary/30">
                 <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-medium">Step {currentStep + 1} of {steps.length}</span>
-                        <span className="text-sm text-muted-foreground">{Math.round(progress)}% Complete</span>
-                    </div>
-                    <Progress value={progress} className="h-2 mb-4" />
-                    
-                    <div className="hidden md:flex items-center justify-between">
-                        {steps.map((step, index) => (
-                            <div 
-                                key={step.id}
-                                className={`flex flex-col items-center cursor-pointer transition-all ${
-                                    index === currentStep ? 'scale-105' : ''
-                                }`}
-                                onClick={() => setCurrentStep(index)}
-                            >
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-colors ${
-                                    index < currentStep ? 'bg-success text-success-foreground' :
-                                    index === currentStep ? 'bg-primary text-primary-foreground' :
-                                    'bg-muted text-muted-foreground'
-                                }`}>
-                                    {index < currentStep ? (
-                                        <Check className="h-5 w-5" />
-                                    ) : (
-                                        <step.icon className="h-5 w-5" />
-                                    )}
-                                </div>
-                                <span className={`text-xs text-center ${
-                                    index === currentStep ? 'font-medium text-foreground' : 'text-muted-foreground'
-                                }`}>
-                                    {step.title}
-                                </span>
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 rounded-xl bg-secondary/20">
+                                <QrCode className="h-6 w-6 text-secondary" />
                             </div>
-                        ))}
+                            <div>
+                                <p className="text-sm text-muted-foreground">Unique Traceability ID</p>
+                                <p className="font-mono font-bold text-xl text-foreground">{traceId}</p>
+                            </div>
+                            <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => {
+                                    navigator.clipboard.writeText(traceId);
+                                    toast.success('Copied to clipboard');
+                                }}
+                            >
+                                <Copy className="h-4 w-4" />
+                            </Button>
+                        </div>
+                        
+                        {/* Completion Progress */}
+                        <div className="flex items-center gap-6">
+                            <div className="text-center">
+                                <div className="relative w-16 h-16">
+                                    <svg className="w-full h-full transform -rotate-90">
+                                        <circle cx="32" cy="32" r="28" fill="none" stroke="hsl(var(--muted))" strokeWidth="4" />
+                                        <circle 
+                                            cx="32" cy="32" r="28" 
+                                            fill="none" 
+                                            stroke={validationStatus.canSubmit ? "hsl(var(--success))" : "hsl(var(--secondary))"}
+                                            strokeWidth="4"
+                                            strokeDasharray={`${validationStatus.overall.percentage * 1.76} 176`}
+                                        />
+                                    </svg>
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <span className="text-lg font-bold">{validationStatus.overall.percentage}%</span>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">Traceability</p>
+                            </div>
+                            <Badge variant="outline" className={validationStatus.canSubmit ? 'bg-success/10 text-success border-success/30' : 'bg-warning/10 text-warning border-warning/30'}>
+                                {validationStatus.canSubmit ? (
+                                    <><CheckCircle2 className="h-3 w-3 mr-1" />Ready to Link</>
+                                ) : (
+                                    <><AlertCircle className="h-3 w-3 mr-1" />{validationStatus.overall.total - validationStatus.overall.filled} Fields Remaining</>
+                                )}
+                            </Badge>
+                        </div>
                     </div>
                 </CardContent>
             </Card>
 
-            {/* Step Content */}
-            <Card>
-                <CardHeader>
-                    <div className="flex items-center gap-3">
-                        {React.createElement(steps[currentStep].icon, { className: "h-6 w-6 text-secondary" })}
-                        <div>
-                            <CardTitle>{steps[currentStep].title}</CardTitle>
-                            <CardDescription>{steps[currentStep].description}</CardDescription>
+            {/* Live Yield Conversion Tracker */}
+            <Card className="border-accent/30">
+                <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center gap-2">
+                        <Scale className="h-4 w-4 text-accent" />
+                        Live Yield Conversion
+                    </CardTitle>
+                    <CardDescription>Real-time material flow calculation</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                        <div className="flex-shrink-0 text-center p-3 rounded-xl bg-green-50 min-w-[100px]">
+                            <Leaf className="h-5 w-5 text-green-600 mx-auto mb-1" />
+                            <p className="text-xl font-bold text-green-700">{yieldMetrics.fiberKg}</p>
+                            <p className="text-xs text-muted-foreground">KG Fiber</p>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                        <div className="flex-shrink-0 text-center p-3 rounded-xl bg-blue-50 min-w-[100px]">
+                            <Factory className="h-5 w-5 text-blue-600 mx-auto mb-1" />
+                            <p className="text-xl font-bold text-blue-700">{yieldMetrics.yarnKg}</p>
+                            <p className="text-xs text-muted-foreground">KG Yarn</p>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                        <div className="flex-shrink-0 text-center p-3 rounded-xl bg-purple-50 min-w-[100px]">
+                            <Package className="h-5 w-5 text-purple-600 mx-auto mb-1" />
+                            <p className="text-xl font-bold text-purple-700">{yieldMetrics.fabricMeters}</p>
+                            <p className="text-xs text-muted-foreground">Meters Fabric</p>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                        <div className={`flex-shrink-0 text-center p-3 rounded-xl min-w-[100px] ${yieldMetrics.garmentUnits >= yieldMetrics.targetUnits ? 'bg-success/10' : 'bg-warning/10'}`}>
+                            <Shirt className={`h-5 w-5 mx-auto mb-1 ${yieldMetrics.garmentUnits >= yieldMetrics.targetUnits ? 'text-success' : 'text-warning'}`} />
+                            <p className={`text-xl font-bold ${yieldMetrics.garmentUnits >= yieldMetrics.targetUnits ? 'text-success' : 'text-warning'}`}>
+                                {yieldMetrics.garmentUnits.toLocaleString()}
+                            </p>
+                            <p className="text-xs text-muted-foreground">/ {yieldMetrics.targetUnits.toLocaleString()} Units</p>
                         </div>
                     </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    {/* Step 0: Product Identity */}
-                    {currentStep === 0 && (
-                        <div className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                </CardContent>
+            </Card>
+
+            {/* Main Form - Unified Sections */}
+            <Tabs defaultValue="identity" className="space-y-6">
+                <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
+                    <TabsTrigger value="identity" className="relative">
+                        Product
+                        {validationStatus.productIdentity?.complete && (
+                            <CheckCircle2 className="absolute -top-1 -right-1 h-4 w-4 text-success" />
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="fiber" className="relative">
+                        Fiber
+                        {validationStatus.fiber?.complete && (
+                            <CheckCircle2 className="absolute -top-1 -right-1 h-4 w-4 text-success" />
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="spinning" className="relative">
+                        Yarn
+                        {validationStatus.spinning?.complete && (
+                            <CheckCircle2 className="absolute -top-1 -right-1 h-4 w-4 text-success" />
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="fabric" className="relative">
+                        Fabric
+                        {validationStatus.fabric?.complete && (
+                            <CheckCircle2 className="absolute -top-1 -right-1 h-4 w-4 text-success" />
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="processing" className="relative">
+                        Processing
+                        {validationStatus.processing?.complete && (
+                            <CheckCircle2 className="absolute -top-1 -right-1 h-4 w-4 text-success" />
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="final">
+                        Final QC
+                    </TabsTrigger>
+                </TabsList>
+
+                {/* Section 1: Product Identity */}
+                <TabsContent value="identity">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <FileText className="h-5 w-5 text-secondary" />
+                                Core Product Identity
+                            </CardTitle>
+                            <CardDescription>Basic product and manufacturer information</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {/* Auto-populated PO Info */}
+                            <div className="p-4 rounded-xl bg-muted/50 border border-border">
+                                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                                    <Zap className="h-3 w-3" /> Auto-populated from Purchase Order
+                                </p>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div>
+                                        <Label className="text-xs text-muted-foreground">PO Number</Label>
+                                        <p className="font-mono font-medium">{formData.poNumber}</p>
+                                    </div>
+                                    <div>
+                                        <Label className="text-xs text-muted-foreground">Buyer</Label>
+                                        <p className="font-medium">{formData.buyerName}</p>
+                                    </div>
+                                    <div>
+                                        <Label className="text-xs text-muted-foreground">Target Units</Label>
+                                        <p className="font-medium">{parseInt(formData.totalUnits).toLocaleString()} pcs</p>
+                                    </div>
+                                    <div>
+                                        <Label className="text-xs text-muted-foreground">Due Date</Label>
+                                        <p className="font-medium">{poData.dueDate}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Manual Entry Fields */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="styleName">Style Name *</Label>
                                     <Input 
@@ -400,7 +588,7 @@ export const ProductCreation = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="styleNumber">Style Number *</Label>
+                                    <Label htmlFor="styleNumber">Style Number</Label>
                                     <Input 
                                         id="styleNumber"
                                         placeholder="e.g., STY-2024-001"
@@ -408,36 +596,9 @@ export const ProductCreation = () => {
                                         onChange={(e) => updateFormData('styleNumber', e.target.value)}
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="sku">SKU *</Label>
-                                    <Input 
-                                        id="sku"
-                                        placeholder="e.g., TSH-ORG-WHT-M"
-                                        value={formData.sku}
-                                        onChange={(e) => updateFormData('sku', e.target.value)}
-                                    />
-                                </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="category">Category</Label>
-                                    <Select 
-                                        value={formData.category} 
-                                        onValueChange={(v) => updateFormData('category', v)}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select category" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="T-Shirt">T-Shirt</SelectItem>
-                                            <SelectItem value="Shirt">Shirt</SelectItem>
-                                            <SelectItem value="Pants">Pants</SelectItem>
-                                            <SelectItem value="Jacket">Jacket</SelectItem>
-                                            <SelectItem value="Dress">Dress</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="invoiceNumber">Invoice Number</Label>
                                     <Input 
@@ -448,7 +609,7 @@ export const ProductCreation = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="totalUnits">Total Units</Label>
+                                    <Label htmlFor="totalUnits">Total Units (pcs) *</Label>
                                     <Input 
                                         id="totalUnits"
                                         type="number"
@@ -469,61 +630,41 @@ export const ProductCreation = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="deliveryDate">Delivery Date</Label>
+                                    <Label htmlFor="factoryLocation">Factory Location *</Label>
                                     <Input 
-                                        id="deliveryDate"
-                                        type="date"
-                                        value={formData.deliveryDate}
-                                        onChange={(e) => updateFormData('deliveryDate', e.target.value)}
+                                        id="factoryLocation"
+                                        placeholder="City, Country"
+                                        value={formData.factoryLocation}
+                                        onChange={(e) => updateFormData('factoryLocation', e.target.value)}
                                     />
                                 </div>
                             </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="factoryAddress">Factory Address *</Label>
-                                <Textarea 
-                                    id="factoryAddress"
-                                    placeholder="Complete factory address with city and country"
-                                    value={formData.factoryAddress}
-                                    onChange={(e) => updateFormData('factoryAddress', e.target.value)}
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label>Certifications</Label>
-                                <div className="flex flex-wrap gap-2">
-                                    {['GOTS', 'OCS', 'OEKO-TEX', 'SA8000', 'WRAP', 'ISO 9001'].map((cert) => (
-                                        <Badge 
-                                            key={cert}
-                                            variant={formData.certifications.includes(cert) ? 'default' : 'outline'}
-                                            className="cursor-pointer"
-                                            onClick={() => {
-                                                const newCerts = formData.certifications.includes(cert)
-                                                    ? formData.certifications.filter(c => c !== cert)
-                                                    : [...formData.certifications, cert];
-                                                updateFormData('certifications', newCerts);
-                                            }}
-                                        >
-                                            {cert}
-                                        </Badge>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Step 1: Fiber Details */}
-                    {currentStep === 1 && (
-                        <div className="space-y-6">
-                            {/* Saved Suppliers Quick Select */}
-                            <Card className="bg-muted/30">
+                {/* Section 2: Fiber */}
+                <TabsContent value="fiber">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Leaf className="h-5 w-5 text-green-600" />
+                                Fiber Sourcing (Upstream)
+                            </CardTitle>
+                            <CardDescription>Raw material source and specifications</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {/* Smart Supplier Selection */}
+                            <Card className="bg-gradient-to-r from-green-50 to-transparent border-green-200">
                                 <CardContent className="p-4">
                                     <div className="flex items-center justify-between mb-3">
-                                        <span className="text-sm font-medium">Quick Select from Saved Suppliers</span>
-                                        <Button variant="ghost" size="sm" onClick={() => setShowSupplierSearch('fiber')}>
-                                            <Search className="h-4 w-4 mr-1" />
-                                            Browse All
-                                        </Button>
+                                        <div className="flex items-center gap-2">
+                                            <Zap className="h-4 w-4 text-green-600" />
+                                            <span className="text-sm font-medium">Smart Engine - Select Saved Supplier</span>
+                                        </div>
+                                        <Badge variant="outline" className="bg-green-100 text-green-700 border-green-300">
+                                            API Auto-Fill
+                                        </Badge>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
                                         {savedSuppliers.fiber.map((supplier) => (
@@ -531,89 +672,86 @@ export const ProductCreation = () => {
                                                 key={supplier.id}
                                                 variant="outline"
                                                 size="sm"
-                                                onClick={() => selectSavedSupplier('fiber', supplier)}
+                                                disabled={apiLoading.fiber}
+                                                onClick={() => fetchSupplierData('fiber', supplier)}
+                                                className="border-green-300 hover:bg-green-100"
                                             >
-                                                <Building2 className="h-3 w-3 mr-1" />
+                                                {apiLoading.fiber ? (
+                                                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                                ) : (
+                                                    <Building2 className="h-3 w-3 mr-1" />
+                                                )}
                                                 {supplier.name}
                                             </Button>
                                         ))}
                                     </div>
+                                    {savedSuppliers.fiber[0] && (
+                                        <p className="text-xs text-muted-foreground mt-2">
+                                            Latest lot available: {savedSuppliers.fiber[0].latestLot} • Stock: {savedSuppliers.fiber[0].availableStock}
+                                        </p>
+                                    )}
                                 </CardContent>
                             </Card>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="fiberType">Fiber Type *</Label>
-                                    <Select 
-                                        value={formData.fiberType} 
-                                        onValueChange={(v) => updateFormData('fiberType', v)}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select fiber type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Organic Cotton">Organic Cotton</SelectItem>
-                                            <SelectItem value="BCI Cotton">BCI Cotton</SelectItem>
-                                            <SelectItem value="Recycled Polyester">Recycled Polyester</SelectItem>
-                                            <SelectItem value="Recycled Cotton">Recycled Cotton</SelectItem>
-                                            <SelectItem value="Hemp">Hemp</SelectItem>
-                                            <SelectItem value="Linen">Linen</SelectItem>
-                                            <SelectItem value="Wool">Wool</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="fiberSource">Fiber Source/Origin</Label>
-                                    <Input 
-                                        id="fiberSource"
-                                        placeholder="e.g., Gujarat, India"
-                                        value={formData.fiberSource}
-                                        onChange={(e) => updateFormData('fiberSource', e.target.value)}
-                                    />
-                                </div>
-                            </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="fiberSupplier">Supplier Name *</Label>
                                     <Input 
                                         id="fiberSupplier"
-                                        placeholder="Fiber supplier name"
+                                        placeholder="Fiber supplier"
                                         value={formData.fiberSupplier}
                                         onChange={(e) => updateFormData('fiberSupplier', e.target.value)}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="fiberSupplierLocation">Supplier Location</Label>
+                                    <Label htmlFor="fiberLocation">Location</Label>
                                     <Input 
-                                        id="fiberSupplierLocation"
+                                        id="fiberLocation"
                                         placeholder="City, Country"
-                                        value={formData.fiberSupplierLocation}
-                                        onChange={(e) => updateFormData('fiberSupplierLocation', e.target.value)}
+                                        value={formData.fiberLocation}
+                                        onChange={(e) => updateFormData('fiberLocation', e.target.value)}
                                     />
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="space-y-2">
+                                    <Label htmlFor="fiberType">Fiber Type *</Label>
+                                    <Select value={formData.fiberType} onValueChange={(v) => updateFormData('fiberType', v)}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Organic Cotton">Organic Cotton</SelectItem>
+                                            <SelectItem value="BCI Cotton">BCI Cotton</SelectItem>
+                                            <SelectItem value="Recycled Polyester">Recycled Polyester</SelectItem>
+                                            <SelectItem value="Hemp">Hemp</SelectItem>
+                                            <SelectItem value="Linen">Linen</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
                                     <Label htmlFor="fiberLotNumber">Lot Number *</Label>
                                     <Input 
                                         id="fiberLotNumber"
-                                        placeholder="e.g., LOT-2024-001"
+                                        placeholder="e.g., LOT-F-2024-001"
                                         value={formData.fiberLotNumber}
                                         onChange={(e) => updateFormData('fiberLotNumber', e.target.value)}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="baleWeight">Bale Weight (KG) *</Label>
+                                    <Label htmlFor="fiberBaleWeight">Bale Weight (KG) *</Label>
                                     <Input 
-                                        id="baleWeight"
+                                        id="fiberBaleWeight"
                                         type="number"
                                         placeholder="e.g., 1500"
-                                        value={formData.baleWeight}
-                                        onChange={(e) => updateFormData('baleWeight', e.target.value)}
+                                        value={formData.fiberBaleWeight}
+                                        onChange={(e) => updateFormData('fiberBaleWeight', e.target.value)}
                                     />
                                 </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="fiberCertification">Certification</Label>
                                     <Input 
@@ -623,38 +761,38 @@ export const ProductCreation = () => {
                                         onChange={(e) => updateFormData('fiberCertification', e.target.value)}
                                     />
                                 </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="fiberDate">Date</Label>
+                                    <Input 
+                                        id="fiberDate"
+                                        type="date"
+                                        value={formData.fiberDate}
+                                        onChange={(e) => updateFormData('fiberDate', e.target.value)}
+                                    />
+                                </div>
                             </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="fiberNotes">Notes</Label>
-                                <Textarea 
-                                    id="fiberNotes"
-                                    placeholder="Additional notes about fiber sourcing..."
-                                    value={formData.fiberNotes}
-                                    onChange={(e) => updateFormData('fiberNotes', e.target.value)}
-                                />
-                            </div>
-
-                            {formData.fiberSupplier && (
-                                <Button 
-                                    variant="outline" 
-                                    className="w-full"
-                                    onClick={() => sendVerificationNotification(formData.fiberSupplier)}
-                                >
-                                    <Shield className="h-4 w-4 mr-2" />
-                                    Send Digital Handshake to {formData.fiberSupplier}
-                                </Button>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Step 2: Spinning */}
-                    {currentStep === 2 && (
-                        <div className="space-y-6">
-                            <Card className="bg-muted/30">
+                {/* Section 3: Spinning */}
+                <TabsContent value="spinning">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Factory className="h-5 w-5 text-blue-600" />
+                                Spinning (Yarn Production)
+                            </CardTitle>
+                            <CardDescription>Yarn count, TPI, and weight specifications</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <Card className="bg-gradient-to-r from-blue-50 to-transparent border-blue-200">
                                 <CardContent className="p-4">
                                     <div className="flex items-center justify-between mb-3">
-                                        <span className="text-sm font-medium">Quick Select from Saved Suppliers</span>
+                                        <div className="flex items-center gap-2">
+                                            <Zap className="h-4 w-4 text-blue-600" />
+                                            <span className="text-sm font-medium">Smart Engine - Select Spinning Mill</span>
+                                        </div>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
                                         {savedSuppliers.spinning.map((supplier) => (
@@ -662,9 +800,15 @@ export const ProductCreation = () => {
                                                 key={supplier.id}
                                                 variant="outline"
                                                 size="sm"
-                                                onClick={() => selectSavedSupplier('spinning', supplier)}
+                                                disabled={apiLoading.spinning}
+                                                onClick={() => fetchSupplierData('spinning', supplier)}
+                                                className="border-blue-300 hover:bg-blue-100"
                                             >
-                                                <Factory className="h-3 w-3 mr-1" />
+                                                {apiLoading.spinning ? (
+                                                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                                ) : (
+                                                    <Factory className="h-3 w-3 mr-1" />
+                                                )}
                                                 {supplier.name}
                                             </Button>
                                         ))}
@@ -674,7 +818,7 @@ export const ProductCreation = () => {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="spinningMill">Spinning Mill Name *</Label>
+                                    <Label htmlFor="spinningMill">Spinning Mill *</Label>
                                     <Input 
                                         id="spinningMill"
                                         placeholder="Mill name"
@@ -698,7 +842,7 @@ export const ProductCreation = () => {
                                     <Label htmlFor="yarnCount">Yarn Count *</Label>
                                     <Input 
                                         id="yarnCount"
-                                        placeholder="e.g., 30s, 40s"
+                                        placeholder="e.g., 30s Combed"
                                         value={formData.yarnCount}
                                         onChange={(e) => updateFormData('yarnCount', e.target.value)}
                                     />
@@ -714,20 +858,20 @@ export const ProductCreation = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="spinningWeight">Weight (KG) *</Label>
+                                    <Label htmlFor="spinningWeightKg">Weight (KG) *</Label>
                                     <Input 
-                                        id="spinningWeight"
+                                        id="spinningWeightKg"
                                         type="number"
-                                        placeholder="Total yarn weight"
-                                        value={formData.spinningWeight}
-                                        onChange={(e) => updateFormData('spinningWeight', e.target.value)}
+                                        placeholder="Yarn weight"
+                                        value={formData.spinningWeightKg}
+                                        onChange={(e) => updateFormData('spinningWeightKg', e.target.value)}
                                     />
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="spinningLotNumber">Lot Number</Label>
+                                    <Label htmlFor="spinningLotNumber">Lot Number *</Label>
                                     <Input 
                                         id="spinningLotNumber"
                                         placeholder="Yarn lot number"
@@ -736,46 +880,37 @@ export const ProductCreation = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="spinningCertification">Certification</Label>
+                                    <Label htmlFor="spinningDate">Date</Label>
                                     <Input 
-                                        id="spinningCertification"
-                                        placeholder="e.g., GOTS"
-                                        value={formData.spinningCertification}
-                                        onChange={(e) => updateFormData('spinningCertification', e.target.value)}
+                                        id="spinningDate"
+                                        type="date"
+                                        value={formData.spinningDate}
+                                        onChange={(e) => updateFormData('spinningDate', e.target.value)}
                                     />
                                 </div>
                             </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="spinningNotes">Notes</Label>
-                                <Textarea 
-                                    id="spinningNotes"
-                                    placeholder="Additional notes about spinning..."
-                                    value={formData.spinningNotes}
-                                    onChange={(e) => updateFormData('spinningNotes', e.target.value)}
-                                />
-                            </div>
-
-                            {formData.spinningMill && (
-                                <Button 
-                                    variant="outline" 
-                                    className="w-full"
-                                    onClick={() => sendVerificationNotification(formData.spinningMill)}
-                                >
-                                    <Shield className="h-4 w-4 mr-2" />
-                                    Send Digital Handshake to {formData.spinningMill}
-                                </Button>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Step 3: Fabric */}
-                    {currentStep === 3 && (
-                        <div className="space-y-6">
-                            <Card className="bg-muted/30">
+                {/* Section 4: Fabric */}
+                <TabsContent value="fabric">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Package className="h-5 w-5 text-purple-600" />
+                                Fabric Production (Weaving/Knitting)
+                            </CardTitle>
+                            <CardDescription>GSM, meters, and fabric type specifications</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <Card className="bg-gradient-to-r from-purple-50 to-transparent border-purple-200">
                                 <CardContent className="p-4">
                                     <div className="flex items-center justify-between mb-3">
-                                        <span className="text-sm font-medium">Quick Select from Saved Suppliers</span>
+                                        <div className="flex items-center gap-2">
+                                            <Zap className="h-4 w-4 text-purple-600" />
+                                            <span className="text-sm font-medium">Smart Engine - Select Fabric Supplier</span>
+                                        </div>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
                                         {savedSuppliers.fabric.map((supplier) => (
@@ -783,9 +918,15 @@ export const ProductCreation = () => {
                                                 key={supplier.id}
                                                 variant="outline"
                                                 size="sm"
-                                                onClick={() => selectSavedSupplier('fabric', supplier)}
+                                                disabled={apiLoading.fabric}
+                                                onClick={() => fetchSupplierData('fabric', supplier)}
+                                                className="border-purple-300 hover:bg-purple-100"
                                             >
-                                                <Package className="h-3 w-3 mr-1" />
+                                                {apiLoading.fabric ? (
+                                                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                                ) : (
+                                                    <Package className="h-3 w-3 mr-1" />
+                                                )}
                                                 {supplier.name}
                                             </Button>
                                         ))}
@@ -795,26 +936,6 @@ export const ProductCreation = () => {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="fabricType">Fabric Type *</Label>
-                                    <Select 
-                                        value={formData.fabricType} 
-                                        onValueChange={(v) => updateFormData('fabricType', v)}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select fabric type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Jersey">Jersey (Knit)</SelectItem>
-                                            <SelectItem value="Pique">Pique (Knit)</SelectItem>
-                                            <SelectItem value="Rib">Rib (Knit)</SelectItem>
-                                            <SelectItem value="Interlock">Interlock (Knit)</SelectItem>
-                                            <SelectItem value="Poplin">Poplin (Woven)</SelectItem>
-                                            <SelectItem value="Twill">Twill (Woven)</SelectItem>
-                                            <SelectItem value="Denim">Denim (Woven)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
                                     <Label htmlFor="fabricSupplier">Supplier Name *</Label>
                                     <Input 
                                         id="fabricSupplier"
@@ -823,36 +944,51 @@ export const ProductCreation = () => {
                                         onChange={(e) => updateFormData('fabricSupplier', e.target.value)}
                                     />
                                 </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="fabricLocation">Location</Label>
+                                    <Input 
+                                        id="fabricLocation"
+                                        placeholder="City, Country"
+                                        value={formData.fabricLocation}
+                                        onChange={(e) => updateFormData('fabricLocation', e.target.value)}
+                                    />
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="gsm">GSM *</Label>
+                                    <Label htmlFor="fabricType">Fabric Type *</Label>
+                                    <Select value={formData.fabricType} onValueChange={(v) => updateFormData('fabricType', v)}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Jersey">Jersey (Knit)</SelectItem>
+                                            <SelectItem value="Pique">Pique (Knit)</SelectItem>
+                                            <SelectItem value="Rib">Rib (Knit)</SelectItem>
+                                            <SelectItem value="Poplin">Poplin (Woven)</SelectItem>
+                                            <SelectItem value="Twill">Twill (Woven)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="fabricGsm">GSM *</Label>
                                     <Input 
-                                        id="gsm"
+                                        id="fabricGsm"
                                         type="number"
                                         placeholder="e.g., 180"
-                                        value={formData.gsm}
-                                        onChange={(e) => updateFormData('gsm', e.target.value)}
+                                        value={formData.fabricGsm}
+                                        onChange={(e) => updateFormData('fabricGsm', e.target.value)}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="fabricWidth">Width (inches)</Label>
+                                    <Label htmlFor="fabricMeters">Total Meters *</Label>
                                     <Input 
-                                        id="fabricWidth"
-                                        placeholder="e.g., 72"
-                                        value={formData.fabricWidth}
-                                        onChange={(e) => updateFormData('fabricWidth', e.target.value)}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="totalMeters">Total Meters *</Label>
-                                    <Input 
-                                        id="totalMeters"
+                                        id="fabricMeters"
                                         type="number"
-                                        placeholder="Total fabric meters"
-                                        value={formData.totalMeters}
-                                        onChange={(e) => updateFormData('totalMeters', e.target.value)}
+                                        placeholder="Fabric meters"
+                                        value={formData.fabricMeters}
+                                        onChange={(e) => updateFormData('fabricMeters', e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -868,25 +1004,37 @@ export const ProductCreation = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="fabricLocation">Location</Label>
+                                    <Label htmlFor="fabricDate">Date</Label>
                                     <Input 
-                                        id="fabricLocation"
-                                        placeholder="City, Country"
-                                        value={formData.fabricLocation}
-                                        onChange={(e) => updateFormData('fabricLocation', e.target.value)}
+                                        id="fabricDate"
+                                        type="date"
+                                        value={formData.fabricDate}
+                                        onChange={(e) => updateFormData('fabricDate', e.target.value)}
                                     />
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        </CardContent>
+                    </Card>
+                </TabsContent>
 
-                    {/* Step 4: Processing/Dyeing */}
-                    {currentStep === 4 && (
-                        <div className="space-y-6">
-                            <Card className="bg-muted/30">
+                {/* Section 5: Processing */}
+                <TabsContent value="processing">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Droplets className="h-5 w-5 text-cyan-600" />
+                                Processing / Dyeing
+                            </CardTitle>
+                            <CardDescription>Dyeing house, chemical logs, and shade approval</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <Card className="bg-gradient-to-r from-cyan-50 to-transparent border-cyan-200">
                                 <CardContent className="p-4">
                                     <div className="flex items-center justify-between mb-3">
-                                        <span className="text-sm font-medium">Quick Select from Saved Suppliers</span>
+                                        <div className="flex items-center gap-2">
+                                            <Zap className="h-4 w-4 text-cyan-600" />
+                                            <span className="text-sm font-medium">Smart Engine - Select Processing Unit</span>
+                                        </div>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
                                         {savedSuppliers.processing.map((supplier) => (
@@ -894,9 +1042,15 @@ export const ProductCreation = () => {
                                                 key={supplier.id}
                                                 variant="outline"
                                                 size="sm"
-                                                onClick={() => selectSavedSupplier('processing', supplier)}
+                                                disabled={apiLoading.processing}
+                                                onClick={() => fetchSupplierData('processing', supplier)}
+                                                className="border-cyan-300 hover:bg-cyan-100"
                                             >
-                                                <Droplets className="h-3 w-3 mr-1" />
+                                                {apiLoading.processing ? (
+                                                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                                ) : (
+                                                    <Droplets className="h-3 w-3 mr-1" />
+                                                )}
                                                 {supplier.name}
                                             </Button>
                                         ))}
@@ -906,7 +1060,7 @@ export const ProductCreation = () => {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="dyeingHouse">Dyeing House Name *</Label>
+                                    <Label htmlFor="dyeingHouse">Dyeing House *</Label>
                                     <Input 
                                         id="dyeingHouse"
                                         placeholder="Processing unit name"
@@ -928,24 +1082,20 @@ export const ProductCreation = () => {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="dyeType">Dye Type</Label>
-                                    <Select 
-                                        value={formData.dyeType} 
-                                        onValueChange={(v) => updateFormData('dyeType', v)}
-                                    >
+                                    <Select value={formData.dyeType} onValueChange={(v) => updateFormData('dyeType', v)}>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select dye type" />
+                                            <SelectValue placeholder="Select type" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="Reactive">Reactive Dye</SelectItem>
                                             <SelectItem value="Disperse">Disperse Dye</SelectItem>
                                             <SelectItem value="Vat">Vat Dye</SelectItem>
-                                            <SelectItem value="Pigment">Pigment</SelectItem>
                                             <SelectItem value="Natural">Natural Dye</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="shadeNumber">Shade Number</Label>
+                                    <Label htmlFor="shadeNumber">Shade Number *</Label>
                                     <Input 
                                         id="shadeNumber"
                                         placeholder="e.g., WHT-001"
@@ -954,13 +1104,12 @@ export const ProductCreation = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="waterUsage">Water Usage (Liters)</Label>
+                                    <Label htmlFor="processingDate">Date</Label>
                                     <Input 
-                                        id="waterUsage"
-                                        type="number"
-                                        placeholder="Total water used"
-                                        value={formData.waterUsage}
-                                        onChange={(e) => updateFormData('waterUsage', e.target.value)}
+                                        id="processingDate"
+                                        type="date"
+                                        value={formData.processingDate}
+                                        onChange={(e) => updateFormData('processingDate', e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -969,324 +1118,210 @@ export const ProductCreation = () => {
                                 <Label htmlFor="chemicalLogs">Chemical Logs / MSDS Reference</Label>
                                 <Textarea 
                                     id="chemicalLogs"
-                                    placeholder="List chemicals used and their compliance status..."
+                                    placeholder="List chemicals used and compliance status..."
                                     value={formData.chemicalLogs}
                                     onChange={(e) => updateFormData('chemicalLogs', e.target.value)}
                                 />
                             </div>
 
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center space-x-2 p-4 rounded-xl bg-warning/10 border border-warning/30">
                                 <Checkbox 
                                     id="shadeApproval"
                                     checked={formData.shadeApproval}
                                     onCheckedChange={(checked) => updateFormData('shadeApproval', checked)}
                                 />
-                                <Label htmlFor="shadeApproval" className="text-sm font-normal">
-                                    Shade Approved by Buyer
+                                <Label htmlFor="shadeApproval" className="text-sm font-medium cursor-pointer">
+                                    Shade Approved by Buyer * (Required for submission)
                                 </Label>
                             </div>
-                        </div>
-                    )}
+                        </CardContent>
+                    </Card>
+                </TabsContent>
 
-                    {/* Step 5: Value Addition */}
-                    {currentStep === 5 && (
-                        <div className="space-y-6">
-                            <div className="p-4 rounded-xl bg-muted/30">
-                                <p className="text-sm text-muted-foreground mb-4">
-                                    Select and configure any value-added processes applied to the garments
-                                </p>
-                            </div>
-
-                            {/* Embroidery */}
-                            <Card>
-                                <CardContent className="p-4">
-                                    <div className="flex items-center space-x-2 mb-4">
-                                        <Checkbox 
-                                            id="hasEmbroidery"
-                                            checked={formData.hasEmbroidery}
-                                            onCheckedChange={(checked) => updateFormData('hasEmbroidery', checked)}
-                                        />
-                                        <Label htmlFor="hasEmbroidery" className="font-medium">
-                                            Embroidery
-                                        </Label>
-                                    </div>
-                                    {formData.hasEmbroidery && (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-6">
-                                            <div className="space-y-2">
-                                                <Label htmlFor="embroideryDetails">Details</Label>
-                                                <Input 
-                                                    id="embroideryDetails"
-                                                    placeholder="Logo, placement, thread type..."
-                                                    value={formData.embroideryDetails}
-                                                    onChange={(e) => updateFormData('embroideryDetails', e.target.value)}
+                {/* Section 6: Final QC */}
+                <TabsContent value="final">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Shirt className="h-5 w-5 text-orange-600" />
+                                Value Addition & Final QC
+                            </CardTitle>
+                            <CardDescription>Embroidery, printing, and quality check</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {/* Value Addition */}
+                            <div className="space-y-4">
+                                <h4 className="font-medium flex items-center gap-2">
+                                    <Sparkles className="h-4 w-4" />
+                                    Value Addition (Optional)
+                                </h4>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <Card className={formData.hasEmbroidery ? 'border-secondary' : ''}>
+                                        <CardContent className="p-4">
+                                            <div className="flex items-center space-x-2 mb-3">
+                                                <Checkbox 
+                                                    id="hasEmbroidery"
+                                                    checked={formData.hasEmbroidery}
+                                                    onCheckedChange={(checked) => updateFormData('hasEmbroidery', checked)}
                                                 />
+                                                <Label htmlFor="hasEmbroidery" className="font-medium cursor-pointer">Embroidery</Label>
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="embroideryUnits">Units</Label>
-                                                <Input 
-                                                    id="embroideryUnits"
-                                                    type="number"
-                                                    placeholder="Number of units"
-                                                    value={formData.embroideryUnits}
-                                                    onChange={(e) => updateFormData('embroideryUnits', e.target.value)}
-                                                />
-                                            </div>
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
+                                            {formData.hasEmbroidery && (
+                                                <div className="space-y-3">
+                                                    <Input 
+                                                        placeholder="Details (logo, placement, thread)"
+                                                        value={formData.embroideryDetails}
+                                                        onChange={(e) => updateFormData('embroideryDetails', e.target.value)}
+                                                    />
+                                                    <Input 
+                                                        type="number"
+                                                        placeholder="Units with embroidery"
+                                                        value={formData.embroideryUnits}
+                                                        onChange={(e) => updateFormData('embroideryUnits', e.target.value)}
+                                                    />
+                                                </div>
+                                            )}
+                                        </CardContent>
+                                    </Card>
 
-                            {/* Printing */}
-                            <Card>
-                                <CardContent className="p-4">
-                                    <div className="flex items-center space-x-2 mb-4">
-                                        <Checkbox 
-                                            id="hasPrinting"
-                                            checked={formData.hasPrinting}
-                                            onCheckedChange={(checked) => updateFormData('hasPrinting', checked)}
-                                        />
-                                        <Label htmlFor="hasPrinting" className="font-medium">
-                                            Printing
-                                        </Label>
-                                    </div>
-                                    {formData.hasPrinting && (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-6">
-                                            <div className="space-y-2">
-                                                <Label htmlFor="printingDetails">Details</Label>
-                                                <Input 
-                                                    id="printingDetails"
-                                                    placeholder="Print type, colors, placement..."
-                                                    value={formData.printingDetails}
-                                                    onChange={(e) => updateFormData('printingDetails', e.target.value)}
+                                    <Card className={formData.hasPrinting ? 'border-secondary' : ''}>
+                                        <CardContent className="p-4">
+                                            <div className="flex items-center space-x-2 mb-3">
+                                                <Checkbox 
+                                                    id="hasPrinting"
+                                                    checked={formData.hasPrinting}
+                                                    onCheckedChange={(checked) => updateFormData('hasPrinting', checked)}
                                                 />
+                                                <Label htmlFor="hasPrinting" className="font-medium cursor-pointer">Printing</Label>
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="printingUnits">Units</Label>
-                                                <Input 
-                                                    id="printingUnits"
-                                                    type="number"
-                                                    placeholder="Number of units"
-                                                    value={formData.printingUnits}
-                                                    onChange={(e) => updateFormData('printingUnits', e.target.value)}
-                                                />
-                                            </div>
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
-
-                            {/* Washing */}
-                            <Card>
-                                <CardContent className="p-4">
-                                    <div className="flex items-center space-x-2 mb-4">
-                                        <Checkbox 
-                                            id="hasWashing"
-                                            checked={formData.hasWashing}
-                                            onCheckedChange={(checked) => updateFormData('hasWashing', checked)}
-                                        />
-                                        <Label htmlFor="hasWashing" className="font-medium">
-                                            Washing/Treatment
-                                        </Label>
-                                    </div>
-                                    {formData.hasWashing && (
-                                        <div className="pl-6">
-                                            <div className="space-y-2">
-                                                <Label htmlFor="washingDetails">Washing Details</Label>
-                                                <Input 
-                                                    id="washingDetails"
-                                                    placeholder="Wash type (enzyme, stone, etc.)..."
-                                                    value={formData.washingDetails}
-                                                    onChange={(e) => updateFormData('washingDetails', e.target.value)}
-                                                />
-                                            </div>
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="valueAdditionNotes">Additional Notes</Label>
-                                <Textarea 
-                                    id="valueAdditionNotes"
-                                    placeholder="Any other value addition details..."
-                                    value={formData.valueAdditionNotes}
-                                    onChange={(e) => updateFormData('valueAdditionNotes', e.target.value)}
-                                />
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Step 6: Final Construction */}
-                    {currentStep === 6 && (
-                        <div className="space-y-6">
-                            <div className="p-4 rounded-xl bg-success/10 border border-success/30">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Shirt className="h-5 w-5 text-success" />
-                                    <span className="font-medium text-success">Final Step - Link Everything Together</span>
+                                            {formData.hasPrinting && (
+                                                <div className="space-y-3">
+                                                    <Input 
+                                                        placeholder="Details (type, colors, placement)"
+                                                        value={formData.printingDetails}
+                                                        onChange={(e) => updateFormData('printingDetails', e.target.value)}
+                                                    />
+                                                    <Input 
+                                                        type="number"
+                                                        placeholder="Units with printing"
+                                                        value={formData.printingUnits}
+                                                        onChange={(e) => updateFormData('printingUnits', e.target.value)}
+                                                    />
+                                                </div>
+                                            )}
+                                        </CardContent>
+                                    </Card>
                                 </div>
+                            </div>
+
+                            {/* Final QC */}
+                            <div className="space-y-4 pt-4 border-t">
+                                <h4 className="font-medium flex items-center gap-2">
+                                    <CheckCircle2 className="h-4 w-4" />
+                                    Final Quality Check
+                                </h4>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="finalQcDate">QC Date</Label>
+                                        <Input 
+                                            id="finalQcDate"
+                                            type="date"
+                                            value={formData.finalQcDate}
+                                            onChange={(e) => updateFormData('finalQcDate', e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="packedUnits">Packed Units</Label>
+                                        <Input 
+                                            id="packedUnits"
+                                            type="number"
+                                            placeholder="Total packed"
+                                            value={formData.packedUnits}
+                                            onChange={(e) => updateFormData('packedUnits', e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="defectRate">Defect Rate (%)</Label>
+                                        <Input 
+                                            id="defectRate"
+                                            type="number"
+                                            step="0.1"
+                                            placeholder="e.g., 0.5"
+                                            value={formData.defectRate}
+                                            onChange={(e) => updateFormData('defectRate', e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="finalNotes">Final Notes</Label>
+                                    <Textarea 
+                                        id="finalNotes"
+                                        placeholder="Any additional notes..."
+                                        value={formData.finalNotes}
+                                        onChange={(e) => updateFormData('finalNotes', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
+
+            {/* Submit Section */}
+            <Card className={validationStatus.canSubmit ? 'border-success/50 bg-success/5' : 'border-warning/50 bg-warning/5'}>
+                <CardContent className="p-6">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className={`p-3 rounded-xl ${validationStatus.canSubmit ? 'bg-success/20' : 'bg-warning/20'}`}>
+                                {validationStatus.canSubmit ? (
+                                    <Link2 className="h-6 w-6 text-success" />
+                                ) : (
+                                    <AlertCircle className="h-6 w-6 text-warning" />
+                                )}
+                            </div>
+                            <div>
+                                <p className="font-medium text-foreground">
+                                    {validationStatus.canSubmit 
+                                        ? 'Ready to Create Product & Link Traceability' 
+                                        : 'Complete Required Fields to Enable Submission'
+                                    }
+                                </p>
                                 <p className="text-sm text-muted-foreground">
-                                    This step links all previous entries to the final finished product.
+                                    {validationStatus.overall.filled} of {validationStatus.overall.total} mandatory fields completed
                                 </p>
                             </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="cmtFactory">CMT Factory Name *</Label>
-                                    <Input 
-                                        id="cmtFactory"
-                                        placeholder="Cut-Make-Trim factory"
-                                        value={formData.cmtFactory}
-                                        onChange={(e) => updateFormData('cmtFactory', e.target.value)}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="cmtLocation">Location</Label>
-                                    <Input 
-                                        id="cmtLocation"
-                                        placeholder="City, Country"
-                                        value={formData.cmtLocation}
-                                        onChange={(e) => updateFormData('cmtLocation', e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="cuttingDate">Cutting Date</Label>
-                                    <Input 
-                                        id="cuttingDate"
-                                        type="date"
-                                        value={formData.cuttingDate}
-                                        onChange={(e) => updateFormData('cuttingDate', e.target.value)}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="sewingDate">Sewing Date</Label>
-                                    <Input 
-                                        id="sewingDate"
-                                        type="date"
-                                        value={formData.sewingDate}
-                                        onChange={(e) => updateFormData('sewingDate', e.target.value)}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="finishingDate">Finishing Date</Label>
-                                    <Input 
-                                        id="finishingDate"
-                                        type="date"
-                                        value={formData.finishingDate}
-                                        onChange={(e) => updateFormData('finishingDate', e.target.value)}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="qcDate">QC Date</Label>
-                                    <Input 
-                                        id="qcDate"
-                                        type="date"
-                                        value={formData.qcDate}
-                                        onChange={(e) => updateFormData('qcDate', e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="packedUnits">Packed Units *</Label>
-                                    <Input 
-                                        id="packedUnits"
-                                        type="number"
-                                        placeholder="Total packed units"
-                                        value={formData.packedUnits}
-                                        onChange={(e) => updateFormData('packedUnits', e.target.value)}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="defectRate">Defect Rate (%)</Label>
-                                    <Input 
-                                        id="defectRate"
-                                        type="number"
-                                        step="0.1"
-                                        placeholder="e.g., 0.5"
-                                        value={formData.defectRate}
-                                        onChange={(e) => updateFormData('defectRate', e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="finalNotes">Final Notes</Label>
-                                <Textarea 
-                                    id="finalNotes"
-                                    placeholder="Any final notes about the production..."
-                                    value={formData.finalNotes}
-                                    onChange={(e) => updateFormData('finalNotes', e.target.value)}
-                                />
-                            </div>
-
-                            {/* Summary */}
-                            <Card className="bg-muted/30">
-                                <CardHeader className="pb-2">
-                                    <CardTitle className="text-base">Production Summary</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                                        <div>
-                                            <span className="text-muted-foreground">Fiber:</span>
-                                            <p className="font-medium">{formData.fiberType || '-'}</p>
-                                        </div>
-                                        <div>
-                                            <span className="text-muted-foreground">Yarn:</span>
-                                            <p className="font-medium">{formData.yarnCount || '-'}</p>
-                                        </div>
-                                        <div>
-                                            <span className="text-muted-foreground">Fabric:</span>
-                                            <p className="font-medium">{formData.fabricType} {formData.gsm ? `(${formData.gsm} GSM)` : ''}</p>
-                                        </div>
-                                        <div>
-                                            <span className="text-muted-foreground">Processing:</span>
-                                            <p className="font-medium">{formData.dyeingHouse || '-'}</p>
-                                        </div>
-                                        <div>
-                                            <span className="text-muted-foreground">Total Units:</span>
-                                            <p className="font-medium">{formData.totalUnits || '-'}</p>
-                                        </div>
-                                        <div>
-                                            <span className="text-muted-foreground">Packed:</span>
-                                            <p className="font-medium">{formData.packedUnits || '-'}</p>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
                         </div>
-                    )}
+                        
+                        <div className="flex items-center gap-3">
+                            <Button variant="outline" onClick={() => navigate('/manufacturer')}>
+                                Cancel
+                            </Button>
+                            <Button 
+                                variant="hero"
+                                size="lg"
+                                disabled={!validationStatus.canSubmit || isSubmitting}
+                                onClick={handleSubmit}
+                                className="min-w-[200px]"
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                        Creating...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Check className="h-4 w-4 mr-2" />
+                                        Create Product & Link
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
-
-            {/* Navigation Buttons */}
-            <div className="flex items-center justify-between">
-                <Button 
-                    variant="outline" 
-                    onClick={handlePrevious}
-                    disabled={currentStep === 0}
-                >
-                    <ChevronLeft className="h-4 w-4 mr-2" />
-                    Previous
-                </Button>
-                
-                <div className="flex items-center gap-2">
-                    {currentStep === steps.length - 1 ? (
-                        <Button variant="hero" onClick={handleSubmit}>
-                            <Check className="h-4 w-4 mr-2" />
-                            Complete & Generate Traceability
-                        </Button>
-                    ) : (
-                        <Button onClick={handleNext}>
-                            Next
-                            <ChevronRight className="h-4 w-4 ml-2" />
-                        </Button>
-                    )}
-                </div>
-            </div>
         </div>
     );
 };
