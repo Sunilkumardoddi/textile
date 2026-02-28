@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { 
     Factory, Package, TrendingUp, AlertTriangle, 
     ChevronRight, Clock, CheckCircle2, ArrowUpRight,
-    GitBranch, Award, FileCheck, ShoppingBag, Plus,
-    ShoppingCart, Sparkles, Link2
+    GitBranch, Award, FileCheck, ShoppingBag, 
+    ShoppingCart, Sparkles, Link2, Edit3, RefreshCw
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
