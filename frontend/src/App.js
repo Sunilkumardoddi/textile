@@ -25,14 +25,9 @@ import AuditResponses from "@/pages/manufacturer/AuditResponses";
 import Alerts from "@/pages/manufacturer/Alerts";
 import ProductCreation from "@/pages/manufacturer/ProductCreation";
 
-// Buyer Module
-import BuyerLayout from "@/pages/buyer/BuyerLayout";
-import BuyerOverview from "@/pages/buyer/BuyerOverview";
-import BuyerOrders from "@/pages/buyer/BuyerOrders";
-import BuyerTraceability from "@/pages/buyer/BuyerTraceability";
-import BuyerAnalytics from "@/pages/buyer/BuyerAnalytics";
-import DelayReports from "@/pages/buyer/DelayReports";
-import BuyerReports from "@/pages/buyer/BuyerReports";
+// Buyer Module - DEPRECATED (redirects to Brand)
+// All Buyer functionality is now consolidated into Brand Dashboard
+// Keeping imports for backward compatibility redirects
 
 // Consumer Module
 import QrStoryPage from "@/pages/consumer/QrStoryPage";
