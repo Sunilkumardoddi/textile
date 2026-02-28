@@ -422,6 +422,115 @@ export const BrandDashboard = () => {
                         </div>
                     </TabsContent>
 
+                    {/* Yield Conversion Tab - NEW */}
+                    <TabsContent value="yield" className="space-y-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Scale className="h-5 w-5 text-accent" />
+                                    Yield Conversion Metrics
+                                </CardTitle>
+                                <CardDescription>
+                                    Real-time material flow from Fiber to Finished Garments
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                {globalPOTracker.map((po) => {
+                                    // Calculate yield from step data
+                                    const fiberKg = po.steps.fiber.complete ? parseInt(po.steps.fiber.data.weight?.replace(/[^0-9]/g, '') || 0) : 0;
+                                    const yarnKg = po.steps.spinning.complete ? parseInt(po.steps.spinning.data.weight?.replace(/[^0-9]/g, '') || 0) : 0;
+                                    const fabricM = po.steps.fabric.complete ? parseInt(po.steps.fabric.data.meters?.replace(/[^0-9]/g, '') || 0) : 0;
+                                    const finalUnits = po.steps.final.complete ? parseInt(po.steps.final.data.packed?.replace(/[^0-9]/g, '') || 0) : 0;
+                                    const targetUnits = po.quantity;
+                                    const efficiency = finalUnits > 0 ? Math.round((finalUnits / targetUnits) * 100) : 0;
+                                    
+                                    return (
+                                        <div key={po.poNumber} className="p-4 rounded-xl border bg-card">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div>
+                                                    <span className="font-mono font-medium">{po.poNumber}</span>
+                                                    <p className="text-sm text-muted-foreground">{po.product}</p>
+                                                </div>
+                                                <Badge variant={efficiency >= 95 ? 'default' : efficiency >= 80 ? 'secondary' : 'destructive'}>
+                                                    {efficiency > 0 ? `${efficiency}% Yield` : 'In Progress'}
+                                                </Badge>
+                                            </div>
+                                            
+                                            {/* Yield Flow Visualization */}
+                                            <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                                                <div className="flex-shrink-0 text-center p-3 rounded-xl bg-green-50 min-w-[90px]">
+                                                    <Leaf className="h-4 w-4 text-green-600 mx-auto mb-1" />
+                                                    <p className="text-lg font-bold text-green-700">{fiberKg.toLocaleString()}</p>
+                                                    <p className="text-[10px] text-muted-foreground">KG Fiber</p>
+                                                </div>
+                                                <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                                <div className="flex-shrink-0 text-center p-3 rounded-xl bg-blue-50 min-w-[90px]">
+                                                    <Factory className="h-4 w-4 text-blue-600 mx-auto mb-1" />
+                                                    <p className="text-lg font-bold text-blue-700">{yarnKg.toLocaleString()}</p>
+                                                    <p className="text-[10px] text-muted-foreground">KG Yarn</p>
+                                                </div>
+                                                <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                                <div className="flex-shrink-0 text-center p-3 rounded-xl bg-purple-50 min-w-[90px]">
+                                                    <Package className="h-4 w-4 text-purple-600 mx-auto mb-1" />
+                                                    <p className="text-lg font-bold text-purple-700">{fabricM.toLocaleString()}</p>
+                                                    <p className="text-[10px] text-muted-foreground">M Fabric</p>
+                                                </div>
+                                                <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                                                <div className={`flex-shrink-0 text-center p-3 rounded-xl min-w-[90px] ${finalUnits > 0 ? 'bg-success/10' : 'bg-muted'}`}>
+                                                    <Shirt className={`h-4 w-4 mx-auto mb-1 ${finalUnits > 0 ? 'text-success' : 'text-muted-foreground'}`} />
+                                                    <p className={`text-lg font-bold ${finalUnits > 0 ? 'text-success' : 'text-muted-foreground'}`}>
+                                                        {finalUnits > 0 ? finalUnits.toLocaleString() : '-'}
+                                                    </p>
+                                                    <p className="text-[10px] text-muted-foreground">/{targetUnits.toLocaleString()} pcs</p>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Conversion Ratios */}
+                                            {fiberKg > 0 && (
+                                                <div className="mt-3 pt-3 border-t flex items-center gap-4 text-xs text-muted-foreground">
+                                                    {yarnKg > 0 && (
+                                                        <span>Fiber→Yarn: {Math.round((yarnKg / fiberKg) * 100)}%</span>
+                                                    )}
+                                                    {yarnKg > 0 && fabricM > 0 && (
+                                                        <span>1 KG = {(fabricM / yarnKg).toFixed(1)} M</span>
+                                                    )}
+                                                    {fabricM > 0 && finalUnits > 0 && (
+                                                        <span>{(fabricM / finalUnits).toFixed(2)} M/garment</span>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </CardContent>
+                        </Card>
+                        
+                        {/* Summary Card */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <Card className="bg-green-50 border-green-200">
+                                <CardContent className="p-6 text-center">
+                                    <Leaf className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                                    <p className="text-3xl font-bold text-green-700">3,500</p>
+                                    <p className="text-sm text-muted-foreground">Total KG Fiber Sourced</p>
+                                </CardContent>
+                            </Card>
+                            <Card className="bg-purple-50 border-purple-200">
+                                <CardContent className="p-6 text-center">
+                                    <Package className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                                    <p className="text-3xl font-bold text-purple-700">13,700</p>
+                                    <p className="text-sm text-muted-foreground">Total Meters Fabric</p>
+                                </CardContent>
+                            </Card>
+                            <Card className="bg-success/10 border-success/30">
+                                <CardContent className="p-6 text-center">
+                                    <Shirt className="h-8 w-8 text-success mx-auto mb-2" />
+                                    <p className="text-3xl font-bold text-success">2,950</p>
+                                    <p className="text-sm text-muted-foreground">Garments Shipped</p>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </TabsContent>
+
                     {/* Lead Time Analysis Tab */}
                     <TabsContent value="leadtime" className="space-y-6">
                         <Card>
