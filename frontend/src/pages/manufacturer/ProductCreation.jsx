@@ -579,8 +579,8 @@ export const ProductCreation = () => {
                                         <p className="font-mono font-medium">{formData.poNumber}</p>
                                     </div>
                                     <div>
-                                        <Label className="text-xs text-muted-foreground">Buyer</Label>
-                                        <p className="font-medium">{formData.buyerName}</p>
+                                        <Label className="text-xs text-muted-foreground">Brand</Label>
+                                        <p className="font-medium">{formData.brandName}</p>
                                     </div>
                                     <div>
                                         <Label className="text-xs text-muted-foreground">Target Units</Label>
