@@ -19,12 +19,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
-// Mock PO Data (would come from Buyer's PO via API)
+// Mock PO Data (would come from Brand's PO via API)
 const mockPOData = {
     'PO-2024-001': {
         poNumber: 'PO-2024-001',
-        buyer: 'EcoWear Brands Ltd',
-        buyerContact: 'Sarah Johnson',
+        brand: 'EcoWear Brands Ltd',
+        brandContact: 'Sarah Johnson',
         product: 'Organic Cotton T-Shirts',
         category: 'T-Shirt',
         quantity: 5000,
@@ -35,8 +35,8 @@ const mockPOData = {
     },
     'PO-2024-002': {
         poNumber: 'PO-2024-002',
-        buyer: 'GreenStyle Fashion',
-        buyerContact: 'Michael Chen',
+        brand: 'GreenStyle Fashion',
+        brandContact: 'Michael Chen',
         product: 'Recycled Polyester Jackets',
         category: 'Jacket',
         quantity: 2000,
@@ -47,8 +47,8 @@ const mockPOData = {
     },
     'PO-2024-003': {
         poNumber: 'PO-2024-003',
-        buyer: 'Sustainable Threads',
-        buyerContact: 'Emma Wilson',
+        brand: 'Sustainable Threads',
+        brandContact: 'Emma Wilson',
         product: 'Hemp Blend Shirts',
         category: 'Shirt',
         quantity: 3000,
@@ -114,7 +114,7 @@ export const ProductCreation = () => {
     const [formData, setFormData] = useState({
         // Section 1: Core Product Identity (Auto-populated + Manual)
         poNumber: '',
-        buyerName: '',
+        brandName: '',
         styleName: '',
         styleNumber: '',
         totalUnits: '',

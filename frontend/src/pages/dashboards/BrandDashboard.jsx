@@ -23,7 +23,7 @@ const delayReasonLabels = {
     machine_breakdown: 'Machine Breakdown',
     labor_shortage: 'Labor Shortage',
     power_cut: 'Power Cut',
-    buyer_change: 'Buyer Specification Change',
+    brand_change: 'Brand Specification Change',
     quality_issue: 'Quality Rejection/Rework',
     logistics: 'Logistics/Shipping Delay',
     other: 'Other',
@@ -62,7 +62,7 @@ const DelayReportsSection = () => {
                                 </Badge>
                             </div>
                             <p className="font-medium text-foreground">{report.product}</p>
-                            <p className="text-sm text-muted-foreground">{report.buyer}</p>
+                            <p className="text-sm text-muted-foreground">{report.brand}</p>
                         </div>
                         <div className="text-right text-sm text-muted-foreground">
                             <p>Due: {report.dueDate}</p>
