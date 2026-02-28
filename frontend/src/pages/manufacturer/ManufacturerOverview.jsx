@@ -54,11 +54,11 @@ const delayReasons = [
     { value: 'other', label: 'Other' },
 ];
 
-// Extended PO data with more realistic statuses
+// Extended PO data with more realistic statuses (Brand = PO owner)
 const allPOs = [
     { 
         poNumber: 'PO-2024-001', 
-        buyer: 'EcoWear Brands Ltd', 
+        brand: 'EcoWear Brands Ltd', 
         product: 'Organic Cotton T-Shirts',
         style: 'Classic Crew Neck',
         quantity: 5000, 
@@ -70,7 +70,7 @@ const allPOs = [
     },
     { 
         poNumber: 'PO-2024-002', 
-        buyer: 'GreenStyle Fashion', 
+        brand: 'GreenStyle Fashion', 
         product: 'Recycled Polyester Jackets',
         style: 'Urban Windbreaker',
         quantity: 2000, 
@@ -82,7 +82,7 @@ const allPOs = [
     },
     { 
         poNumber: 'PO-2024-003', 
-        buyer: 'Sustainable Threads', 
+        brand: 'Sustainable Threads', 
         product: 'Hemp Blend Shirts',
         style: 'Casual Linen',
         quantity: 3000, 
@@ -94,7 +94,7 @@ const allPOs = [
     },
     { 
         poNumber: 'PO-2024-004', 
-        buyer: 'EcoWear Brands Ltd', 
+        brand: 'EcoWear Brands Ltd', 
         product: 'BCI Cotton Pants',
         style: 'Relaxed Chino',
         quantity: 4000, 
@@ -106,7 +106,7 @@ const allPOs = [
     },
     { 
         poNumber: 'PO-2024-005', 
-        buyer: 'GreenStyle Fashion', 
+        brand: 'GreenStyle Fashion', 
         product: 'Organic Denim Jeans',
         style: 'Slim Fit',
         quantity: 2500, 
