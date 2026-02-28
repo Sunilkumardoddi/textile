@@ -4,11 +4,12 @@
 Build a comprehensive textile supply chain traceability portal with:
 1. Modern professional login page with animated world map background
 2. Role-based access (Brand, Manufacturer, Auditor, Admin, Buyer)
-3. **PO-Driven Traceability Update flow** - Unified wizard combining product identity with traceability
-4. Sequential 6-step traceability link system with Smart Engine automation
-5. Smart linkage with unique Traceability IDs and API-based supplier auto-fill
-6. Brand Master Dashboard with Power BI integration, Yield Conversion metrics, and Lead Time Analysis
-7. Consumer QR Story page for product transparency
+3. PO-Driven Traceability Update flow with unified wizard
+4. **RCA (Root Cause Analysis) System for Delays**
+5. **Interactive Status Boxes with Click-Through Filtering**
+6. **Export/Reporting Engine (Excel & PDF)**
+7. Brand Master Dashboard with Power BI integration, Yield Conversion, and **Delay Reports**
+8. Consumer QR Story page for product transparency
 
 ## What's Been Implemented (Latest Update: Feb 2026)
 
@@ -20,95 +21,123 @@ Build a comprehensive textile supply chain traceability portal with:
 - **Demo credentials** for quick testing
 - **Role-based routing** and protected routes
 
-#### 2. Manufacturer Dashboard UI - Refined ✅ (NEW!)
+#### 2. Manufacturer Dashboard - Enhanced with RCA System ✅
 
-**Global Button Removed:**
-- ❌ Removed global "Update Traceability" button from top right corner
+**Interactive Status Boxes (Clickable KPIs):**
+| Status | Color | Description |
+|--------|-------|-------------|
+| Incoming | Blue | New POs from Buyers |
+| Pending Traceability | Orange | Awaiting traceability input |
+| In Progress | Teal | Traceability being filled |
+| Delayed | Red | Past due date |
+| Completed | Green | Traceability complete |
+| Canceled | Gray | Order canceled |
 
-**PO-Level Actions:**
-- ✅ Each Incoming PO has its own "Update Traceability" button
-- ✅ Status progression:
-  - **"Pending Traceability"** (warning badge) - Initial state when Buyer punches PO
-  - **"In Progress"** (secondary badge) - When Manufacturer starts filling wizard
-  - **"Traceability Complete"** (success badge) - When all stages submitted
+**Click-Through Filtering:**
+- Click any status box to filter PO list
+- Shows badge: "Showing: {Status} ({count})"
+- "Clear Filter" button to reset
 
-**Button Text:**
-- `Update Traceability` - For pending POs
-- `Continue Traceability` - For in-progress POs  
-- `View Complete` - For completed POs
+**RCA (Root Cause Analysis) System:**
+- **Trigger**: When clicking "Continue Traceability" on a delayed PO
+- **Mandatory Pop-up**: "This order is behind schedule. Please select the reason for delay"
+- **Dropdown Options**:
+  - Raw Material Shortage
+  - Machine Breakdown
+  - Labor Shortage
+  - Power Cut
+  - Buyer Specification Change
+  - Quality Rejection/Rework
+  - Logistics/Shipping Delay
+  - Other
+- **Comments Box**: Brief explanation (optional)
+- **Auto-Sync**: Reason synced to Brand Dashboard immediately
+
+**Export/Reporting Engine:**
+- "Download Report" button in header
+- **Excel (.csv)**: For data analysis
+- **PDF (text format)**: For official documentation
+- Report includes: PO #, Style, Current Stage, Delay Reason, Lead Time
+
+**Action Buttons (PO-Level):**
+- "Start Traceability" - For new/incoming POs
+- "Continue Traceability" - For in-progress POs (RED for delayed)
+- "View Complete" - For completed POs
+- "Order Canceled" badge - For canceled POs
+
+**Efficiency Metrics:**
+- Avg Lead Time (Days)
+- Completion Rate (%)
+- Delay Rate (%)
+- Efficiency Score
 
 #### 3. Unified Traceability Update Wizard ✅
 
-**Title & Navigation:**
+**Title & Flow:**
 - Page title: "Update Traceability"
 - Subtitle: "Product Details & Supply Chain Thread for {PO Number}"
 
 **Two Sections in One Flow:**
-
-**Section 1: Product Details**
-- Auto-populated: PO Number, Buyer Name, Target Units, Due Date
-- Manual entry: Style Name, Style Number, Invoice Number
-- Manufacturer details: Name, Factory Location
-
-**Section 2: The Traceability Thread (Supply Chain Stages)**
-- Fiber: Source, Lot #, Bale Weight
-- Yarn (Spinning): Count, TPI, Weight in KGs
-- Fabric (Weaving/Knitting): GSM, Meters, Type
-- Processing: Dyeing house, Chemical logs, Shade approval
-- Value Addition: Embroidery/Printing details
-- Final QC: Quality check and packing
+1. **Product Details**: Style, Units, Invoice, Manufacturer info
+2. **Traceability Thread**: Fiber → Yarn → Fabric → Processing → Value Add → Final QC
 
 **Smart Features:**
-- **Smart Engine Automation**: Saved supplier quick-select with API auto-fill
-- **Live Yield Conversion**: Real-time Fiber → Yarn → Fabric → Units calculation
-- **Validation**: Submit disabled until 19 mandatory fields completed
-- **Instant Sync**: Auto-syncs to Brand Dashboard & QR Generator (no separate steps)
+- Smart Engine API auto-fill from saved suppliers
+- Live Yield Conversion tracker
+- Validation (19 mandatory fields)
+- Instant sync to Brand Dashboard & QR Generator
 
-**Submit Button:**
-- Text: "Complete Traceability" (was "Create Product & Link")
-- Shows: "Auto-syncs to Brand Dashboard & QR"
+#### 4. Brand Master Dashboard ✅
 
-#### 4. Smart Data Flow (Instant Sync) ✅
+**5 Tabs:**
+1. **PO Tracker**: Global view with step completion icons
+2. **Delay Reports** (NEW!): Real-time delay reasons synced from manufacturers
+3. **Yield Conversion**: Material flow visualization
+4. **Lead Time**: Stage-by-stage analysis
+5. **Drill-Down**: Full journey view per PO
 
-When Manufacturer completes traceability:
-1. Status updates to "Traceability Complete"
-2. **Instant sync to Brand Dashboard** - No delay, no separate steps
-3. **Instant sync to QR Generator** - Product available at `/product/{traceId}`
-4. Console logs: "✅ Synced to Brand Dashboard and QR Generator"
+**Delay Reports Tab (Synced from Manufacturer RCA):**
+- Shows all delay reports submitted by manufacturers
+- Displays: PO #, Product, Buyer, Days Overdue, Reason, Comments
+- Real-time via webhook simulation
+- No need to call manufacturer for updates!
 
-#### 5. Brand Master Dashboard (Enhanced!)
-- **Global PO Tracker** with step completion visualization
-- **4 Tabs**: PO Tracker | Yield Conversion | Lead Time | Drill-Down
-- **Yield Conversion Tab**: Per-PO material flow visualization
-- **Direct sync from Manufacturer** updates appear instantly
-
-#### 6. Buyer Portal (Complete - 6 Pages)
+#### 5. Buyer Portal (Complete - 6 Pages)
 - Dashboard, Purchase Orders, Traceability, Analytics, Delay Reports, Reports
 
-#### 7. Consumer QR Story Page (Complete)
+#### 6. Consumer QR Story Page (Complete)
 - Mobile-optimized product journey at `/product/:productId`
 
-### Status Flow Diagram
+### Data Flow Diagram
 
 ```
-Buyer punches PO
-       ↓
-[Manufacturer Dashboard]
-"Pending Traceability" (yellow)
-       ↓
-Manufacturer clicks "Update Traceability"
-       ↓
-[Wizard Opens]
-"In Progress" (blue)
-       ↓
-Manufacturer fills all 19 fields
-       ↓
-Clicks "Complete Traceability"
-       ↓
-Instant sync: Brand Dashboard + QR Generator
-       ↓
-[Dashboard Updated]
-"Traceability Complete" (green)
+┌─────────────────────────────────────────────────────────────┐
+│                    MANUFACTURER DASHBOARD                    │
+├─────────────────────────────────────────────────────────────┤
+│  [Incoming] [Pending] [In Progress] [Delayed] [Complete]    │
+│      ↓          ↓           ↓           ↓          ↓        │
+│  Click to filter PO list instantly                          │
+├─────────────────────────────────────────────────────────────┤
+│  PO-2024-001 [DELAYED] → Click "Continue Traceability"      │
+│       ↓                                                      │
+│  ┌─────────────────────────────────┐                        │
+│  │ RCA MODAL                       │                        │
+│  │ • Select Reason: [Dropdown ▼]  │                        │
+│  │ • Comments: [__________]        │                        │
+│  │ [Submit & Continue]             │                        │
+│  └─────────────────────────────────┘                        │
+│       ↓                                                      │
+│  Auto-sync to Brand Dashboard (webhook)                     │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│                    BRAND DASHBOARD                           │
+├─────────────────────────────────────────────────────────────┤
+│  [Delay Reports] tab shows:                                  │
+│  PO-2024-001 | +745 days overdue                            │
+│  Reason: Raw Material Shortage                               │
+│  "Supplier delivery delayed by 2 weeks"                      │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ### Technical Architecture
@@ -123,9 +152,9 @@ Instant sync: Brand Dashboard + QR Generator
 └── pages/
     ├── LoginPage.jsx
     ├── dashboards/
-    │   └── BrandDashboard.jsx      # Global PO Tracker + Yield Conversion
+    │   └── BrandDashboard.jsx      # Global PO Tracker + Delay Reports
     ├── manufacturer/
-    │   ├── ManufacturerOverview.jsx # Incoming POs with Update Traceability
+    │   ├── ManufacturerOverview.jsx # Status boxes, RCA modal, Export
     │   └── ProductCreation.jsx      # Unified traceability wizard
     ├── buyer/
     │   └── ... (6 pages)
@@ -139,6 +168,7 @@ Instant sync: Brand Dashboard + QR Generator
 - `product_draft_{poId}` - Saved drafts
 - `textile_products` - Completed products
 - `brand_po_data` - Synced data for Brand Dashboard
+- `brand_delay_reports` - Delay reasons synced from manufacturers
 - `qr_products` - Products available for QR/Consumer view
 
 ## Test Credentials
@@ -154,22 +184,23 @@ Instant sync: Brand Dashboard + QR Generator
 - **ALL FEATURES ARE MOCKED** - Frontend-only prototype
 - No backend/database - localStorage for state persistence
 - Power BI dashboards are simulated placeholders
-- API calls are simulated with 800ms delays
+- API/Webhook calls are simulated
 
 ## P0/P1/P2 Backlog
 
 ### P0 - Completed ✅
 - [x] Login page with animated background
 - [x] Role-based routing
-- [x] ~~Global Update Traceability button~~ → **Removed**
-- [x] **PO-Level "Update Traceability" buttons**
-- [x] **Unified Traceability Wizard (Product + Supply Chain)**
-- [x] **Smart Engine API auto-fill from saved suppliers**
-- [x] **Live Yield Conversion tracker**
-- [x] **Validation preventing save until all fields complete**
-- [x] **Instant sync to Brand Dashboard & QR (no separate steps)**
-- [x] Brand Global PO Tracker with drill-down
-- [x] Brand Yield Conversion metrics tab
+- [x] **6 Interactive Status Boxes** (clickable filtering)
+- [x] **RCA Modal for Delayed POs** (mandatory reason capture)
+- [x] **Export/Download Report** (Excel & PDF)
+- [x] **Efficiency Metrics** (Lead Time, Completion Rate, Delay Rate, Score)
+- [x] **Brand Delay Reports Tab** (synced from manufacturer)
+- [x] PO-Level "Start/Continue Traceability" buttons
+- [x] Unified Traceability Wizard
+- [x] Smart Engine API auto-fill
+- [x] Live Yield Conversion tracker
+- [x] Instant sync to Brand Dashboard & QR
 - [x] Buyer Portal (6 pages)
 - [x] Consumer QR Story page
 
@@ -177,9 +208,9 @@ Instant sync: Brand Dashboard + QR Generator
 - [ ] Backend API integration with FastAPI + MongoDB
 - [ ] Real authentication system with JWT
 - [ ] Actual Power BI embed integration
-- [ ] Real webhook/API integration with suppliers
-- [ ] QR code generation for products
-- [ ] Email-based password reset
+- [ ] Real webhook integration with suppliers
+- [ ] PDF generation with proper formatting
+- [ ] Email notifications for delays
 
 ### P2 - Enhancements
 - [ ] Admin approval workflows
