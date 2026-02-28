@@ -210,9 +210,13 @@ export const BrandDashboard = () => {
                 </Card>
 
                 <Tabs defaultValue="tracker" className="space-y-6">
-                    <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-flex">
+                    <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-flex">
                         <TabsTrigger value="tracker">PO Tracker</TabsTrigger>
-                        <TabsTrigger value="yield">Yield Conversion</TabsTrigger>
+                        <TabsTrigger value="delays" className="relative">
+                            Delay Reports
+                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
+                        </TabsTrigger>
+                        <TabsTrigger value="yield">Yield</TabsTrigger>
                         <TabsTrigger value="leadtime">Lead Time</TabsTrigger>
                         <TabsTrigger value="drilldown">Drill-Down</TabsTrigger>
                     </TabsList>
