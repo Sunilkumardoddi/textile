@@ -128,11 +128,12 @@ export const reportsAPI = {
 };
 
 // Suppliers API
+// Note: Using trailing slashes to match FastAPI route definitions
 export const suppliersAPI = {
-    getAll: (params) => api.get('/suppliers', { params }),
+    getAll: (params) => api.get('/suppliers/', { params }),
     getStats: () => api.get('/suppliers/stats'),
     getById: (id) => api.get(`/suppliers/${id}`),
-    create: (data) => api.post('/suppliers', data),
+    create: (data) => api.post('/suppliers/', data),
     update: (id, data) => api.put(`/suppliers/${id}`, data),
     delete: (id) => api.delete(`/suppliers/${id}`),
     activate: (id) => api.post(`/suppliers/${id}/activate`),
@@ -143,11 +144,12 @@ export const suppliersAPI = {
 };
 
 // Purchase Orders API
+// Note: Using trailing slashes to match FastAPI route definitions
 export const purchaseOrdersAPI = {
-    getAll: (params) => api.get('/purchase-orders', { params }),
+    getAll: (params) => api.get('/purchase-orders/', { params }),
     getStats: () => api.get('/purchase-orders/stats'),
     getById: (id) => api.get(`/purchase-orders/${id}`),
-    create: (data) => api.post('/purchase-orders', data),
+    create: (data) => api.post('/purchase-orders/', data),
     accept: (id) => api.post(`/purchase-orders/${id}/accept`),
     reject: (id, reason) => api.post(`/purchase-orders/${id}/reject`, null, { params: { reason } }),
     updateStatus: (id, status, notes) => api.post(`/purchase-orders/${id}/status`, null, { params: { new_status: status, notes } }),
