@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Request
+from fastapi.responses import RedirectResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 import os
@@ -37,12 +38,13 @@ async def lifespan(app: FastAPI):
     await close_connection()
 
 
-# Create the main app
+# Create the main app with redirect_slashes disabled
 app = FastAPI(
     title="Textile Traceability Portal API",
     description="Cloud-Based Textile Traceability Portal with Multi-Role Access Control",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    redirect_slashes=False
 )
 
 # Create a router with the /api prefix
