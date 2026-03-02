@@ -143,6 +143,11 @@ function AppRoutes() {
                     <DashboardLayout><ComingSoon title="Documents" /></DashboardLayout>
                 </ProtectedRoute>
             } />
+            <Route path="/dashboard/manufacturer/orders" element={
+                <ProtectedRoute allowedRoles={['admin', 'manufacturer']}>
+                    <DashboardLayout><ComingSoon title="Purchase Orders" /></DashboardLayout>
+                </ProtectedRoute>
+            } />
             
             {/* Brand Routes */}
             <Route path="/dashboard/brand" element={
