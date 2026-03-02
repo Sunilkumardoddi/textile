@@ -160,7 +160,8 @@ class TestPurchaseOrderEndpoints:
     def test_get_po_stats_as_brand(self, api_client, brand_token):
         """Brand can view PO statistics"""
         api_client.headers.update({"Authorization": f"Bearer {brand_token}"})
-        response = api_client.get(api_url("/purchase-orders/stats"))
+        # Note: stats endpoint works without trailing slash
+        response = api_client.get(f"{BASE_URL}/api/purchase-orders/stats")
         assert response.status_code == 200, f"Get PO stats failed: {response.text}"
         data = response.json()
         
@@ -171,7 +172,8 @@ class TestPurchaseOrderEndpoints:
     def test_get_po_stats_as_supplier(self, api_client, supplier_token):
         """Supplier can view their PO statistics"""
         api_client.headers.update({"Authorization": f"Bearer {supplier_token}"})
-        response = api_client.get(api_url("/purchase-orders/stats"))
+        # Note: stats endpoint works without trailing slash
+        response = api_client.get(f"{BASE_URL}/api/purchase-orders/stats")
         assert response.status_code == 200, f"Get PO stats failed: {response.text}"
         data = response.json()
         
