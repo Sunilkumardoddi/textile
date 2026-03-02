@@ -17,12 +17,6 @@ api.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
-        // Add trailing slash if not present for POST/PUT/PATCH/DELETE
-        if (['post', 'put', 'patch', 'delete'].includes(config.method?.toLowerCase() || '')) {
-            if (config.url && !config.url.endsWith('/')) {
-                config.url += '/';
-            }
-        }
         return config;
     },
     (error) => Promise.reject(error)
