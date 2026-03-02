@@ -40,13 +40,13 @@ async def lifespan(app: FastAPI):
     await close_connection()
 
 
-# Create the main app with redirect_slashes enabled
+# Create the main app with redirect_slashes disabled to avoid mixed content issues
 app = FastAPI(
     title="Textile Traceability Portal API",
     description="Cloud-Based Textile Traceability Portal with Multi-Role Access Control",
     version="1.0.0",
     lifespan=lifespan,
-    redirect_slashes=True
+    redirect_slashes=False
 )
 
 # Create a router with the /api prefix
