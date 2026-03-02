@@ -1,77 +1,71 @@
 <analysis>**original_problem_statement:**
-The initial request was to design a modern login page for a textile supply chain web portal. The project has since evolved into a full-scale, multi-stakeholder traceability platform.
+The user has requested the development of a comprehensive, cloud-based textile traceability portal. The initial frontend prototype has evolved into a full-stack application with multi-role access control (Admin, Manufacturer, Brand, Auditor) and end-to-end supply chain tracking.
 
-The core requirements implemented include:
-1.  **Role-Based Access**: Login, role selection (Brand, Manufacturer, Auditor, Admin), and signup flows.
-2.  **Comprehensive Manufacturer Module**: A dashboard for manufacturers to manage factory profiles, certifications, and orders. It features a PO-driven product creation wizard to build a Story of the Product by inputting data for each supply chain step (Fiber, Spinning, Fabric, etc.). This includes a Root Cause Analysis (RCA) system for reporting delays.
-3.  **Brand Master Dashboard**: A central dashboard for brands to create Purchase Orders (POs), monitor the Fiber-to-Garment journey in real-time, view lead-time analysis, see delay reasons submitted by manufacturers, and analyze yield conversion metrics.
-4.  **Consumer QR Story Page**: A mobile-responsive page showing a product's journey and sustainability impact, designed to be accessed via QR code.
-5.  **Terminology Refactor**: The most recent request is to consolidate the Buyer role into the Brand role, ensuring consistent terminology across the entire application. All functionality previously associated with Buyer should now belong to Brand.
+The most recent and active requirement is to build a detailed **Supplier Management Module**. This includes:
+1.  **New Supplier Role**: A fifth user role with its own login and dashboard.
+2.  **Admin Supplier Management**: Admins must be able to perform full CRUD operations on suppliers, manage their status (Active/Inactive), and view performance metrics.
+3.  **Brand Supplier Directory**: Brands can view a directory of active suppliers and filter them by various criteria.
+4.  **PO Creation Flow**: Brands create Purchase Orders (POs) and assign them directly to a selected, active supplier.
+5.  **Supplier Dashboard**: Suppliers can view and manage POs assigned to them.
+6.  **Supplier Performance Engine**: The system must automatically calculate and track supplier performance metrics (e.g., on-time delivery, audit pass rate).
+7.  **Brand Analytics**: The Brand dashboard must include analytics focused on supplier performance.
+
+This builds upon a previously implemented full-stack system that tracks the product journey from raw material to finished garment.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A comprehensive, frontend-only React prototype. It features a polished UI with a custom design system, role-based dashboards, and extensive mocked functionality. Key features include an animated login page, a detailed Manufacturer Dashboard with an interactive PO list and status filtering, a multi-step traceability wizard, a comprehensive Brand Dashboard with analytics tabs, and a consumer-facing QR story page. State is managed locally and persisted between page loads using  to simulate a logged-in experience.
+A full-stack application with a FastAPI backend and a React frontend. The backend uses MongoDB for data storage and JWT for authentication. The application supports four roles (Admin, Manufacturer, Brand, Auditor) with dedicated dashboards and functionality. The core features, including user registration, admin approval, batch creation by manufacturers, and dashboard data visualization for all roles, have been implemented and tested. The agent has just begun building the backend for the new Supplier Management module.
 
 **Last working item**:
-*   **Last item agent was working:** The agent was executing a major refactoring task to replace all instances of Buyer with Brand throughout the application to standardize terminology. The agent started by deleting the  directory, updating  to remove the Buyer login button, and was in the process of updating  to redirect old buyer routes.
+*   **Last item agent was working:** The agent was implementing the backend for the new **Supplier Management module**. New models (, ), Pydantic schemas, and API routes (, ) have been created. The main  was updated to include these new routes, and dashboard endpoints were modified to account for supplier-related statistics. The backend service was just restarted to apply these changes.
 *   **Status:** IN PROGRESS
 *   **Agent Testing Done:** N
-*   **Which testing method agent to use?** Frontend testing agent
+*   **Which testing method agent to use?** backend testing agent
 *   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-*   **Issue 1: Incomplete Buyer to Brand Refactor** (Priority: P0)
-    *   **Description**: The application is in a broken state due to an incomplete refactoring of the Buyer terminology to Brand. The agent has started the process but has not finished updating all relevant files.
-    *   **Attempted fixes**: Deleted the  directory, removed the Buyer button from , and started modifying  to redirect  routes to .
-    *   **Next debug checklist**:
-        1.  Complete the modifications in  to remove old buyer routes and ensure redirects are in place.
-        2.  Thoroughly search and replace Buyer with Brand (and buyer with brand) in .
-        3.  Review and update  for any remaining Buyer references.
-        4.  Perform a global search across the entire  directory for the terms Buyer and buyer to catch any missed instances in component text, variables, or mock data.
-        5.  Once the refactor is complete, conduct a full end-to-end test of the Brand and Manufacturer flows.
-    *   **Why fix this issue and what will be achieved with the fix?**: To align the application with the user's explicit requirement for consistent terminology, which clarifies user roles and consolidates all order management and monitoring functionality under the Brand entity.
-    *   **Status:** IN PROGRESS
-    *   **Is recurring issue?** N
-    *   **Should Test frontend/backend/both after fix?** frontend
-    *   **Blocked on other issue:** No
+There are no outstanding bugs or issues. The current focus is on new feature development.
 
 **In progress Task List**:
-*   **Task 1: Complete the Buyer to Brand Refactoring** (Priority: P0)
-    *   **Where to resume:** The agent was modifying . The next step is to finalize the route changes, then proceed to  and other files as outlined in the Pending Issue checklist.
-    *   **What will be achieved with this?** A fully functional application with consistent terminology, where Brand is the sole entity responsible for creating POs and monitoring the supply chain.
+*   **Task 1: Complete and Test the Supplier Management Backend** (Priority: P0)
+    *   **Where to resume:** The backend has been restarted with the new supplier/PO routes. The immediate next step is to test these new API endpoints using  or a similar tool.
+    *   **Testing Checklist:**
+        1.  Create a new user with the Supplier role.
+        2.  As Admin, create a new supplier profile via .
+        3.  As Brand, create a new PO assigned to the new supplier via .
+        4.  Test all GET, PUT, and DELETE endpoints for both suppliers and POs.
+        5.  Verify the Admin dashboard endpoint () returns supplier-related stats.
+    *   **What will be achieved with this?** A fully functional and tested backend for the new supplier management and PO creation flows.
     *   **Status:** IN PROGRESS
-    *   **Should Test frontend/backend/both after fix?** frontend
-    *   **Blocked on something:** No
+    *   **Should Test frontend/backend/both after fix?** backend
+    *   **Blocked on something:** No.
 
 **Upcoming and Future Tasks**
 *   **Upcoming Tasks:**
-    *   **P0**: Implement and test the unified reporting/exporting feature (Excel/PDF) from the Brand and Manufacturer dashboards, ensuring the column is labeled Brand Name.
-    *   **P1**: Verify that all generated outputs (like the QR code page) correctly feature the Brand's name.
+    *   **P0: Implement Frontend for Supplier Management:**
+        *   Add Supplier as a selectable role in the signup and login flow.
+        *   Build the Admin Supplier Management dashboard for CRUD operations.
+        *   Build the Brand Supplier Directory and update the PO creation UI.
+        *   Create the Supplier Dashboard for viewing and managing assigned POs.
+        *   Connect all new frontend components to the backend APIs.
+    *   **P1: Implement Backend Supplier Performance Engine:**
+        *   Create the logic to automatically calculate performance metrics (, , etc.) and update the  table after each PO is completed.
+    *   **P2: Implement Brand Dashboard Analytics:**
+        *   Add the Supplier Analytics section to the Brand dashboard, visualizing data from the performance engine.
 *   **Future Tasks:**
-    *   Full backend integration to replace all mocked data, logic, and  state management.
-    *   Implementation of a secure, production-ready authentication system.
-    *   Development of an email-based password reset flow.
-    *   Implementation of admin approval workflows for data submissions.
-    *   Integration with actual webhooks for real-time data sync instead of the current simulation.
+    *   Blockchain integration for an immutable audit trail.
+    *   QR code generation for batch tracking.
+    *   Integration with external ERP systems.
+    *   Alerting system for material balance, suspicious activity, and expired certifications.
+    *   Two-Factor Authentication (2FA).
 
 **Completed work in this session**
-*   **Full Multi-Stakeholder Portal**: Created and integrated the Buyer (now Brand) and Consumer portal pages.
-*   **Advanced Manufacturer Dashboard**:
-    *   Implemented a Root Cause Analysis (RCA) modal for reporting order delays.
-    *   Created interactive, clickable status boxes for filtering the PO list.
-    *   Added an Export Report feature placeholder.
-    *   Refined the UI to place action buttons at the individual PO level, removing the global Update Traceability button.
-*   **Advanced Brand Dashboard**:
-    *   Added a Delay Reports tab to view RCA data synced from manufacturers.
-    *   Added a Yield Conversion Metrics tab to visualize material conversion efficiency for each PO.
-*   **Unified Product Creation Wizard**:
-    *   Redesigned the wizard into a seamless, single-page experience with tabs.
-    *   Added a Smart Engine feature to simulate API auto-fill from saved suppliers.
-    *   Integrated a live-updating yield conversion tracker directly into the wizard.
-*   **Testing and Bug Fixes**:
-    *   Used the frontend testing agent and extensive screenshot-based verification for all major features.
-    *   Fixed a bug where the Buyer role button was missing from the login page.
+*   **Full-Stack Application Build:** Successfully migrated the project from a frontend-only mock to a complete full-stack application with a FastAPI backend, MongoDB database, and a fully integrated React frontend.
+*   **Core Role-Based Functionality:** Implemented and tested the complete user lifecycle (signup, admin approval, login) and role-specific dashboards for Admin, Manufacturer, Brand, and Auditor.
+*   **Buyer to Brand Refactor:** Completed a global refactor across the frontend codebase to unify terminology from Buyer to Brand as requested.
+*   **Comprehensive Testing:** Successfully used the  to validate the entire application, achieving a 100% pass rate on both frontend and backend tests for the core functionality.
+*   **Backend Refinements:** Diagnosed and fixed a 307 redirect issue related to trailing slashes in FastAPI routes.
 
 **Earlier issues found/mentioned but not fixed**
 *   None.
@@ -83,68 +77,81 @@ A comprehensive, frontend-only React prototype. It features a polished UI with a
 
 
 **Key Technical Concepts**
-*   **Frontend:** React, Tailwind CSS, shadcn/ui
-*   **State Management:** Component-level state with  for mock session persistence.
-*   **UI/UX:** Design System First, Token-based styling (HSL), Glassmorphism, Wizard-style forms, Dynamic filtering, Conditional rendering based on mock state.
-*   **Mocking:** All application data, API calls (simulated with ), and user roles are mocked in the frontend.
+*   **Backend:** FastAPI, MongoDB (via Motor), Pydantic, JWT Authentication.
+*   **Frontend:** React, Tailwind CSS, shadcn/ui, Axios.
+*   **Architecture:** Decoupled full-stack application with a REST API. It uses Role-Based Access Control (RBAC) as a core design principle.
+*   **State Management:**  for JWT token persistence; component-level state for UI.
 
 **key DB schema**
-*   N/A. This is a frontend-only project with no database connection.
+*   : {email, password, role, is_active, is_approved}
+*   : {batch_id, product_name, quantity, created_by, status, stage}
+*   : {supplier_id, company_name, country, contact_person, status, risk_category}
+*   : {po_id, brand_id, supplier_id, po_details, status}
+*   : {supplier_id, compliance_percentage, on_time_delivery_percentage, audit_pass_rate}
 
 **changes in tech stack**
-*   None.
+*   The project was fundamentally changed from a frontend-only prototype into a full-stack application (React, FastAPI, MongoDB).
 
 **All files of reference**
-*   : Contains all application routing logic (currently being refactored).
-*   : Entry point and role selection (updated to remove Buyer).
-*   : Core dashboard for manufacturers, showing POs from Brands (needs refactoring).
-*   : The unified wizard for product and traceability data entry.
-*   : The master view for Brands, consolidating previous Buyer functionality.
-*   : The product requirements document, updated after each major feature completion.
+*   : The main FastAPI application entry point.
+*   : New API routes for supplier management.
+*   : New API routes for Purchase Order management.
+*   : New MongoDB model for the  collection.
+*   : Central API service for all frontend-to-backend communication.
+*   : The product requirements document, which should be updated upon completion of the supplier module.
 
 **Areas that need refactoring**:
-*   **State Management:** The reliance on  is a temporary solution for mocking. Introducing a global state management library (like Context API or Redux Toolkit) is necessary for future backend integration and scalability.
-*   **Mock Data:** Mock data is currently defined within the components that use it. Consolidating all mock data into a separate, centralized module () would improve organization and maintainability.
+*   The frontend lacks robust global state management and centralized error handling, which will be necessary as complexity grows.
 
 **key api endpoints**
-*   N/A. All API calls are simulated with timeouts.
+*   **Auth:** , 
+*   **Admin:** , 
+*   **Suppliers (New):** 
+*   **POs (New):** 
+*   **Dashboards:** 
 
 **Critical Info for New Agent**
-*   **Refactoring in Progress:** Your immediate priority is to complete the Buyer to Brand refactor. The application is currently in a non-functional state. Follow the checklist in the  to complete this task.
-*   **MOCK PROTOTYPE:** This is a frontend-only application. All data, authentication, and state are mocked. Do not attempt to implement backend logic. State is persisted in  to simulate user sessions.
-*   **Design System:** All styling must use the design tokens and HSL color variables defined in .
+*   Your immediate priority is to **test the new backend endpoints** for the Supplier and PO modules to ensure they are working correctly before building the corresponding frontend.
+*   The user has provided very detailed specifications for the Supplier Management module. Adhere to these requirements closely.
+*   The core application (user auth, dashboards for the original four roles) is stable and was successfully tested, providing a solid foundation to build upon.
+*   A new Supplier role must be handled throughout the application, from authentication to dashboard access.
 
 **documents and test reports created in this job**
 *   
-*    (updated multiple times)
+*   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User (Latest):** Requested a full refactor to consolidate Buyer into Brand across the UI, logic, and reporting. (Status: In Progress)
-2.  **User:** Requested an RCA system for manufacturers to report delay reasons, interactive dashboard KPIs, and an export feature. (Status: Completed)
-3.  **Agent:** Finished implementation of the RCA and reporting features and updated PRD. (Status: Completed)
-4.  **User:** Requested UI refinements for the Manufacturer Dashboard, including removing a global button and making PO-level actions more explicit. (Status: Completed)
-5.  **Agent:** Finished the UI refinement task and updated PRD. (Status: Completed)
-6.  **User:** Requested a unified product creation wizard that combines product identity and traceability into a single flow with live yield conversion metrics. (Status: Completed)
-7.  **Agent:** Finished implementation of the unified wizard and updated PRD. (Status: Completed)
-8.  **Agent:** Fixed the missing Buyer role button on the login page found by the testing agent. (Status: Completed)
-9.  **Agent:** Ran the testing agent, which found two minor issues. (Status: Completed)
-10. **User:** Provided a detailed feature expansion for a PO-driven product creation flow with a sequential step-by-step build and Power BI dashboard integration. (Status: Completed)
+1.  **User:** Confirmed implementation choices: Add new Supplier role, PO goes directly to Supplier, and Create all features at once.
+2.  **Agent:** Asked clarifying questions about the new Supplier module.
+3.  **Agent:** Proposed the plan to build the Supplier Management module.
+4.  **User:** Provided detailed requirements for the entire Supplier Management feature set.
+5.  **Agent:** Completed the initial full-stack application build.
+6.  **Agent:** Ran the testing agent, which passed all tests for the core application.
+7.  **Agent:** Confirmed the Manufacturer Dashboard was working.
+8.  **Agent:** Confirmed the Admin Dashboard was working after login.
+9.  **Agent:** Fixed a trailing slash issue in the frontend API calls.
+10. **Agent:** Identified a Not Found error during login.
 
 **Project Health Check:**
-*   **Broken:** The application is currently broken due to the incomplete Buyer to Brand refactor.
-*   **Mocked:** The entire application is a mock. This includes authentication, all data displayed on dashboards, API calls, and form submissions.
+*   **Broken:** No. The main application is stable. The new Supplier feature is in development and not yet functional.
+*   **Mocked:** No. The application is fully integrated with a backend database.
 
 **3rd Party Integrations**
-*   **Power BI:** Requested for the Brand Analytics dashboard but not yet implemented. It exists as a mocked placeholder/notice in the UI.
+*   **Power BI:** A planned feature for the Brand dashboard analytics, but not yet implemented.
 
 **Testing status**
-*   **Testing agent used after significant changes:** YES
+*   **Testing agent used after significant changes:** YES (for the initial full-stack build).
 *   **Troubleshoot agent used after agent stuck in loop:** NO
 *   **Test files created:** []
-*   **Known regressions:** The entire application flow related to Brand (formerly Buyer) is currently broken due to the in-progress refactor.
+*   **Known regressions:** None.
 
 **Credentials to test flow:**
-*   No specific credentials are needed. The login flow is mocked. After the refactor is complete, clicking the role buttons on the login page (Brand, Manufacturer, Auditor, Admin) will pre-fill mock credentials and allow access to the corresponding dashboard.
+Use the following credentials with the password :
+*   
+*   
+*   
+*   
+A new  user will need to be created and approved by the admin to test the new flow.
 
 **What agent forgot to execute**
-*   The agent did not forget any tasks but stopped mid-execution of the large Buyer to Brand refactoring. This task needs to be completed as the highest priority.</analysis>
+*   Nothing was forgotten. The agent is mid-way through a large, user-requested feature implementation.</analysis>
