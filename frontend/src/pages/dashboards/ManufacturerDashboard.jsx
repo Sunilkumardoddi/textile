@@ -3,25 +3,34 @@ import { useNavigate } from 'react-router-dom';
 import { 
     Package, Factory, Truck, FileText, Plus, 
     RefreshCw, Loader2, ArrowRight, AlertTriangle,
-    CheckCircle, Clock, TrendingUp
+    CheckCircle, Clock, TrendingUp, ShoppingCart, XCircle, DollarSign
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { dashboardAPI } from '@/lib/api';
+import { dashboardAPI, purchaseOrdersAPI } from '@/lib/api';
 import { toast } from 'sonner';
 
 const ManufacturerDashboard = () => {
     const navigate = useNavigate();
     const [stats, setStats] = useState(null);
+    const [purchaseOrders, setPurchaseOrders] = useState([]);
+    const [poStats, setPOStats] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [actionLoading, setActionLoading] = useState(null);
 
     const fetchData = async () => {
         try {
             setLoading(true);
-            const response = await dashboardAPI.getManufacturer();
-            setStats(response.data);
+            const [dashboardRes, posRes, posStatsRes] = await Promise.all([
+                dashboardAPI.getManufacturer(),
+                purchaseOrdersAPI.getAll({ limit: 10 }).catch(() => ({ data: [] })),
+                purchaseOrdersAPI.getStats().catch(() => ({ data: { total_pos: 0, total_value: 0 } }))
+            ]);
+            setStats(dashboardRes.data);
+            setPurchaseOrders(posRes.data || []);
+            setPOStats(posStatsRes.data);
         } catch (error) {
             toast.error('Failed to load dashboard data');
         } finally {
@@ -32,6 +41,57 @@ const ManufacturerDashboard = () => {
     useEffect(() => {
         fetchData();
     }, []);
+
+    const handleAcceptOrder = async (orderId) => {
+        setActionLoading(orderId);
+        try {
+            await purchaseOrdersAPI.accept(orderId);
+            toast.success('Purchase order accepted');
+            fetchData();
+        } catch (error) {
+            toast.error(error.response?.data?.detail || 'Failed to accept order');
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handleRejectOrder = async (orderId) => {
+        const reason = prompt('Enter rejection reason:');
+        if (!reason) return;
+        
+        setActionLoading(orderId);
+        try {
+            await purchaseOrdersAPI.reject(orderId, reason);
+            toast.success('Purchase order rejected');
+            fetchData();
+        } catch (error) {
+            toast.error(error.response?.data?.detail || 'Failed to reject order');
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const getStatusColor = (status) => {
+        const colors = {
+            awaiting_acceptance: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30',
+            accepted: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
+            in_production: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+            shipped: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
+            delivered: 'bg-green-500/10 text-green-400 border-green-500/30',
+            completed: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+            rejected: 'bg-red-500/10 text-red-400 border-red-500/30',
+        };
+        return colors[status] || 'bg-slate-500/10 text-slate-400 border-slate-500/30';
+    };
+
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount || 0);
+    };
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return 'N/A';
+        return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    };
 
     if (loading) {
         return (
