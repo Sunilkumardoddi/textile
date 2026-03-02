@@ -7,10 +7,9 @@ import uuid
 
 class UserRole(str, Enum):
     ADMIN = "admin"
-    MANUFACTURER = "manufacturer"
+    MANUFACTURER = "manufacturer"  # Manufacturers also act as suppliers
     BRAND = "brand"
     AUDITOR = "auditor"
-    SUPPLIER = "supplier"
 
 
 class UserStatus(str, Enum):
