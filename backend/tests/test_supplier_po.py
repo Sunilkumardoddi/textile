@@ -27,6 +27,14 @@ def api_client():
     return session
 
 
+def api_url(endpoint):
+    """Helper to ensure trailing slash for FastAPI routes (redirect_slashes=False)"""
+    # Add trailing slash if not present and not a specific resource URL
+    if not endpoint.endswith('/') and '?' not in endpoint:
+        return f"{BASE_URL}/api{endpoint}/"
+    return f"{BASE_URL}/api{endpoint}"
+
+
 @pytest.fixture
 def admin_token(api_client):
     """Get admin token"""
