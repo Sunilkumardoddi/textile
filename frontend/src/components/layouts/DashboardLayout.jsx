@@ -40,6 +40,7 @@ const DashboardLayout = ({ children }) => {
             ],
             manufacturer: [
                 { id: 'batches', label: 'My Batches', icon: Package, path: '/dashboard/manufacturer/batches' },
+                { id: 'orders', label: 'Purchase Orders', icon: ShoppingCart, path: '/dashboard/manufacturer/orders' },
                 { id: 'production', label: 'Production', icon: Factory, path: '/dashboard/manufacturer/production' },
                 { id: 'shipments', label: 'Shipments', icon: Truck, path: '/dashboard/manufacturer/shipments' },
                 { id: 'documents', label: 'Documents', icon: FileText, path: '/dashboard/manufacturer/documents' },
@@ -55,12 +56,6 @@ const DashboardLayout = ({ children }) => {
                 { id: 'batches', label: 'Batch Verification', icon: Package, path: '/dashboard/auditor/batches' },
                 { id: 'reports', label: 'Audit Reports', icon: FileText, path: '/dashboard/auditor/reports' },
             ],
-            supplier: [
-                { id: 'orders', label: 'Purchase Orders', icon: ShoppingCart, path: '/dashboard/supplier/orders' },
-                { id: 'shipments', label: 'Shipments', icon: Truck, path: '/dashboard/supplier/shipments' },
-                { id: 'documents', label: 'Documents', icon: FileText, path: '/dashboard/supplier/documents' },
-                { id: 'performance', label: 'Performance', icon: BarChart3, path: '/dashboard/supplier/performance' },
-            ],
         };
 
         return [...baseItems, ...(roleItems[user?.role] || [])];
@@ -74,7 +69,6 @@ const DashboardLayout = ({ children }) => {
         manufacturer: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
         brand: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
         auditor: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
-        supplier: 'bg-teal-500/10 text-teal-400 border-teal-500/30',
     };
 
     return (
