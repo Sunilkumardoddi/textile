@@ -345,9 +345,9 @@ async def get_purchase_order(po_id: str, current_user: dict = Depends(require_an
 
 @router.post("/{po_id}/accept")
 async def accept_po(po_id: str, current_user: dict = Depends(require_any_authenticated)):
-    """Accept a PO (Supplier only)."""
-    if current_user["role"] not in ["supplier", "admin"]:
-        raise HTTPException(status_code=403, detail="Only suppliers can accept POs")
+    """Accept a PO (Manufacturer/Supplier only)."""
+    if current_user["role"] not in ["manufacturer", "admin"]:
+        raise HTTPException(status_code=403, detail="Only manufacturers can accept POs")
     
     # Find the PO
     po = await pos_collection.find_one({
@@ -360,7 +360,7 @@ async def accept_po(po_id: str, current_user: dict = Depends(require_any_authent
         raise HTTPException(status_code=404, detail="PO not found or cannot be accepted")
     
     # Verify supplier ownership if not admin
-    if current_user["role"] == "supplier":
+    if current_user["role"] == "manufacturer":
         supplier = await suppliers_collection.find_one({"user_id": current_user["user_id"]})
         if not supplier or po["supplier_id"] not in [supplier["id"], supplier["supplier_id"]]:
             raise HTTPException(status_code=403, detail="Not authorized to accept this PO")
@@ -378,7 +378,7 @@ async def accept_po(po_id: str, current_user: dict = Depends(require_any_authent
                     "status": "accepted",
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                     "changed_by": current_user["user_id"],
-                    "notes": "PO Accepted by Supplier"
+                    "notes": "PO Accepted by Manufacturer"
                 }
             }
         }
@@ -401,9 +401,9 @@ async def accept_po(po_id: str, current_user: dict = Depends(require_any_authent
 
 @router.post("/{po_id}/reject")
 async def reject_po(po_id: str, reason: str, current_user: dict = Depends(require_any_authenticated)):
-    """Reject a PO (Supplier only)."""
-    if current_user["role"] not in ["supplier", "admin"]:
-        raise HTTPException(status_code=403, detail="Only suppliers can reject POs")
+    """Reject a PO (Manufacturer/Supplier only)."""
+    if current_user["role"] not in ["manufacturer", "admin"]:
+        raise HTTPException(status_code=403, detail="Only manufacturers can reject POs")
     
     po = await pos_collection.find_one({
         "$or": [{"id": po_id}, {"po_number": po_id}],
@@ -415,7 +415,7 @@ async def reject_po(po_id: str, reason: str, current_user: dict = Depends(requir
         raise HTTPException(status_code=404, detail="PO not found or cannot be rejected")
     
     # Verify supplier ownership if not admin
-    if current_user["role"] == "supplier":
+    if current_user["role"] == "manufacturer":
         supplier = await suppliers_collection.find_one({"user_id": current_user["user_id"]})
         if not supplier or po["supplier_id"] not in [supplier["id"], supplier["supplier_id"]]:
             raise HTTPException(status_code=403, detail="Not authorized to reject this PO")
