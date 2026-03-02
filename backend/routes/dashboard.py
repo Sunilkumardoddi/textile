@@ -341,6 +341,79 @@ async def get_auditor_dashboard(current_user: dict = Depends(require_any_authent
     }
 
 
+
+@router.get("/supplier")
+async def get_supplier_dashboard(current_user: dict = Depends(require_any_authenticated)):
+    """Get supplier dashboard data."""
+    if current_user["role"] not in ["admin", "supplier"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Get supplier profile
+    supplier = await suppliers_collection.find_one({"user_id": current_user["user_id"], "is_deleted": {"$ne": True}})
+    
+    if not supplier and current_user["role"] == "supplier":
+        return {
+            "profile": None,
+            "purchase_orders": {"by_status": {}, "total": 0},
+            "message": "Supplier profile not linked. Contact admin."
+        }
+    
+    supplier_ids = [supplier["id"], supplier["supplier_id"]] if supplier else []
+    
+    # PO stats for this supplier
+    po_query = {"supplier_id": {"$in": supplier_ids}, "is_deleted": {"$ne": True}} if supplier else {"is_deleted": {"$ne": True}}
+    
+    if current_user["role"] == "admin":
+        po_query = {"is_deleted": {"$ne": True}}
+    
+    po_pipeline = [
+        {"$match": po_query},
+        {"$group": {
+            "_id": "$status",
+            "count": {"$sum": 1},
+            "total_value": {"$sum": "$total_amount"}
+        }}
+    ]
+    po_stats = await pos_collection.aggregate(po_pipeline).to_list(20)
+    
+    # Recent POs
+    recent_pos = await pos_collection.find(po_query).sort("created_at", -1).limit(5).to_list(5)
+    
+    # Awaiting acceptance
+    awaiting = await pos_collection.count_documents({**po_query, "status": "awaiting_acceptance"})
+    
+    return {
+        "profile": {
+            "supplier_id": supplier["supplier_id"] if supplier else None,
+            "company_name": supplier["company_name"] if supplier else None,
+            "compliance_score": supplier.get("compliance_score", 0) if supplier else 0,
+            "risk_category": supplier.get("risk_category", "medium") if supplier else "medium",
+            "status": supplier.get("status", "unknown") if supplier else "unknown"
+        } if supplier else None,
+        "purchase_orders": {
+            "by_status": {stat["_id"]: {"count": stat["count"], "value": stat["total_value"]} for stat in po_stats},
+            "total": sum(stat["count"] for stat in po_stats),
+            "total_value": sum(stat["total_value"] for stat in po_stats),
+            "awaiting_acceptance": awaiting,
+            "recent": [{
+                "id": po["id"],
+                "po_number": po["po_number"],
+                "brand_name": po.get("brand_name", ""),
+                "status": po["status"],
+                "total_amount": po.get("total_amount", 0),
+                "delivery_date": po.get("delivery_date")
+            } for po in recent_pos]
+        },
+        "performance": {
+            "on_time_delivery_rate": supplier.get("on_time_delivery_rate", 0) if supplier else 0,
+            "audit_pass_rate": supplier.get("audit_pass_rate", 0) if supplier else 0,
+            "rejection_rate": supplier.get("rejection_rate", 0) if supplier else 0,
+            "total_pos": supplier.get("total_pos", 0) if supplier else 0,
+            "completed_pos": supplier.get("completed_pos", 0) if supplier else 0
+        }
+    }
+
+
 @router.get("/activity")
 async def get_activity_log(
     entity_type: Optional[str] = None,
