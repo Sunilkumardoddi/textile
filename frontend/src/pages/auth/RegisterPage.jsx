@@ -72,9 +72,8 @@ const RegisterPage = () => {
     };
 
     const roles = [
-        { value: 'manufacturer', label: 'Manufacturer', description: 'Create batches, manage production' },
-        { value: 'brand', label: 'Brand', description: 'Track suppliers, request audits' },
-        { value: 'supplier', label: 'Supplier', description: 'Manage orders, track deliveries' },
+        { value: 'manufacturer', label: 'Manufacturer', description: 'Create batches, manage production, receive POs' },
+        { value: 'brand', label: 'Brand', description: 'Track suppliers, request audits, create POs' },
         { value: 'auditor', label: 'Auditor', description: 'Verify transactions, approve batches' },
     ];
 
