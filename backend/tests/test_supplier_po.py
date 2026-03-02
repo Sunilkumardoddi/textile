@@ -186,7 +186,7 @@ class TestCreatePurchaseOrder:
         api_client.headers.update({"Authorization": f"Bearer {brand_token}"})
         
         # First get a supplier ID
-        suppliers_response = api_client.get(f"{BASE_URL}/api/suppliers")
+        suppliers_response = api_client.get(api_url("/suppliers"))
         if suppliers_response.status_code != 200 or len(suppliers_response.json()) == 0:
             pytest.skip("No suppliers available for PO creation test")
         
@@ -209,7 +209,7 @@ class TestCreatePurchaseOrder:
             "priority": "normal"
         }
         
-        response = api_client.post(f"{BASE_URL}/api/purchase-orders", json=po_data)
+        response = api_client.post(api_url("/purchase-orders"), json=po_data)
         assert response.status_code == 201, f"Create PO failed: {response.text}"
         
         data = response.json()
