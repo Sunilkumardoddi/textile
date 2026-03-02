@@ -109,7 +109,8 @@ class TestSupplierEndpoints:
     def test_get_supplier_stats_as_admin(self, api_client, admin_token):
         """Admin can view supplier statistics"""
         api_client.headers.update({"Authorization": f"Bearer {admin_token}"})
-        response = api_client.get(api_url("/suppliers/stats"))
+        # Note: stats endpoint works without trailing slash
+        response = api_client.get(f"{BASE_URL}/api/suppliers/stats")
         assert response.status_code == 200, f"Get supplier stats failed: {response.text}"
         data = response.json()
         
