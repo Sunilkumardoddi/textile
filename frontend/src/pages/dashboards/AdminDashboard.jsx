@@ -213,19 +213,19 @@ const AdminDashboard = () => {
                     </CardContent>
                 </Card>
 
-                {/* Supplier Risk Distribution */}
+                {/* Manufacturer Risk Distribution */}
                 {supplierStats && (
                     <Card className="bg-slate-800 border-slate-700">
                         <CardHeader>
                             <CardTitle className="text-white flex items-center gap-2">
                                 <Building2 className="h-5 w-5 text-teal-400" />
-                                Supplier Overview
+                                Manufacturer Overview
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-slate-400">Total Suppliers</span>
+                                    <span className="text-slate-400">Total Manufacturers</span>
                                     <span className="text-white font-medium">{supplierStats.total_suppliers}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
