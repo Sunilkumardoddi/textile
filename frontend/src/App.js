@@ -198,33 +198,6 @@ function AppRoutes() {
                 </ProtectedRoute>
             } />
             
-            {/* Supplier Routes */}
-            <Route path="/dashboard/supplier" element={
-                <ProtectedRoute allowedRoles={['admin', 'supplier']}>
-                    <DashboardLayout><SupplierDashboard /></DashboardLayout>
-                </ProtectedRoute>
-            } />
-            <Route path="/dashboard/supplier/orders" element={
-                <ProtectedRoute allowedRoles={['admin', 'supplier']}>
-                    <DashboardLayout><ComingSoon title="Purchase Orders" /></DashboardLayout>
-                </ProtectedRoute>
-            } />
-            <Route path="/dashboard/supplier/shipments" element={
-                <ProtectedRoute allowedRoles={['admin', 'supplier']}>
-                    <DashboardLayout><ComingSoon title="Shipments" /></DashboardLayout>
-                </ProtectedRoute>
-            } />
-            <Route path="/dashboard/supplier/documents" element={
-                <ProtectedRoute allowedRoles={['admin', 'supplier']}>
-                    <DashboardLayout><ComingSoon title="Documents" /></DashboardLayout>
-                </ProtectedRoute>
-            } />
-            <Route path="/dashboard/supplier/performance" element={
-                <ProtectedRoute allowedRoles={['admin', 'supplier']}>
-                    <DashboardLayout><ComingSoon title="Performance Metrics" /></DashboardLayout>
-                </ProtectedRoute>
-            } />
-            
             {/* Default redirect */}
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
