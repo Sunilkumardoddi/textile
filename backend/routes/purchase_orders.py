@@ -256,7 +256,8 @@ async def get_po_stats(current_user: dict = Depends(require_any_authenticated)):
     
     if current_user["role"] == "brand":
         query["brand_id"] = current_user["user_id"]
-    elif current_user["role"] == "supplier":
+    elif current_user["role"] == "manufacturer":
+        # Manufacturers act as suppliers
         supplier = await suppliers_collection.find_one({"user_id": current_user["user_id"]})
         if supplier:
             query["supplier_id"] = {"$in": [supplier["id"], supplier["supplier_id"]]}
@@ -292,7 +293,8 @@ async def get_purchase_order(po_id: str, current_user: dict = Depends(require_an
     # Role-based access
     if current_user["role"] == "brand":
         query["brand_id"] = current_user["user_id"]
-    elif current_user["role"] == "supplier":
+    elif current_user["role"] == "manufacturer":
+        # Manufacturers act as suppliers
         supplier = await suppliers_collection.find_one({"user_id": current_user["user_id"]})
         if supplier:
             query["supplier_id"] = {"$in": [supplier["id"], supplier["supplier_id"]]}
