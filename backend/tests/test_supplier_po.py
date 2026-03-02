@@ -232,7 +232,7 @@ class TestPOAcceptReject:
         api_client.headers.update({"Authorization": f"Bearer {brand_token}"})
         
         # Get supplier
-        suppliers_response = api_client.get(f"{BASE_URL}/api/suppliers")
+        suppliers_response = api_client.get(api_url("/suppliers"))
         if suppliers_response.status_code != 200 or len(suppliers_response.json()) == 0:
             pytest.skip("No suppliers available")
         
@@ -252,7 +252,7 @@ class TestPOAcceptReject:
             "priority": "normal"
         }
         
-        create_response = api_client.post(f"{BASE_URL}/api/purchase-orders", json=po_data)
+        create_response = api_client.post(api_url("/purchase-orders"), json=po_data)
         if create_response.status_code != 201:
             pytest.skip(f"Could not create PO for accept test: {create_response.text}")
         
