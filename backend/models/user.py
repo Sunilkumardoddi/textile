@@ -10,6 +10,7 @@ class UserRole(str, Enum):
     MANUFACTURER = "manufacturer"
     BRAND = "brand"
     AUDITOR = "auditor"
+    SUPPLIER = "supplier"
 
 
 class UserStatus(str, Enum):
