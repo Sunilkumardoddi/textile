@@ -127,4 +127,33 @@ export const reportsAPI = {
     getAnalyticsOverview: () => api.get('/reports/analytics/overview'),
 };
 
+// Suppliers API
+export const suppliersAPI = {
+    getAll: (params) => api.get('/suppliers', { params }),
+    getStats: () => api.get('/suppliers/stats'),
+    getById: (id) => api.get(`/suppliers/${id}`),
+    create: (data) => api.post('/suppliers', data),
+    update: (id, data) => api.put(`/suppliers/${id}`, data),
+    delete: (id) => api.delete(`/suppliers/${id}`),
+    activate: (id) => api.post(`/suppliers/${id}/activate`),
+    deactivate: (id) => api.post(`/suppliers/${id}/deactivate`),
+    lock: (id, reason) => api.post(`/suppliers/${id}/lock`, null, { params: { reason } }),
+    unlock: (id) => api.post(`/suppliers/${id}/unlock`),
+    getPerformance: (id) => api.get(`/suppliers/${id}/performance`),
+};
+
+// Purchase Orders API
+export const purchaseOrdersAPI = {
+    getAll: (params) => api.get('/purchase-orders', { params }),
+    getStats: () => api.get('/purchase-orders/stats'),
+    getById: (id) => api.get(`/purchase-orders/${id}`),
+    create: (data) => api.post('/purchase-orders', data),
+    accept: (id) => api.post(`/purchase-orders/${id}/accept`),
+    reject: (id, reason) => api.post(`/purchase-orders/${id}/reject`, null, { params: { reason } }),
+    updateStatus: (id, status, notes) => api.post(`/purchase-orders/${id}/status`, null, { params: { new_status: status, notes } }),
+    lock: (id) => api.post(`/purchase-orders/${id}/lock`),
+    unlock: (id) => api.post(`/purchase-orders/${id}/unlock`),
+    getHistory: (id) => api.get(`/purchase-orders/${id}/history`),
+};
+
 export default api;
