@@ -102,13 +102,15 @@ const ManufacturerDashboard = () => {
     }
 
     const totalBatches = Object.values(stats?.batches?.by_status || {}).reduce((a, b) => a + b.count, 0);
+    const pendingOrders = purchaseOrders.filter(o => o.status === 'awaiting_acceptance');
+    const activeOrders = purchaseOrders.filter(o => ['accepted', 'in_production', 'shipped'].includes(o.status));
 
     return (
         <div className="space-y-6" data-testid="manufacturer-dashboard">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-white">Manufacturer Dashboard</h1>
-                    <p className="text-slate-400">Manage your production and batches</p>
+                    <p className="text-slate-400">Manage your production, batches, and incoming orders</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <Button variant="outline" onClick={fetchData} className="border-slate-600 text-slate-300">
@@ -126,7 +128,7 @@ const ManufacturerDashboard = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <Card className="bg-slate-800 border-slate-700">
                     <CardContent className="p-6">
                         <div className="flex items-center justify-between">
@@ -145,11 +147,25 @@ const ManufacturerDashboard = () => {
                     <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-slate-400 text-sm">Materials</p>
-                                <p className="text-3xl font-bold text-white mt-1">{stats?.materials?.total_entries || 0}</p>
+                                <p className="text-slate-400 text-sm">Pending Orders</p>
+                                <p className="text-3xl font-bold text-yellow-400 mt-1">{pendingOrders.length}</p>
                             </div>
-                            <div className="p-3 rounded-xl bg-amber-500/10">
-                                <Factory className="h-6 w-6 text-amber-400" />
+                            <div className="p-3 rounded-xl bg-yellow-500/10">
+                                <Clock className="h-6 w-6 text-yellow-400" />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="bg-slate-800 border-slate-700">
+                    <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-slate-400 text-sm">Active Orders</p>
+                                <p className="text-3xl font-bold text-emerald-400 mt-1">{activeOrders.length}</p>
+                            </div>
+                            <div className="p-3 rounded-xl bg-emerald-500/10">
+                                <ShoppingCart className="h-6 w-6 text-emerald-400" />
                             </div>
                         </div>
                     </CardContent>
@@ -164,8 +180,8 @@ const ManufacturerDashboard = () => {
                                     {Object.values(stats?.shipments?.by_status || {}).reduce((a, b) => a + b, 0)}
                                 </p>
                             </div>
-                            <div className="p-3 rounded-xl bg-emerald-500/10">
-                                <Truck className="h-6 w-6 text-emerald-400" />
+                            <div className="p-3 rounded-xl bg-purple-500/10">
+                                <Truck className="h-6 w-6 text-purple-400" />
                             </div>
                         </div>
                     </CardContent>
@@ -175,16 +191,91 @@ const ManufacturerDashboard = () => {
                     <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-slate-400 text-sm">Pending Audits</p>
-                                <p className="text-3xl font-bold text-white mt-1">{stats?.audits?.pending || 0}</p>
+                                <p className="text-slate-400 text-sm">Total Order Value</p>
+                                <p className="text-2xl font-bold text-white mt-1">{formatCurrency(poStats?.total_value)}</p>
                             </div>
-                            <div className="p-3 rounded-xl bg-purple-500/10">
-                                <AlertTriangle className="h-6 w-6 text-purple-400" />
+                            <div className="p-3 rounded-xl bg-teal-500/10">
+                                <DollarSign className="h-6 w-6 text-teal-400" />
                             </div>
                         </div>
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Pending Orders Section */}
+            {pendingOrders.length > 0 && (
+                <Card className="bg-slate-800/50 border-slate-700">
+                    <CardHeader>
+                        <CardTitle className="text-white flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5 text-yellow-400" />
+                            Orders Awaiting Acceptance
+                        </CardTitle>
+                        <CardDescription className="text-slate-400">
+                            Review and respond to incoming purchase orders from brands
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {pendingOrders.map((order) => (
+                                <div 
+                                    key={order.id} 
+                                    className="flex items-center justify-between p-4 bg-slate-900/50 rounded-lg border border-yellow-500/20"
+                                    data-testid={`pending-order-${order.id}`}
+                                >
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <span className="font-semibold text-white">{order.po_number}</span>
+                                            <Badge variant="outline" className={getStatusColor(order.status)}>
+                                                {order.status.replace(/_/g, ' ')}
+                                            </Badge>
+                                            {order.priority === 'urgent' && (
+                                                <Badge variant="destructive">Urgent</Badge>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-4 text-sm text-slate-400">
+                                            <span>From: {order.brand_name}</span>
+                                            <span>Items: {order.line_items?.length || 0}</span>
+                                            <span>Value: {formatCurrency(order.total_amount)}</span>
+                                            <span>Delivery: {formatDate(order.delivery_date)}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                                            onClick={() => handleRejectOrder(order.id)}
+                                            disabled={actionLoading === order.id}
+                                            data-testid={`reject-order-${order.id}`}
+                                        >
+                                            {actionLoading === order.id ? (
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                            ) : (
+                                                <XCircle className="h-4 w-4 mr-1" />
+                                            )}
+                                            Reject
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            className="bg-emerald-600 hover:bg-emerald-700"
+                                            onClick={() => handleAcceptOrder(order.id)}
+                                            disabled={actionLoading === order.id}
+                                            data-testid={`accept-order-${order.id}`}
+                                        >
+                                            {actionLoading === order.id ? (
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                            ) : (
+                                                <CheckCircle className="h-4 w-4 mr-1" />
+                                            )}
+                                            Accept
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card className="bg-slate-800 border-slate-700">
