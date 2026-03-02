@@ -68,6 +68,35 @@ async def get_admin_dashboard(current_user: dict = Depends(require_admin)):
     # Active alerts
     active_alerts = await alerts_collection.count_documents({"status": "active"})
     
+    # Supplier stats
+    supplier_stats = await suppliers_collection.aggregate([
+        {"$match": {"is_deleted": {"$ne": True}}},
+        {"$group": {
+            "_id": None,
+            "total": {"$sum": 1},
+            "active": {"$sum": {"$cond": [{"$eq": ["$status", "active"]}, 1, 0]}},
+            "high_risk": {"$sum": {"$cond": [{"$in": ["$risk_category", ["high", "critical"]]}, 1, 0]}},
+            "locked": {"$sum": {"$cond": [{"$eq": ["$is_locked", True]}, 1, 0]}}
+        }}
+    ]).to_list(1)
+    sup_stats = supplier_stats[0] if supplier_stats else {"total": 0, "active": 0, "high_risk": 0, "locked": 0}
+    
+    # PO stats
+    po_stats = await pos_collection.aggregate([
+        {"$match": {"is_deleted": {"$ne": True}}},
+        {"$group": {
+            "_id": "$status",
+            "count": {"$sum": 1}
+        }}
+    ]).to_list(20)
+    
+    # Delayed POs (past delivery date but not completed)
+    delayed_pos = await pos_collection.count_documents({
+        "delivery_date": {"$lt": datetime.now(timezone.utc).isoformat()},
+        "status": {"$nin": ["completed", "delivered", "cancelled"]},
+        "is_deleted": {"$ne": True}
+    })
+    
     return {
         "users": {
             "by_role": {stat["_id"]: {"total": stat["count"], "active": stat["active"], "pending": stat["pending"]} for stat in user_stats},
@@ -89,6 +118,16 @@ async def get_admin_dashboard(current_user: dict = Depends(require_admin)):
         },
         "alerts": {
             "active": active_alerts
+        },
+        "suppliers": {
+            "total": sup_stats.get("total", 0),
+            "active": sup_stats.get("active", 0),
+            "high_risk": sup_stats.get("high_risk", 0),
+            "locked": sup_stats.get("locked", 0)
+        },
+        "purchase_orders": {
+            "by_status": {stat["_id"]: stat["count"] for stat in po_stats},
+            "delayed": delayed_pos
         }
     }
 
