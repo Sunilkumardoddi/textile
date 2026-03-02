@@ -85,8 +85,8 @@ const AdminDashboard = () => {
             bgColor: 'bg-purple-500/10',
         },
         { 
-            title: 'Active Suppliers', 
-            value: supplierStats?.active_suppliers || 0,
+            title: 'Registered Manufacturers', 
+            value: supplierStats?.total_suppliers || (stats?.users?.by_role?.manufacturer?.active || 0),
             icon: Building2,
             color: 'text-teal-400',
             bgColor: 'bg-teal-500/10',
@@ -99,7 +99,7 @@ const AdminDashboard = () => {
             bgColor: 'bg-amber-500/10',
         },
         { 
-            title: 'High Risk Suppliers', 
+            title: 'High Risk Manufacturers', 
             value: supplierStats?.high_risk_suppliers || 0,
             icon: AlertTriangle,
             color: 'text-red-400',
