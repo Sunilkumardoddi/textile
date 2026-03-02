@@ -174,16 +174,13 @@ async def get_purchase_orders(
     # Role-based filtering
     if current_user["role"] == "brand":
         query["brand_id"] = current_user["user_id"]
-    elif current_user["role"] == "supplier":
-        # Get supplier's supplier_id from their profile
+    elif current_user["role"] == "manufacturer":
+        # Manufacturers act as suppliers - get POs assigned to their supplier profile
         supplier = await suppliers_collection.find_one({"user_id": current_user["user_id"]})
         if supplier:
             query["supplier_id"] = {"$in": [supplier["id"], supplier["supplier_id"]]}
         else:
             return []  # No supplier profile linked
-    elif current_user["role"] == "manufacturer":
-        # Manufacturers don't see POs unless linked as supplier
-        return []
     
     # Apply filters
     if status:
