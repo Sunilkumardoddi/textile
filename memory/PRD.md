@@ -150,7 +150,6 @@ System tracks: Raw Material → Processing → Production → Shipment → Audit
 | Manufacturer | manufacturer@textile.com | testpassword |
 | Brand | brand@textile.com | testpassword |
 | Auditor | auditor@textile.com | testpassword |
-| Supplier | supplier@testsupplier.com | testpassword |
 
 ---
 
