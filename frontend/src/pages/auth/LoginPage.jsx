@@ -58,7 +58,8 @@ const LoginPage = () => {
                 admin: '/dashboard/admin',
                 manufacturer: '/dashboard/manufacturer',
                 brand: '/dashboard/brand',
-                auditor: '/dashboard/auditor'
+                auditor: '/dashboard/auditor',
+                supplier: '/dashboard/supplier'
             };
             navigate(dashboardRoutes[user.role] || '/dashboard');
         } catch (error) {
@@ -70,10 +71,11 @@ const LoginPage = () => {
     };
 
     const demoCredentials = [
-        { role: 'Admin', email: 'admin@textile.com', password: 'admin123' },
-        { role: 'Manufacturer', email: 'manufacturer@textile.com', password: 'manu123' },
-        { role: 'Brand', email: 'brand@textile.com', password: 'brand123' },
-        { role: 'Auditor', email: 'auditor@textile.com', password: 'audit123' },
+        { role: 'Admin', email: 'admin@textile.com', password: 'testpassword' },
+        { role: 'Manufacturer', email: 'manufacturer@textile.com', password: 'testpassword' },
+        { role: 'Brand', email: 'brand@textile.com', password: 'testpassword' },
+        { role: 'Auditor', email: 'auditor@textile.com', password: 'testpassword' },
+        { role: 'Supplier', email: 'supplier@testsupplier.com', password: 'testpassword' },
     ];
 
     return (
