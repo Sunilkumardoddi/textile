@@ -323,7 +323,7 @@ class TestRoleBasedAccessControl:
         api_client.headers.update({"Authorization": f"Bearer {brand_token}"})
         
         # Get any PO
-        pos_response = api_client.get(f"{BASE_URL}/api/purchase-orders")
+        pos_response = api_client.get(api_url("/purchase-orders"))
         if pos_response.status_code != 200 or len(pos_response.json()) == 0:
             pytest.skip("No POs available for RBAC test")
         
@@ -351,6 +351,6 @@ class TestRoleBasedAccessControl:
             "priority": "normal"
         }
         
-        response = api_client.post(f"{BASE_URL}/api/purchase-orders", json=po_data)
+        response = api_client.post(api_url("/purchase-orders"), json=po_data)
         assert response.status_code == 403, f"Supplier should not be able to create PO: {response.text}"
         print(f"✓ Supplier correctly denied from creating PO")
