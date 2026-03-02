@@ -4,12 +4,11 @@
 ### Original Problem Statement
 Build a Cloud-Based Textile Traceability Portal with Multi-Role Access Control and End-to-End Supply Chain Tracking.
 
-The portal supports:
-- **Admin**: System management, user approvals, overall monitoring, supplier management
-- **Manufacturer**: Create batches, manage production, shipments
-- **Brand**: Track supplier traceability, request audits, view compliance, create Purchase Orders
+The portal supports 4 roles (Supplier merged into Manufacturer):
+- **Admin**: System management, user approvals, overall monitoring, manufacturer management
+- **Manufacturer**: Create batches, manage production, shipments, **AND receive/manage Purchase Orders from Brands**
+- **Brand**: Track manufacturer traceability, request audits, view compliance, create Purchase Orders
 - **Auditor**: Verify transactions, approve/reject batches
-- **Supplier**: View and manage Purchase Orders, track deliveries
 
 System tracks: Raw Material → Processing → Production → Shipment → Audit Verification
 
@@ -17,37 +16,41 @@ System tracks: Raw Material → Processing → Production → Shipment → Audit
 
 ## What's Been Implemented (March 2, 2026)
 
-### Supplier Management Module (NEW - March 2, 2026)
+### Role Merge: Supplier → Manufacturer (March 2, 2026)
+- Supplier role has been merged into Manufacturer role
+- Manufacturers now act as both producers AND suppliers
+- Brands create Purchase Orders to Manufacturers directly
+- All supplier-related APIs now work with manufacturer role
+
+### Purchase Order Management Module
 
 #### Backend API Endpoints
-- [x] `/api/suppliers/` - Full CRUD for supplier management
-- [x] `/api/suppliers/stats` - Supplier statistics (Admin only)
-- [x] `/api/suppliers/{id}/activate` - Activate supplier
-- [x] `/api/suppliers/{id}/deactivate` - Deactivate supplier
-- [x] `/api/suppliers/{id}/lock` - Lock high-risk supplier
+- [x] `/api/suppliers/` - Manufacturer profiles as suppliers (CRUD)
+- [x] `/api/suppliers/stats` - Manufacturer/supplier statistics (Admin only)
+- [x] `/api/suppliers/{id}/activate` - Activate manufacturer
+- [x] `/api/suppliers/{id}/deactivate` - Deactivate manufacturer
+- [x] `/api/suppliers/{id}/lock` - Lock high-risk manufacturer
 - [x] `/api/suppliers/{id}/performance` - Performance metrics
 - [x] `/api/purchase-orders/` - Full CRUD for Purchase Orders
 - [x] `/api/purchase-orders/stats` - PO statistics
-- [x] `/api/purchase-orders/{id}/accept` - Supplier accepts PO
-- [x] `/api/purchase-orders/{id}/reject` - Supplier rejects PO
+- [x] `/api/purchase-orders/{id}/accept` - Manufacturer accepts PO
+- [x] `/api/purchase-orders/{id}/reject` - Manufacturer rejects PO
 - [x] `/api/purchase-orders/{id}/status` - Update PO status
 
 #### Frontend Features
-- [x] **Supplier Dashboard** - View and manage assigned Purchase Orders
-  - Stats: Total Orders, Pending Acceptance, Active Orders, Total Value
-  - Accept/Reject PO functionality with confirmation
-  - All Purchase Orders table view
+- [x] **Manufacturer Dashboard Updates**
+  - Added "Purchase Orders" navigation item
+  - Stats: Total Batches, Pending Orders, Active Orders, Shipments, Total Order Value
+  - "Orders Awaiting Acceptance" section with Accept/Reject buttons
+  - View incoming POs from Brands
 - [x] **Brand Dashboard Updates**
-  - Supplier Directory section showing active suppliers
-  - Create PO button for each supplier
+  - "Manufacturer Directory" section showing active manufacturers
+  - Create PO button for each manufacturer
   - PO Creation Dialog with product details, delivery info
   - Recent Purchase Orders list with status badges
 - [x] **Admin Dashboard Updates**
-  - Active Suppliers and High Risk Suppliers stat cards
-  - Supplier Overview section with risk distribution
-- [x] **Auth Updates**
-  - Supplier role in registration dropdown
-  - Supplier demo credentials on login page
+  - Registered Manufacturers and High Risk Manufacturers stat cards
+  - Manufacturer Overview section with risk distribution
   - Supplier routing and navigation
 
 #### Database Schema Additions
