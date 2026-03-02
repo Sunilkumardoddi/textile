@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
     Users, Package, ClipboardCheck, TrendingUp, AlertTriangle,
-    CheckCircle, Clock, XCircle, ArrowUpRight, RefreshCw, Loader2
+    CheckCircle, Clock, XCircle, ArrowUpRight, RefreshCw, Loader2,
+    Building2, ShoppingCart
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { dashboardAPI, usersAPI } from '@/lib/api';
+import { dashboardAPI, usersAPI, suppliersAPI } from '@/lib/api';
 import { toast } from 'sonner';
 
 const AdminDashboard = () => {
     const [stats, setStats] = useState(null);
+    const [supplierStats, setSupplierStats] = useState(null);
     const [pendingUsers, setPendingUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [approving, setApproving] = useState(null);
@@ -20,12 +22,14 @@ const AdminDashboard = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const [dashboardRes, pendingRes] = await Promise.all([
+            const [dashboardRes, pendingRes, suppliersRes] = await Promise.all([
                 dashboardAPI.getAdmin(),
-                usersAPI.getPending()
+                usersAPI.getPending(),
+                suppliersAPI.getStats().catch(() => ({ data: null }))
             ]);
             setStats(dashboardRes.data);
             setPendingUsers(pendingRes.data);
+            setSupplierStats(suppliersRes.data);
         } catch (error) {
             toast.error('Failed to load dashboard data');
         } finally {
@@ -81,11 +85,25 @@ const AdminDashboard = () => {
             bgColor: 'bg-purple-500/10',
         },
         { 
+            title: 'Active Suppliers', 
+            value: supplierStats?.active_suppliers || 0,
+            icon: Building2,
+            color: 'text-teal-400',
+            bgColor: 'bg-teal-500/10',
+        },
+        { 
             title: 'Pending Approvals', 
             value: stats?.users?.pending_approvals || 0,
             icon: Clock,
             color: 'text-amber-400',
             bgColor: 'bg-amber-500/10',
+        },
+        { 
+            title: 'High Risk Suppliers', 
+            value: supplierStats?.high_risk_suppliers || 0,
+            icon: AlertTriangle,
+            color: 'text-red-400',
+            bgColor: 'bg-red-500/10',
         },
     ];
 
@@ -102,7 +120,7 @@ const AdminDashboard = () => {
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {statCards.map((stat, idx) => (
                     <Card key={idx} className="bg-slate-800 border-slate-700">
                         <CardContent className="p-6">
@@ -194,6 +212,47 @@ const AdminDashboard = () => {
                         </div>
                     </CardContent>
                 </Card>
+
+                {/* Supplier Risk Distribution */}
+                {supplierStats && (
+                    <Card className="bg-slate-800 border-slate-700">
+                        <CardHeader>
+                            <CardTitle className="text-white flex items-center gap-2">
+                                <Building2 className="h-5 w-5 text-teal-400" />
+                                Supplier Overview
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-slate-400">Total Suppliers</span>
+                                    <span className="text-white font-medium">{supplierStats.total_suppliers}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-slate-400">Avg Compliance</span>
+                                    <span className="text-emerald-400 font-medium">{supplierStats.average_compliance?.toFixed(1)}%</span>
+                                </div>
+                                <div className="pt-2 border-t border-slate-700">
+                                    <p className="text-sm text-slate-400 mb-3">Risk Distribution</p>
+                                    {Object.entries(supplierStats.risk_distribution || {}).map(([risk, count]) => (
+                                        <div key={risk} className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center gap-2">
+                                                <div className={`w-3 h-3 rounded-full ${
+                                                    risk === 'low' ? 'bg-emerald-400' :
+                                                    risk === 'medium' ? 'bg-amber-400' :
+                                                    risk === 'high' ? 'bg-orange-400' :
+                                                    'bg-red-400'
+                                                }`} />
+                                                <span className="text-slate-300 capitalize">{risk}</span>
+                                            </div>
+                                            <span className="text-white font-medium">{count}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
             </div>
         </div>
     );
