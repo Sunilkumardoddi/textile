@@ -7,7 +7,7 @@ from models.supplier import (
     Supplier, SupplierCreate, SupplierResponse, SupplierUpdate,
     SupplierStatus, RiskCategory, CertificationType, ProductCategory, AuditStatus as SupplierAuditStatus
 )
-from utils.auth import get_current_user, require_admin, require_any_authenticated
+from utils.auth import get_current_user, require_admin, require_any_authenticated, require_manufacturer_as_supplier
 from utils.database import db
 from utils.activity_logger import log_activity
 from utils.alerts import create_alert
@@ -126,11 +126,11 @@ async def get_suppliers(
     """Get suppliers based on user role and filters."""
     query = {"is_deleted": {"$ne": True}}
     
-    # Brands can only see active suppliers
+    # Brands can only see active suppliers (manufacturers)
     if current_user["role"] == "brand":
         query["status"] = "active"
-    elif current_user["role"] == "supplier":
-        # Suppliers can only see their own profile
+    elif current_user["role"] == "manufacturer":
+        # Manufacturers can only see their own supplier profile
         query["user_id"] = current_user["user_id"]
     
     # Apply filters
@@ -252,8 +252,8 @@ async def get_supplier(supplier_id: str, current_user: dict = Depends(require_an
     """Get supplier by ID."""
     query = {"$or": [{"id": supplier_id}, {"supplier_id": supplier_id}], "is_deleted": {"$ne": True}}
     
-    # Suppliers can only see their own profile
-    if current_user["role"] == "supplier":
+    # Manufacturers can only see their own profile
+    if current_user["role"] == "manufacturer":
         query["user_id"] = current_user["user_id"]
     # Brands can only see active suppliers
     elif current_user["role"] == "brand":
