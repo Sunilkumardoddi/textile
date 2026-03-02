@@ -8,6 +8,8 @@ from .shipments import router as shipments_router
 from .audits import router as audits_router
 from .dashboard import router as dashboard_router
 from .reports import router as reports_router
+from .suppliers import router as suppliers_router
+from .purchase_orders import router as purchase_orders_router
 
 __all__ = [
     "auth_router",
@@ -19,4 +21,6 @@ __all__ = [
     "audits_router",
     "dashboard_router",
     "reports_router",
+    "suppliers_router",
+    "purchase_orders_router",
 ]
