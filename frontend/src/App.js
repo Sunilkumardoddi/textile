@@ -14,7 +14,6 @@ import AdminDashboard from '@/pages/dashboards/AdminDashboard';
 import ManufacturerDashboard from '@/pages/dashboards/ManufacturerDashboard';
 import BrandDashboard from '@/pages/dashboards/BrandDashboard';
 import AuditorDashboard from '@/pages/dashboards/AuditorDashboard';
-import SupplierDashboard from '@/pages/dashboards/SupplierDashboard';
 
 import './App.css';
 
