@@ -14,6 +14,7 @@ import AdminDashboard from '@/pages/dashboards/AdminDashboard';
 import ManufacturerDashboard from '@/pages/dashboards/ManufacturerDashboard';
 import BrandDashboard from '@/pages/dashboards/BrandDashboard';
 import AuditorDashboard from '@/pages/dashboards/AuditorDashboard';
+import SupplierDashboard from '@/pages/dashboards/SupplierDashboard';
 
 import './App.css';
 
@@ -195,6 +196,33 @@ function AppRoutes() {
             <Route path="/dashboard/auditor/audit/:id" element={
                 <ProtectedRoute allowedRoles={['admin', 'auditor']}>
                     <DashboardLayout><ComingSoon title="Audit Details" /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            
+            {/* Supplier Routes */}
+            <Route path="/dashboard/supplier" element={
+                <ProtectedRoute allowedRoles={['admin', 'supplier']}>
+                    <DashboardLayout><SupplierDashboard /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/supplier/orders" element={
+                <ProtectedRoute allowedRoles={['admin', 'supplier']}>
+                    <DashboardLayout><ComingSoon title="Purchase Orders" /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/supplier/shipments" element={
+                <ProtectedRoute allowedRoles={['admin', 'supplier']}>
+                    <DashboardLayout><ComingSoon title="Shipments" /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/supplier/documents" element={
+                <ProtectedRoute allowedRoles={['admin', 'supplier']}>
+                    <DashboardLayout><ComingSoon title="Documents" /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/supplier/performance" element={
+                <ProtectedRoute allowedRoles={['admin', 'supplier']}>
+                    <DashboardLayout><ComingSoon title="Performance Metrics" /></DashboardLayout>
                 </ProtectedRoute>
             } />
             
