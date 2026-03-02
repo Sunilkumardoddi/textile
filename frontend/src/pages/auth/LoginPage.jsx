@@ -58,8 +58,7 @@ const LoginPage = () => {
                 admin: '/dashboard/admin',
                 manufacturer: '/dashboard/manufacturer',
                 brand: '/dashboard/brand',
-                auditor: '/dashboard/auditor',
-                supplier: '/dashboard/supplier'
+                auditor: '/dashboard/auditor'
             };
             navigate(dashboardRoutes[user.role] || '/dashboard');
         } catch (error) {
@@ -75,7 +74,6 @@ const LoginPage = () => {
         { role: 'Manufacturer', email: 'manufacturer@textile.com', password: 'testpassword' },
         { role: 'Brand', email: 'brand@textile.com', password: 'testpassword' },
         { role: 'Auditor', email: 'auditor@textile.com', password: 'testpassword' },
-        { role: 'Supplier', email: 'supplier@testsupplier.com', password: 'testpassword' },
     ];
 
     return (
