@@ -6,10 +6,14 @@ from utils.auth import get_current_user, require_any_authenticated, require_admi
 from utils.database import (
     users_collection, batches_collection, transactions_collection,
     audits_collection, materials_collection, production_collection,
-    shipments_collection, activities_collection, alerts_collection
+    shipments_collection, activities_collection, alerts_collection, db
 )
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
+
+# Collections
+suppliers_collection = db.suppliers
+pos_collection = db.purchase_orders
 
 
 @router.get("/admin")
