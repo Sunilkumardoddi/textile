@@ -5,16 +5,58 @@
 Build a Cloud-Based Textile Traceability Portal with Multi-Role Access Control and End-to-End Supply Chain Tracking.
 
 The portal supports:
-- **Admin**: System management, user approvals, overall monitoring
+- **Admin**: System management, user approvals, overall monitoring, supplier management
 - **Manufacturer**: Create batches, manage production, shipments
-- **Brand**: Track supplier traceability, request audits, view compliance
+- **Brand**: Track supplier traceability, request audits, view compliance, create Purchase Orders
 - **Auditor**: Verify transactions, approve/reject batches
+- **Supplier**: View and manage Purchase Orders, track deliveries
 
 System tracks: Raw Material → Processing → Production → Shipment → Audit Verification
 
 ---
 
 ## What's Been Implemented (March 2, 2026)
+
+### Supplier Management Module (NEW - March 2, 2026)
+
+#### Backend API Endpoints
+- [x] `/api/suppliers/` - Full CRUD for supplier management
+- [x] `/api/suppliers/stats` - Supplier statistics (Admin only)
+- [x] `/api/suppliers/{id}/activate` - Activate supplier
+- [x] `/api/suppliers/{id}/deactivate` - Deactivate supplier
+- [x] `/api/suppliers/{id}/lock` - Lock high-risk supplier
+- [x] `/api/suppliers/{id}/performance` - Performance metrics
+- [x] `/api/purchase-orders/` - Full CRUD for Purchase Orders
+- [x] `/api/purchase-orders/stats` - PO statistics
+- [x] `/api/purchase-orders/{id}/accept` - Supplier accepts PO
+- [x] `/api/purchase-orders/{id}/reject` - Supplier rejects PO
+- [x] `/api/purchase-orders/{id}/status` - Update PO status
+
+#### Frontend Features
+- [x] **Supplier Dashboard** - View and manage assigned Purchase Orders
+  - Stats: Total Orders, Pending Acceptance, Active Orders, Total Value
+  - Accept/Reject PO functionality with confirmation
+  - All Purchase Orders table view
+- [x] **Brand Dashboard Updates**
+  - Supplier Directory section showing active suppliers
+  - Create PO button for each supplier
+  - PO Creation Dialog with product details, delivery info
+  - Recent Purchase Orders list with status badges
+- [x] **Admin Dashboard Updates**
+  - Active Suppliers and High Risk Suppliers stat cards
+  - Supplier Overview section with risk distribution
+- [x] **Auth Updates**
+  - Supplier role in registration dropdown
+  - Supplier demo credentials on login page
+  - Supplier routing and navigation
+
+#### Database Schema Additions
+- `suppliers` collection: company_name, country, certifications, compliance_score, risk_category, etc.
+- `purchase_orders` collection: po_number, brand_id, supplier_id, line_items, status, delivery_date, etc.
+- `supplier_performance_metrics` collection: For calculated metrics
+- `po_status_logs` collection: Status change history
+
+---
 
 ### Backend (FastAPI + MongoDB)
 
@@ -101,10 +143,11 @@ System tracks: Raw Material → Processing → Production → Shipment → Audit
 
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | admin@textile.com | admin123 |
-| Manufacturer | manufacturer@textile.com | manu123 |
-| Brand | brand@textile.com | brand123 |
-| Auditor | auditor@textile.com | audit123 |
+| Admin | admin@textile.com | testpassword |
+| Manufacturer | manufacturer@textile.com | testpassword |
+| Brand | brand@textile.com | testpassword |
+| Auditor | auditor@textile.com | testpassword |
+| Supplier | supplier@testsupplier.com | testpassword |
 
 ---
 
@@ -144,12 +187,16 @@ GET /api/reports/analytics/overview - Dashboard analytics
 ## Prioritized Backlog
 
 ### P0 - High Priority (Next)
+- [ ] Supplier Performance Engine - Auto-calculate metrics after PO completion
+- [ ] Brand Dashboard Supplier Analytics - Charts for supplier performance
+- [ ] Admin Supplier Management Page - Full CRUD UI for suppliers
+- [ ] PO Status Update Flow - Supplier updates through production/shipping/delivery
+
+### P1 - Medium Priority
 - [ ] Batch creation form page
 - [ ] Material inward entry form
 - [ ] Production log entry form
 - [ ] Shipment creation form
-
-### P1 - Medium Priority
 - [ ] Batch details page with traceability visualization
 - [ ] User management page (Admin)
 - [ ] Audit workflow pages (start, add findings, approve/reject)
@@ -206,6 +253,7 @@ GET /api/reports/analytics/overview - Dashboard analytics
 ---
 
 ## Testing Status
-- Backend: 100% (17/17 tests passed)
+- Backend: 100% (14/14 tests passed for Supplier/PO module)
 - Frontend: 100%
 - Last tested: March 2, 2026
+- Test report: `/app/test_reports/iteration_3.json`
