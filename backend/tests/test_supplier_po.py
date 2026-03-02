@@ -82,7 +82,7 @@ class TestSupplierEndpoints:
     def test_get_suppliers_as_brand(self, api_client, brand_token):
         """Brand can view active suppliers"""
         api_client.headers.update({"Authorization": f"Bearer {brand_token}"})
-        response = api_client.get(f"{BASE_URL}/api/suppliers")
+        response = api_client.get(api_url("/suppliers"))
         assert response.status_code == 200, f"Get suppliers failed: {response.text}"
         data = response.json()
         assert isinstance(data, list)
@@ -100,7 +100,7 @@ class TestSupplierEndpoints:
     def test_get_suppliers_as_admin(self, api_client, admin_token):
         """Admin can view all suppliers"""
         api_client.headers.update({"Authorization": f"Bearer {admin_token}"})
-        response = api_client.get(f"{BASE_URL}/api/suppliers")
+        response = api_client.get(api_url("/suppliers"))
         assert response.status_code == 200, f"Get suppliers failed: {response.text}"
         data = response.json()
         assert isinstance(data, list)
@@ -109,7 +109,7 @@ class TestSupplierEndpoints:
     def test_get_supplier_stats_as_admin(self, api_client, admin_token):
         """Admin can view supplier statistics"""
         api_client.headers.update({"Authorization": f"Bearer {admin_token}"})
-        response = api_client.get(f"{BASE_URL}/api/suppliers/stats")
+        response = api_client.get(api_url("/suppliers/stats"))
         assert response.status_code == 200, f"Get supplier stats failed: {response.text}"
         data = response.json()
         
