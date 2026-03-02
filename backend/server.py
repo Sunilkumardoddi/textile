@@ -20,6 +20,8 @@ from routes.shipments import router as shipments_router
 from routes.audits import router as audits_router
 from routes.dashboard import router as dashboard_router
 from routes.reports import router as reports_router
+from routes.suppliers import router as suppliers_router
+from routes.purchase_orders import router as purchase_orders_router
 
 # Import database utilities
 from utils.database import create_indexes, close_connection
@@ -80,6 +82,8 @@ api_router.include_router(shipments_router)
 api_router.include_router(audits_router)
 api_router.include_router(dashboard_router)
 api_router.include_router(reports_router)
+api_router.include_router(suppliers_router)
+api_router.include_router(purchase_orders_router)
 
 # Include the router in the main app
 app.include_router(api_router)
