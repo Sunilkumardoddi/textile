@@ -1,20 +1,44 @@
-# TextileTrace - Cloud-Based Textile Traceability Portal
+# TextileTrace - Cloud-Based Textile Supply Chain ERP & Traceability Platform
 ## Product Requirements Document
 
 ### Original Problem Statement
-Build a Cloud-Based Textile Traceability Portal with Multi-Role Access Control and End-to-End Supply Chain Tracking.
+Build a Cloud-Based Textile Supply Chain ERP and Brand Dashboard Platform with end-to-end traceability. The system allows a Brand (top-level user) to monitor and control the entire supply chain, while multiple Suppliers (manufacturers, fabric mills, yarn suppliers, processors) enter real-time production and material data.
 
-The portal supports 4 roles (Supplier merged into Manufacturer):
-- **Admin**: System management, user approvals, overall monitoring, manufacturer management
-- **Manufacturer**: Create batches, manage production, shipments, **AND receive/manage Purchase Orders from Brands**
-- **Brand**: Track manufacturer traceability, request audits, view compliance, create Purchase Orders
+The portal supports 4 roles (expandable to multi-tier suppliers):
+- **Super Admin**: System management, user approvals, overall monitoring
+- **Brand**: Track supply chain, view analytics, create Purchase Orders, monitor compliance
+- **Manufacturer**: Create batches, manage production, shipments, receive/manage Purchase Orders
 - **Auditor**: Verify transactions, approve/reject batches
 
-System tracks: Raw Material → Processing → Production → Shipment → Audit Verification
+Future: Fabric Supplier, Yarn Supplier roles for multi-tier supply chain
+
+System tracks: Fiber → Yarn → Fabric → Garment → Dispatch
 
 ---
 
 ## What's Been Implemented (March 2, 2026)
+
+### Phase 1: Power BI-Style Brand Dashboard (NEW - March 2, 2026)
+Enhanced Brand Dashboard with real-time KPIs and interactive charts:
+
+#### KPI Metrics (Power BI Style)
+- [x] **Total Orders** - With trend indicator (+12% vs last month)
+- [x] **Production Progress** - Overall completion percentage with trend
+- [x] **Delayed Orders** - Count with attention status
+- [x] **Compliance Status** - Score with compliant/review needed indicator
+- [x] **Secondary KPIs** - Active Suppliers, In Transit, Pending Approval, In Production
+
+#### Interactive Charts (Recharts)
+- [x] **Production Progress Chart** - Area chart showing Planned vs Actual production over time
+- [x] **Supplier Performance Chart** - Horizontal bar chart with Compliance, On-Time Delivery, Quality scores
+- [x] **Order Distribution Chart** - Pie chart showing order status distribution
+
+#### Dashboard Features
+- [x] "Supply Chain Command Center" header with Live indicator
+- [x] Real-time data refresh capability
+- [x] Supplier Directory with quick Create PO action
+- [x] Recent Purchase Orders table with progress bars and Track button
+- [x] Quick Actions grid (Traceability, Audit, Analytics, Compliance)
 
 ### Role Merge: Supplier → Manufacturer (March 2, 2026)
 - Supplier role has been merged into Manufacturer role
@@ -188,37 +212,39 @@ GET /api/reports/analytics/overview - Dashboard analytics
 
 ## Prioritized Backlog
 
-### P0 - High Priority (Next)
-- [ ] Supplier Performance Engine - Auto-calculate metrics after PO completion
-- [ ] Brand Dashboard Supplier Analytics - Charts for supplier performance
-- [ ] Admin Supplier Management Page - Full CRUD UI for suppliers
-- [ ] PO Status Update Flow - Supplier updates through production/shipping/delivery
+### P0 - High Priority (In Progress - ERP Phase 2)
+- [ ] **Multi-Tier Supplier Hierarchy** - Add Fabric Supplier, Yarn Supplier roles
+- [ ] **Full Traceability System** - Fiber → Yarn → Fabric → Garment → Dispatch tracking
+- [ ] **Drill-down capability** - Click Order → View Manufacturer → Fabric → Yarn details
+- [ ] **Supplier Input Module** - Production updates, material details, batch numbers
 
-### P1 - Medium Priority
+### P1 - Medium Priority (ERP Phase 3-4)
+- [ ] **Compliance & Certifications Module** - Track Sedex, BSCI, WRAP certifications
+- [ ] **Inventory Management** - Raw materials, WIP, Finished goods tracking
+- [ ] **Alert System** - Delay alerts, low production alerts, compliance expiry
 - [ ] Batch creation form page
 - [ ] Material inward entry form
 - [ ] Production log entry form
 - [ ] Shipment creation form
+- [ ] QR code generation for batch/order tracking
+
+### P2 - Lower Priority
 - [ ] Batch details page with traceability visualization
 - [ ] User management page (Admin)
 - [ ] Audit workflow pages (start, add findings, approve/reject)
 - [ ] PDF report generation
 - [ ] Excel export functionality
-
-### P2 - Lower Priority
-- [ ] Dashboard analytics charts (line charts, pie charts)
-- [ ] QR code generation for batch tracking
 - [ ] Email notifications
 - [ ] Document/Certificate upload with file storage
-- [ ] Alert management UI
 
 ### Future Enhancements
+- [ ] AI-based delay prediction
+- [ ] Cost overrun alerts
+- [ ] Blockchain-based traceability
 - [ ] Two-Factor Authentication (2FA)
-- [ ] Blockchain integration for immutable records
 - [ ] Mobile app support
-- [ ] ERP integration APIs
+- [ ] Power BI integration for advanced analytics
 - [ ] Multi-country compliance modules
-- [ ] Power BI dashboard embedding
 
 ---
 
