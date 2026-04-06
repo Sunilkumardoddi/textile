@@ -25,6 +25,7 @@ from routes.suppliers import router as suppliers_router
 from routes.purchase_orders import router as purchase_orders_router
 from routes.seasons import router as seasons_router
 from routes.collections import router as collections_router
+from routes.traceability import router as traceability_router
 
 # Import database utilities
 from utils.database import create_indexes, close_connection
@@ -36,6 +37,7 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 (UPLOAD_DIR / "designs").mkdir(exist_ok=True)
 (UPLOAD_DIR / "cads").mkdir(exist_ok=True)
 (UPLOAD_DIR / "documents").mkdir(exist_ok=True)
+(UPLOAD_DIR / "sustainability_docs").mkdir(exist_ok=True)
 
 
 # Lifespan context manager for startup/shutdown
@@ -97,6 +99,7 @@ api_router.include_router(suppliers_router)
 api_router.include_router(purchase_orders_router)
 api_router.include_router(seasons_router)
 api_router.include_router(collections_router)
+api_router.include_router(traceability_router)
 
 # Include the router in the main app
 app.include_router(api_router)

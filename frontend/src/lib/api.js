@@ -207,4 +207,32 @@ export const collectionsAPI = {
     getSupplierStats: (collectionId) => api.get(`/collections/${collectionId}/suppliers/stats`),
 };
 
+// Traceability API
+export const traceabilityAPI = {
+    // PO-level traceability
+    getByPO: (poId) => api.get(`/traceability/po/${poId}`),
+    createForPO: (poId) => api.post(`/traceability/po/${poId}`),
+    updateSupplyChain: (poId, stages) => api.put(`/traceability/po/${poId}/supply-chain`, stages),
+    updateSuppliers: (poId, suppliers) => api.put(`/traceability/po/${poId}/suppliers`, suppliers),
+    updateMaterials: (poId, formData) => api.put(`/traceability/po/${poId}/materials`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    // Documents
+    uploadDocument: (poId, formData) => api.post(`/traceability/po/${poId}/documents`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    getDocuments: (poId) => api.get(`/traceability/po/${poId}/documents`),
+    verifyDocument: (poId, docId, status, notes) => api.put(`/traceability/po/${poId}/documents/${docId}/verify`, null, {
+        params: { status, notes }
+    }),
+    // Season-level
+    getSeasonSummary: (seasonId) => api.get(`/traceability/season/${seasonId}`),
+    getSeasonPOs: (seasonId, params) => api.get(`/traceability/season/${seasonId}/pos`, { params }),
+    // Alerts
+    getAlerts: (params) => api.get('/traceability/alerts', { params }),
+    resolveAlert: (alertId, notes) => api.put(`/traceability/alerts/${alertId}/resolve`, null, { params: { notes } }),
+    // Stats
+    getOverview: () => api.get('/traceability/stats/overview'),
+};
+
 export default api;

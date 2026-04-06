@@ -19,6 +19,8 @@ import AuditorDashboard from '@/pages/dashboards/AuditorDashboard';
 import SeasonManagement from '@/pages/brand/SeasonManagement';
 import SeasonDetail from '@/pages/brand/SeasonDetail';
 import ManufacturerCollection from '@/pages/brand/ManufacturerCollection';
+import TraceabilityDashboard from '@/pages/brand/TraceabilityDashboard';
+import POTraceabilityDetail from '@/pages/brand/POTraceabilityDetail';
 
 import './App.css';
 
@@ -162,7 +164,12 @@ function AppRoutes() {
             } />
             <Route path="/dashboard/brand/traceability" element={
                 <ProtectedRoute allowedRoles={['admin', 'brand']}>
-                    <DashboardLayout><ComingSoon title="Traceability" /></DashboardLayout>
+                    <DashboardLayout><TraceabilityDashboard /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/brand/traceability/:poId" element={
+                <ProtectedRoute allowedRoles={['admin', 'brand']}>
+                    <DashboardLayout><POTraceabilityDetail /></DashboardLayout>
                 </ProtectedRoute>
             } />
             <Route path="/dashboard/brand/shipments" element={
