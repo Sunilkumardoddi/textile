@@ -18,6 +18,7 @@ import AuditorDashboard from '@/pages/dashboards/AuditorDashboard';
 // Brand Pages
 import SeasonManagement from '@/pages/brand/SeasonManagement';
 import SeasonDetail from '@/pages/brand/SeasonDetail';
+import ManufacturerCollection from '@/pages/brand/ManufacturerCollection';
 
 import './App.css';
 
@@ -187,6 +188,16 @@ function AppRoutes() {
             <Route path="/dashboard/brand/seasons/:seasonId" element={
                 <ProtectedRoute allowedRoles={['admin', 'brand']}>
                     <DashboardLayout><SeasonDetail /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/brand/seasons/:seasonId/collections" element={
+                <ProtectedRoute allowedRoles={['admin', 'brand']}>
+                    <DashboardLayout><ManufacturerCollection /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/brand/seasons/:seasonId/collections/:collectionId" element={
+                <ProtectedRoute allowedRoles={['admin', 'brand']}>
+                    <DashboardLayout><ManufacturerCollection /></DashboardLayout>
                 </ProtectedRoute>
             } />
             <Route path="/dashboard/brand/compliance" element={

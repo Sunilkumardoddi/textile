@@ -24,6 +24,7 @@ from routes.reports import router as reports_router
 from routes.suppliers import router as suppliers_router
 from routes.purchase_orders import router as purchase_orders_router
 from routes.seasons import router as seasons_router
+from routes.collections import router as collections_router
 
 # Import database utilities
 from utils.database import create_indexes, close_connection
@@ -95,6 +96,7 @@ api_router.include_router(reports_router)
 api_router.include_router(suppliers_router)
 api_router.include_router(purchase_orders_router)
 api_router.include_router(seasons_router)
+api_router.include_router(collections_router)
 
 # Include the router in the main app
 app.include_router(api_router)

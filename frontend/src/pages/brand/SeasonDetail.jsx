@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
     ArrowLeft, Plus, Upload, Image, Palette, Layers, CheckCircle, XCircle,
     Loader2, RefreshCw, Eye, Edit2, Filter, Grid, List, Check, X,
-    Package, TrendingUp, Clock, AlertTriangle, FileText, Download
+    Package, TrendingUp, Clock, AlertTriangle, FileText, Download, Shirt
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { seasonsAPI } from '@/lib/api';
+import { seasonsAPI, collectionsAPI } from '@/lib/api';
 import { toast } from 'sonner';
 
 const SeasonDetail = () => {
@@ -26,6 +26,7 @@ const SeasonDetail = () => {
     const [stats, setStats] = useState(null);
     const [moodBoards, setMoodBoards] = useState([]);
     const [designs, setDesigns] = useState([]);
+    const [collections, setCollections] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
     
@@ -52,16 +53,18 @@ const SeasonDetail = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const [seasonRes, statsRes, moodBoardsRes, designsRes] = await Promise.all([
+            const [seasonRes, statsRes, moodBoardsRes, designsRes, collectionsRes] = await Promise.all([
                 seasonsAPI.getById(seasonId),
                 seasonsAPI.getStats(seasonId),
                 seasonsAPI.getMoodBoards(seasonId),
-                seasonsAPI.getDesigns(seasonId, { limit: 100 })
+                seasonsAPI.getDesigns(seasonId, { limit: 100 }),
+                collectionsAPI.getAll({ season_id: seasonId })
             ]);
             setSeason(seasonRes.data);
             setStats(statsRes.data);
             setMoodBoards(moodBoardsRes.data);
             setDesigns(designsRes.data);
+            setCollections(collectionsRes.data);
         } catch (error) {
             toast.error('Failed to load season data');
         } finally {
@@ -287,6 +290,7 @@ const SeasonDetail = () => {
                 <TabsList className="bg-slate-800 border border-slate-700">
                     <TabsTrigger value="overview" className="data-[state=active]:bg-emerald-600">Overview</TabsTrigger>
                     <TabsTrigger value="mood-boards" className="data-[state=active]:bg-emerald-600">Mood Boards</TabsTrigger>
+                    <TabsTrigger value="collections" className="data-[state=active]:bg-emerald-600">Fabric Collections</TabsTrigger>
                     <TabsTrigger value="designs" className="data-[state=active]:bg-emerald-600">Designs</TabsTrigger>
                     <TabsTrigger value="suppliers" className="data-[state=active]:bg-emerald-600">Suppliers</TabsTrigger>
                 </TabsList>
@@ -405,6 +409,83 @@ const SeasonDetail = () => {
                                                 </div>
                                             )}
                                         </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
+                </TabsContent>
+
+                {/* Collections Tab */}
+                <TabsContent value="collections" className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-medium text-white">Fabric Collections</h3>
+                        <Button 
+                            className="bg-emerald-600 hover:bg-emerald-700"
+                            onClick={() => navigate(`/dashboard/brand/seasons/${seasonId}/collections`)}
+                        >
+                            <Plus className="h-4 w-4 mr-2" />
+                            New Collection
+                        </Button>
+                    </div>
+
+                    {collections.length === 0 ? (
+                        <Card className="bg-slate-800/50 border-slate-700">
+                            <CardContent className="py-12 text-center">
+                                <Shirt className="h-12 w-12 text-slate-600 mx-auto mb-4" />
+                                <h3 className="text-lg font-medium text-white mb-2">No fabric collections yet</h3>
+                                <p className="text-slate-400 mb-4">Create a collection to gather fabric swatches from manufacturers</p>
+                                <Button 
+                                    className="bg-emerald-600 hover:bg-emerald-700"
+                                    onClick={() => navigate(`/dashboard/brand/seasons/${seasonId}/collections`)}
+                                >
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Create Collection
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {collections.map((col) => (
+                                <Card 
+                                    key={col.id} 
+                                    className="bg-slate-800/50 border-slate-700 hover:border-emerald-500/50 transition-colors cursor-pointer"
+                                    onClick={() => navigate(`/dashboard/brand/seasons/${seasonId}/collections/${col.id}`)}
+                                >
+                                    <CardContent className="p-4">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <div>
+                                                <h4 className="text-white font-medium">{col.name}</h4>
+                                                <p className="text-slate-400 text-sm">{col.collection_code}</p>
+                                            </div>
+                                            <Badge variant="outline" className={
+                                                col.status === 'open' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
+                                                col.status === 'closed' ? 'bg-red-500/10 text-red-400 border-red-500/30' :
+                                                'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                                            }>
+                                                {col.status}
+                                            </Badge>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-2 text-center">
+                                            <div className="p-2 bg-slate-900/50 rounded">
+                                                <p className="text-xl font-bold text-white">{col.participating_suppliers || 0}</p>
+                                                <p className="text-xs text-slate-400">Suppliers</p>
+                                            </div>
+                                            <div className="p-2 bg-slate-900/50 rounded">
+                                                <p className="text-xl font-bold text-white">{col.total_swatches || 0}</p>
+                                                <p className="text-xs text-slate-400">Swatches</p>
+                                            </div>
+                                            <div className="p-2 bg-slate-900/50 rounded">
+                                                <p className="text-xl font-bold text-emerald-400">{col.shortlisted_swatches || 0}</p>
+                                                <p className="text-xs text-slate-400">Shortlisted</p>
+                                            </div>
+                                        </div>
+                                        {col.deadline && (
+                                            <div className="mt-3 flex items-center gap-2 text-slate-400 text-sm">
+                                                <Clock className="h-4 w-4" />
+                                                Deadline: {new Date(col.deadline).toLocaleDateString()}
+                                            </div>
+                                        )}
                                     </CardContent>
                                 </Card>
                             ))}

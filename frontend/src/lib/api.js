@@ -184,4 +184,27 @@ export const seasonsAPI = {
     getDuplicates: (seasonId) => api.get(`/seasons/${seasonId}/designs/duplicates`),
 };
 
+// Collections API (Manufacturer Collections / Swatch Library)
+export const collectionsAPI = {
+    getAll: (params) => api.get('/collections/', { params }),
+    getById: (id) => api.get(`/collections/${id}`),
+    create: (data) => api.post('/collections/', data),
+    update: (id, data) => api.put(`/collections/${id}`, data),
+    getAnalytics: (id) => api.get(`/collections/${id}/analytics`),
+    inviteSuppliers: (id, supplierIds) => api.post(`/collections/${id}/invite`, supplierIds),
+    // Swatches
+    getSwatches: (collectionId, params) => api.get(`/collections/${collectionId}/swatches`, { params }),
+    getSwatchCount: (collectionId) => api.get(`/collections/${collectionId}/swatches/count`),
+    uploadSwatch: (collectionId, formData) => api.post(`/collections/${collectionId}/swatches`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    bulkUploadSwatches: (collectionId, formData) => api.post(`/collections/${collectionId}/swatches/bulk`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    getSwatch: (swatchId) => api.get(`/collections/swatches/${swatchId}`),
+    selectSwatches: (collectionId, data) => api.post(`/collections/${collectionId}/swatches/select`, data),
+    getDuplicates: (collectionId) => api.get(`/collections/${collectionId}/swatches/duplicates`),
+    getSupplierStats: (collectionId) => api.get(`/collections/${collectionId}/suppliers/stats`),
+};
+
 export default api;
