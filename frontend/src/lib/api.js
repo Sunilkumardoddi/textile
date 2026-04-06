@@ -275,6 +275,12 @@ export const poReportsAPI = {
     getPOSummary: (poId) => api.get(`/reports/po/${poId}`),
     getPOAnalytics: (poId) => api.get(`/reports/po/${poId}/analytics`),
     getPOTimeline: (poId, params) => api.get(`/reports/po/${poId}/timeline`, { params }),
+    // Enhanced endpoints
+    getEnhancedSummary: (poId) => api.get(`/reports/po/${poId}/enhanced-summary`),
+    getSupplierPerformance: (poId) => api.get(`/reports/po/${poId}/supplier-performance`),
+    getMissingDates: (poId, params) => api.get(`/reports/po/${poId}/missing-dates`, { params }),
+    getReportDetail: (poId, reportType, reportId) => api.get(`/reports/po/${poId}/report-detail/${reportType}/${reportId}`),
+    getAlertsPanel: (poId) => api.get(`/reports/po/${poId}/alerts-panel`),
     // Approval
     approveReport: (reportType, reportId, data) => api.put(`/reports/${reportType}/${reportId}/approve`, data),
     // Alerts

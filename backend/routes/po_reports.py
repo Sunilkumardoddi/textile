@@ -1051,3 +1051,299 @@ async def get_po_reports_timeline(
     timeline.sort(key=lambda x: x.get("date", ""), reverse=True)
     
     return timeline
+
+
+
+# ==================== ENHANCED SUMMARY & STATS ====================
+
+@router.get("/po/{po_id}/enhanced-summary")
+async def get_po_enhanced_summary(
+    po_id: str,
+    current_user: dict = Depends(require_any_authenticated)
+):
+    """Get enhanced PO reports summary with status breakdown."""
+    # Get PO info
+    po = await pos_collection.find_one({"id": po_id}, {"_id": 0})
+    if not po:
+        raise HTTPException(status_code=404, detail="PO not found")
+    
+    # Count reports by status across all types
+    status_counts = {"submitted": 0, "under_review": 0, "approved": 0, "rejected": 0}
+    total_reports = 0
+    
+    for collection in [production_reports, quality_reports, inspection_reports, fabric_test_reports, trims_reports]:
+        for status in status_counts.keys():
+            count = await collection.count_documents({"po_id": po_id, "status": status})
+            status_counts[status] += count
+            total_reports += count
+    
+    # Get report type counts
+    type_counts = {
+        "production": await production_reports.count_documents({"po_id": po_id}),
+        "quality": await quality_reports.count_documents({"po_id": po_id}),
+        "inspection": await inspection_reports.count_documents({"po_id": po_id}),
+        "fabric_test": await fabric_test_reports.count_documents({"po_id": po_id}),
+        "trims": await trims_reports.count_documents({"po_id": po_id})
+    }
+    
+    # Calculate averages
+    prod_reports = await production_reports.find({"po_id": po_id}, {"_id": 0, "overall_efficiency": 1}).to_list(100)
+    avg_efficiency = sum(r.get("overall_efficiency", 0) for r in prod_reports) / len(prod_reports) if prod_reports else 0
+    
+    qual_reports = await quality_reports.find({"po_id": po_id}, {"_id": 0, "dhu_percentage": 1}).to_list(100)
+    avg_dhu = sum(r.get("dhu_percentage", 0) for r in qual_reports) / len(qual_reports) if qual_reports else 0
+    
+    # Inspection pass rate
+    insp_results = await inspection_reports.find({"po_id": po_id}, {"_id": 0, "result": 1}).to_list(100)
+    passed = sum(1 for r in insp_results if r.get("result") == "pass")
+    pass_rate = (passed / len(insp_results) * 100) if insp_results else 0
+    
+    # Get alerts
+    alerts = await report_alerts.find({"po_id": po_id, "is_resolved": False}, {"_id": 0}).to_list(50)
+    
+    # Get last report date
+    last_report = None
+    for collection in [production_reports, quality_reports, inspection_reports]:
+        report = await collection.find_one({"po_id": po_id}, {"_id": 0}, sort=[("created_at", -1)])
+        if report:
+            report_date = report.get("report_date") or report.get("inspection_date") or report.get("test_date")
+            if report_date and (not last_report or report_date > last_report):
+                last_report = report_date
+    
+    return {
+        "po_id": po_id,
+        "po_number": po.get("po_number", ""),
+        "supplier_name": po.get("supplier_name", ""),
+        "style": po.get("style", ""),
+        "total_reports": total_reports,
+        "status_breakdown": status_counts,
+        "type_breakdown": type_counts,
+        "pending_count": status_counts["submitted"] + status_counts["under_review"],
+        "avg_efficiency": round(avg_efficiency, 2),
+        "avg_dhu": round(avg_dhu, 2),
+        "inspection_pass_rate": round(pass_rate, 2),
+        "active_alerts": len(alerts),
+        "alerts": alerts,
+        "last_report_date": last_report
+    }
+
+
+@router.get("/po/{po_id}/supplier-performance")
+async def get_supplier_performance(
+    po_id: str,
+    current_user: dict = Depends(require_any_authenticated)
+):
+    """Get supplier performance metrics for a PO."""
+    # Get PO info
+    po = await pos_collection.find_one({"id": po_id}, {"_id": 0})
+    if not po:
+        raise HTTPException(status_code=404, detail="PO not found")
+    
+    supplier_id = po.get("supplier_id") or po.get("manufacturer_id")
+    
+    # Calculate submission consistency (% of expected reports submitted)
+    # Assuming daily reports expected from PO start date
+    prod_reports = await production_reports.find({"po_id": po_id}, {"_id": 0}).to_list(100)
+    qual_reports = await quality_reports.find({"po_id": po_id}, {"_id": 0}).to_list(100)
+    
+    # Get unique report dates
+    prod_dates = set(r.get("report_date") for r in prod_reports if r.get("report_date"))
+    qual_dates = set(r.get("report_date") for r in qual_reports if r.get("report_date"))
+    
+    # Calculate quality score (inverse of avg DHU, capped at 100)
+    avg_dhu = sum(r.get("dhu_percentage", 0) for r in qual_reports) / len(qual_reports) if qual_reports else 0
+    quality_score = max(0, min(100, 100 - (avg_dhu * 10)))
+    
+    # Calculate efficiency score
+    avg_efficiency = sum(r.get("overall_efficiency", 0) for r in prod_reports) / len(prod_reports) if prod_reports else 0
+    
+    # Inspection success rate
+    insp_reports = await inspection_reports.find({"po_id": po_id}, {"_id": 0}).to_list(100)
+    passed = sum(1 for r in insp_reports if r.get("result") == "pass")
+    inspection_rate = (passed / len(insp_reports) * 100) if insp_reports else 100
+    
+    # On-time submission (reports submitted within 24hrs of report_date)
+    on_time = 0
+    total = len(prod_reports) + len(qual_reports)
+    for r in prod_reports + qual_reports:
+        report_date = r.get("report_date")
+        created_at = r.get("created_at")
+        if report_date and created_at:
+            # Simple check - consider on-time if created within same day
+            on_time += 1
+    on_time_rate = (on_time / total * 100) if total > 0 else 100
+    
+    # Overall score (weighted average)
+    overall_score = (quality_score * 0.4) + (avg_efficiency * 0.3) + (inspection_rate * 0.2) + (on_time_rate * 0.1)
+    
+    return {
+        "supplier_id": supplier_id,
+        "supplier_name": po.get("supplier_name", ""),
+        "po_id": po_id,
+        "po_number": po.get("po_number", ""),
+        "metrics": {
+            "quality_score": round(quality_score, 1),
+            "avg_efficiency": round(avg_efficiency, 1),
+            "avg_dhu": round(avg_dhu, 2),
+            "inspection_pass_rate": round(inspection_rate, 1),
+            "on_time_submission_rate": round(on_time_rate, 1),
+            "overall_score": round(overall_score, 1)
+        },
+        "report_counts": {
+            "production_reports": len(prod_reports),
+            "quality_reports": len(qual_reports),
+            "inspection_reports": len(insp_reports),
+            "unique_production_dates": len(prod_dates),
+            "unique_quality_dates": len(qual_dates)
+        }
+    }
+
+
+@router.get("/po/{po_id}/missing-dates")
+async def get_missing_report_dates(
+    po_id: str,
+    from_date: Optional[str] = None,
+    to_date: Optional[str] = None,
+    current_user: dict = Depends(require_any_authenticated)
+):
+    """Get dates with missing reports for a PO."""
+    # Get PO info
+    po = await pos_collection.find_one({"id": po_id}, {"_id": 0})
+    if not po:
+        raise HTTPException(status_code=404, detail="PO not found")
+    
+    # Default date range: last 30 days
+    if not to_date:
+        to_date = date.today().isoformat()
+    if not from_date:
+        from_date = (date.today() - timedelta(days=30)).isoformat()
+    
+    # Get all report dates
+    prod_dates = set()
+    qual_dates = set()
+    
+    prod_reports = await production_reports.find({"po_id": po_id}, {"_id": 0, "report_date": 1}).to_list(100)
+    qual_reports = await quality_reports.find({"po_id": po_id}, {"_id": 0, "report_date": 1}).to_list(100)
+    
+    for r in prod_reports:
+        if r.get("report_date"):
+            prod_dates.add(r["report_date"])
+    for r in qual_reports:
+        if r.get("report_date"):
+            qual_dates.add(r["report_date"])
+    
+    # Generate all dates in range
+    start = date.fromisoformat(from_date)
+    end = date.fromisoformat(to_date)
+    all_dates = []
+    current = start
+    while current <= end:
+        date_str = current.isoformat()
+        all_dates.append({
+            "date": date_str,
+            "has_production": date_str in prod_dates,
+            "has_quality": date_str in qual_dates,
+            "is_missing": date_str not in prod_dates or date_str not in qual_dates,
+            "is_weekend": current.weekday() >= 5
+        })
+        current += timedelta(days=1)
+    
+    # Filter to only missing (non-weekend) dates
+    missing_dates = [d for d in all_dates if d["is_missing"] and not d["is_weekend"]]
+    
+    return {
+        "po_id": po_id,
+        "date_range": {"from": from_date, "to": to_date},
+        "total_days": len(all_dates),
+        "missing_count": len(missing_dates),
+        "all_dates": all_dates,
+        "missing_dates": missing_dates
+    }
+
+
+@router.get("/po/{po_id}/report-detail/{report_type}/{report_id}")
+async def get_report_detail(
+    po_id: str,
+    report_type: ReportType,
+    report_id: str,
+    current_user: dict = Depends(require_any_authenticated)
+):
+    """Get detailed report with approval history."""
+    # Select collection based on type
+    collection_map = {
+        ReportType.PRODUCTION: production_reports,
+        ReportType.QUALITY: quality_reports,
+        ReportType.INSPECTION: inspection_reports,
+        ReportType.FABRIC_TEST: fabric_test_reports,
+        ReportType.TRIMS: trims_reports
+    }
+    
+    collection = collection_map.get(report_type)
+    if collection is None:
+        raise HTTPException(status_code=400, detail="Invalid report type")
+    
+    report = await collection.find_one({"id": report_id, "po_id": po_id}, {"_id": 0})
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+    
+    # Build approval history
+    approval_history = []
+    if report.get("reviewed_at"):
+        approval_history.append({
+            "action": report.get("status"),
+            "by": report.get("reviewed_by"),
+            "at": report.get("reviewed_at"),
+            "comments": report.get("review_comments")
+        })
+    
+    # Get related traceability
+    traceability = await traceability_collection.find_one({"po_id": po_id}, {"_id": 0, "id": 1, "status": 1, "traceability_score": 1})
+    
+    return {
+        "report": report,
+        "report_type": report_type.value,
+        "approval_history": approval_history,
+        "traceability_link": {
+            "id": traceability.get("id") if traceability else None,
+            "status": traceability.get("status") if traceability else None,
+            "score": traceability.get("traceability_score") if traceability else None
+        }
+    }
+
+
+@router.get("/po/{po_id}/alerts-panel")
+async def get_alerts_panel(
+    po_id: str,
+    current_user: dict = Depends(require_any_authenticated)
+):
+    """Get categorized alerts for the alerts panel."""
+    alerts = await report_alerts.find({"po_id": po_id, "is_resolved": False}, {"_id": 0}).to_list(100)
+    
+    # Categorize by severity
+    critical = [a for a in alerts if a.get("severity") == "high"]
+    warning = [a for a in alerts if a.get("severity") == "medium"]
+    info = [a for a in alerts if a.get("severity") == "low"]
+    
+    # Categorize by type
+    by_type = {}
+    for alert in alerts:
+        alert_type = alert.get("alert_type", "other")
+        if alert_type not in by_type:
+            by_type[alert_type] = []
+        by_type[alert_type].append(alert)
+    
+    return {
+        "po_id": po_id,
+        "total_alerts": len(alerts),
+        "by_severity": {
+            "critical": critical,
+            "warning": warning,
+            "info": info
+        },
+        "by_type": by_type,
+        "counts": {
+            "critical": len(critical),
+            "warning": len(warning),
+            "info": len(info)
+        }
+    }
