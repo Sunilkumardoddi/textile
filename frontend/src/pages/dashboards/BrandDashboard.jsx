@@ -595,10 +595,26 @@ const BrandDashboard = () => {
                                                 {po.delivery_date ? new Date(po.delivery_date).toLocaleDateString() : '-'}
                                             </td>
                                             <td className="py-3 px-4">
-                                                <Button variant="ghost" size="sm" className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10">
-                                                    <Eye className="h-4 w-4 mr-1" />
-                                                    Track
-                                                </Button>
+                                                <div className="flex items-center gap-2">
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="sm" 
+                                                        className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                                                        onClick={() => navigate(`/dashboard/brand/traceability/${po.id}`)}
+                                                    >
+                                                        <Eye className="h-4 w-4 mr-1" />
+                                                        Track
+                                                    </Button>
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="sm" 
+                                                        className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10"
+                                                        onClick={() => navigate(`/dashboard/brand/po/${po.id}/reports`)}
+                                                    >
+                                                        <FileText className="h-4 w-4 mr-1" />
+                                                        Reports
+                                                    </Button>
+                                                </div>
                                             </td>
                                         </tr>
                                     );

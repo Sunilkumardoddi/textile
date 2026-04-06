@@ -235,4 +235,51 @@ export const traceabilityAPI = {
     getOverview: () => api.get('/traceability/stats/overview'),
 };
 
+// PO Reports API
+export const poReportsAPI = {
+    // File upload
+    uploadFile: (formData) => api.post('/reports/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    // Production Reports (DPR)
+    createProductionReport: (formData) => api.post('/reports/production', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    getProductionReports: (params) => api.get('/reports/production', { params }),
+    getProductionReport: (reportId) => api.get(`/reports/production/${reportId}`),
+    // Quality Reports (DQR)
+    createQualityReport: (formData) => api.post('/reports/quality', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    getQualityReports: (params) => api.get('/reports/quality', { params }),
+    getQualityReport: (reportId) => api.get(`/reports/quality/${reportId}`),
+    // Inspection Reports
+    createInspectionReport: (formData) => api.post('/reports/inspection', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    getInspectionReports: (params) => api.get('/reports/inspection', { params }),
+    getInspectionReport: (reportId) => api.get(`/reports/inspection/${reportId}`),
+    // Fabric Test Reports
+    createFabricTestReport: (formData) => api.post('/reports/fabric-tests', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    getFabricTestReports: (params) => api.get('/reports/fabric-tests', { params }),
+    getFabricTestReport: (reportId) => api.get(`/reports/fabric-tests/${reportId}`),
+    // Trims Reports
+    createTrimsReport: (formData) => api.post('/reports/trims', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    getTrimsReports: (params) => api.get('/reports/trims', { params }),
+    getTrimsReport: (reportId) => api.get(`/reports/trims/${reportId}`),
+    // PO Summary & Analytics
+    getPOSummary: (poId) => api.get(`/reports/po/${poId}`),
+    getPOAnalytics: (poId) => api.get(`/reports/po/${poId}/analytics`),
+    getPOTimeline: (poId, params) => api.get(`/reports/po/${poId}/timeline`, { params }),
+    // Approval
+    approveReport: (reportType, reportId, data) => api.put(`/reports/${reportType}/${reportId}/approve`, data),
+    // Alerts
+    getReportAlerts: (params) => api.get('/reports/alerts', { params }),
+    resolveReportAlert: (alertId, notes) => api.put(`/reports/alerts/${alertId}/resolve`, null, { params: { notes } }),
+};
+
 export default api;
