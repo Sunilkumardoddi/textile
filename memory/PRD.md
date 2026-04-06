@@ -17,9 +17,51 @@ System tracks: Fiber → Yarn → Fabric → Garment → Dispatch
 
 ---
 
-## What's Been Implemented (March 2, 2026)
+## What's Been Implemented (April 6, 2026)
 
-### ERP Phase 1: Season & Mood Board Module (NEW - March 2, 2026)
+### ERP Phase 2: Manufacturer Collection Module (NEW - April 6, 2026)
+Complete Fabric Swatch Collection system for brand design workflow:
+
+#### Backend API Endpoints
+- [x] `/api/collections/` - Full CRUD for Manufacturer Collections
+- [x] `/api/collections/{id}` - Get collection details with enriched counts
+- [x] `/api/collections/{id}/analytics` - Analytics (by status, fabric type, supplier)
+- [x] `/api/collections/{id}/invite` - Invite manufacturers to collection
+- [x] `/api/collections/{id}/swatches` - Upload/list swatches
+- [x] `/api/collections/{id}/swatches/bulk` - Bulk upload with CSV metadata
+- [x] `/api/collections/{id}/swatches/select` - Shortlist/select/reject swatches
+- [x] `/api/collections/{id}/swatches/count` - Quick counts by status
+- [x] `/api/collections/{id}/swatches/duplicates` - Duplicate detection
+- [x] `/api/collections/{id}/suppliers/stats` - Supplier performance stats
+- [x] `/api/collections/swatches/{id}` - Get swatch details (marks as viewed)
+
+#### Frontend Features
+- [x] **Season Detail - Fabric Collections Tab**
+  - Collection cards with code, status, supplier/swatch counts
+  - "New Collection" button to create collections
+  - Click card to navigate to collection detail
+- [x] **Manufacturer Collection Page** (`/dashboard/brand/seasons/:seasonId/collections/:collectionId`)
+  - Stats: Suppliers, Total Swatches, Shortlisted, Selected, Sustainable %
+  - Pinterest-style masonry grid view for swatches
+  - List view toggle option
+  - Advanced filters: Fabric type, Weave type, GSM range, Status, Tags
+  - Search swatches functionality
+  - Swatch selection with checkboxes
+  - Bulk actions: Select All, Shortlist, Select, Reject
+  - Swatch detail modal with full metadata
+  - Duplicate badge indicator
+- [x] **Swatch Card Features**
+  - Thumbnail image with hover preview
+  - Status badge (uploaded, viewed, shortlisted, selected, rejected)
+  - Fabric type and GSM badges
+  - Supplier name and swatch code
+  - Tags display
+
+#### Database Schema Additions
+- `manufacturer_collections` collection: name, season_id, deadline, max_swatches_per_supplier, guidelines, status
+- `swatches` collection: metadata (fabric_type, gsm, composition, weave_type, color, pattern), tags, certifications, status
+
+### ERP Phase 1: Season & Mood Board Module (March 2, 2026)
 Complete Season Management system for brand design workflow:
 
 #### Backend API Endpoints
@@ -243,30 +285,26 @@ GET /api/reports/analytics/overview - Dashboard analytics
 
 ## Prioritized Backlog
 
-### P0 - High Priority (In Progress - ERP Phase 2)
+### P0 - High Priority (Upcoming)
+- [ ] **Manufacturer Swatch Upload Interface** - Frontend for manufacturers to bulk upload swatches with metadata
+- [ ] **Duplicate & Similarity Detection** - Backend logic to detect similar designs across suppliers
+- [ ] **Swatch Shortlisting Flow** - Enable Brands to convert shortlisted swatches to Design Development stage
+
+### P1 - Medium Priority (ERP Phase 3)
+- [ ] **Image Storage & CDN Optimization** - AWS S3 integration for handling 100K+ swatch images efficiently
+- [ ] **Manufacturer Performance Analytics** - Rank suppliers by swatch selection ratio and quality
 - [ ] **Multi-Tier Supplier Hierarchy** - Add Fabric Supplier, Yarn Supplier roles
 - [ ] **Full Traceability System** - Fiber → Yarn → Fabric → Garment → Dispatch tracking
-- [ ] **Drill-down capability** - Click Order → View Manufacturer → Fabric → Yarn details
-- [ ] **Supplier Input Module** - Production updates, material details, batch numbers
-
-### P1 - Medium Priority (ERP Phase 3-4)
 - [ ] **Compliance & Certifications Module** - Track Sedex, BSCI, WRAP certifications
+
+### P2 - Lower Priority
 - [ ] **Inventory Management** - Raw materials, WIP, Finished goods tracking
 - [ ] **Alert System** - Delay alerts, low production alerts, compliance expiry
 - [ ] Batch creation form page
-- [ ] Material inward entry form
-- [ ] Production log entry form
-- [ ] Shipment creation form
 - [ ] QR code generation for batch/order tracking
-
-### P2 - Lower Priority
-- [ ] Batch details page with traceability visualization
-- [ ] User management page (Admin)
-- [ ] Audit workflow pages (start, add findings, approve/reject)
 - [ ] PDF report generation
 - [ ] Excel export functionality
 - [ ] Email notifications
-- [ ] Document/Certificate upload with file storage
 
 ### Future Enhancements
 - [ ] AI-based delay prediction
@@ -275,14 +313,13 @@ GET /api/reports/analytics/overview - Dashboard analytics
 - [ ] Two-Factor Authentication (2FA)
 - [ ] Mobile app support
 - [ ] Power BI integration for advanced analytics
-- [ ] Multi-country compliance modules
 
 ---
 
 ## Tech Stack
-- **Backend**: FastAPI, Python 3.x
+- **Backend**: FastAPI, Python 3.x, Pillow (image processing)
 - **Database**: MongoDB
-- **Frontend**: React 18, TailwindCSS, shadcn/ui
+- **Frontend**: React 18, TailwindCSS, shadcn/ui, Recharts
 - **Auth**: JWT (python-jose), bcrypt
 - **API Client**: Axios
 - **State Management**: React Context
@@ -293,9 +330,10 @@ GET /api/reports/analytics/overview - Dashboard analytics
 ```
 /app
 ├── backend/
-│   ├── models/         # Pydantic models
-│   ├── routes/         # API endpoints
+│   ├── models/         # Pydantic models (swatch.py, season.py, etc.)
+│   ├── routes/         # API endpoints (collections.py, seasons.py, etc.)
 │   ├── utils/          # Auth, DB, alerts, activity logger
+│   ├── uploads/        # Swatch images and thumbnails
 │   ├── tests/          # pytest tests
 │   └── server.py       # FastAPI app
 ├── frontend/
@@ -303,7 +341,7 @@ GET /api/reports/analytics/overview - Dashboard analytics
 │   │   ├── components/ # UI components, layouts
 │   │   ├── contexts/   # Auth context
 │   │   ├── lib/        # API client
-│   │   └── pages/      # Page components
+│   │   └── pages/      # Page components (brand/, dashboards/)
 │   └── public/
 └── memory/
     └── PRD.md          # This file
@@ -312,7 +350,7 @@ GET /api/reports/analytics/overview - Dashboard analytics
 ---
 
 ## Testing Status
-- Backend: 100% (14/14 tests passed for Supplier/PO module)
+- Backend: 100% (20/20 tests passed for Collections/Swatches module)
 - Frontend: 100%
-- Last tested: March 2, 2026
-- Test report: `/app/test_reports/iteration_3.json`
+- Last tested: April 6, 2026
+- Test report: `/app/test_reports/iteration_5.json`
