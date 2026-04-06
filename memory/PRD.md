@@ -19,13 +19,18 @@ System tracks: Fiber → Yarn → Fabric → Garment → Dispatch
 
 ## What's Been Implemented (April 6, 2026)
 
-### ERP Phase 4: PO Reports Management Module (NEW - April 6, 2026)
-Comprehensive reporting system for production, quality, and testing at PO level:
+### ERP Phase 4: PO Reports Management Module - ENHANCED (April 6, 2026)
+Comprehensive reporting system for production, quality, and testing at PO level with Power BI-style analytics:
 
 #### Backend API Endpoints
 - [x] `/api/reports/po/{po_id}` - Get PO reports summary (counts, averages)
 - [x] `/api/reports/po/{po_id}/analytics` - Get charts data (production trends, quality trends, defect breakdown)
 - [x] `/api/reports/po/{po_id}/timeline` - Get chronological reports list
+- [x] `/api/reports/po/{po_id}/enhanced-summary` - **NEW** Enhanced summary with status breakdown, type breakdown, alerts
+- [x] `/api/reports/po/{po_id}/supplier-performance` - **NEW** Supplier performance metrics (quality score, efficiency, on-time rate)
+- [x] `/api/reports/po/{po_id}/missing-dates` - **NEW** Find dates missing production/quality reports
+- [x] `/api/reports/po/{po_id}/report-detail/{type}/{id}` - **NEW** Detailed report view with approval history
+- [x] `/api/reports/po/{po_id}/alerts-panel` - **NEW** Categorized alerts by severity (critical/warning/info)
 - [x] `/api/reports/production` - CRUD for Daily Production Reports (DPR)
 - [x] `/api/reports/quality` - CRUD for Daily Quality Reports (DQR) with defect tracking
 - [x] `/api/reports/inspection` - CRUD for Final Inspection Reports (AQL, pass/fail)
@@ -33,35 +38,40 @@ Comprehensive reporting system for production, quality, and testing at PO level:
 - [x] `/api/reports/trims` - CRUD for Trims & Accessories Reports
 - [x] `/api/reports/{type}/{id}/approve` - Approval workflow (Brand only)
 - [x] `/api/reports/alerts` - Report alerts (high DHU, failed inspection)
+- [x] `/api/reports/alerts/{alert_id}/resolve` - **NEW** Resolve alert with notes
 - [x] `/api/reports/upload` - File upload for report attachments
 
 #### Frontend Features
-- [x] **PO Reports Dashboard** (`/dashboard/brand/po/:poId/reports`)
-  - Summary cards: Production, Quality, Inspections, Test Reports, Pending count
-  - KPI cards: Avg Efficiency %, Avg DHU %, Inspection Pass Rate %
-  - Active alerts banner
-  - **6 Tabs:**
-    1. Overview: Production Trend chart (target vs actual), Quality Trend chart (DHU%)
-    2. Production: DPR list with efficiency, line details, status badges
-    3. Quality: DQR list with DHU, defect breakdown, critical badges
-    4. Inspection: Inspection list with PASS/FAIL result, AQL levels
-    5. Tests: Fabric Test and Trims reports
-    6. Timeline: Chronological view with color-coded dots
-  - Approval workflow dialog (Approve/Reject/Under Review)
-  - "Reports" button added to Brand Dashboard PO list
+- [x] **PO Reports Dashboard** (`/dashboard/brand/po/:poId/reports`) - POWER BI STYLE
+  - Summary cards: Total Reports, Pending, Approved, Rejected, Alerts
+  - KPI cards: Avg Efficiency %, Avg DHU % (red if >5%), Inspection Pass Rate %, Supplier Score
+  - Active Alerts Panel: Categorized by severity (Critical/Warning/Info) with Resolve buttons
+  - **7 Tabs:**
+    1. Overview: Production Trend (LineChart), Quality Trend (BarChart with threshold), Inspection Results (PieChart), Top Defects list
+    2. Production: DPR list with efficiency, status badges, Review buttons
+    3. Quality: DQR list with DHU, critical defect badges, status badges
+    4. Inspection: Inspection list with PASS/FAIL/CONDITIONAL result, AQL levels, approved/rejected counts
+    5. Tests: Fabric Test and Trims reports with passed/failed counts
+    6. Timeline: **CRITICAL FEATURE** - Chronological view with color-coded dots (blue=production, purple=quality, green=inspection), date filters, type filter, Missing Report Dates alert
+    7. Supplier Performance: **NEW** Overall score, quality metrics
+  - Approval workflow dialog (Approve/Reject/Under Review with comments)
+  - Cross-navigation: "View Traceability" button links to Traceability Detail
+- [x] **Traceability Detail** - Added "View Reports" button for cross-navigation
 
 #### Database Schema Additions
-- `production_reports`: lines, target/actual, efficiency, WIP
+- `production_reports`: lines, target/actual, efficiency, WIP, cumulative stats
 - `quality_reports`: defects (major/minor/critical), DHU%, rejection rate
-- `inspection_reports`: AQL level, pass/fail result, findings
-- `fabric_test_reports`: GSM, shrinkage, color fastness tests
+- `inspection_reports`: AQL level, pass/fail result, findings, inspector info
+- `fabric_test_reports`: GSM, shrinkage, color fastness tests, lab info
 - `trims_reports`: button/zipper/label tests
-- `report_alerts`: missing report, high defect, failed inspection alerts
+- `report_alerts`: missing report, high defect, failed inspection alerts with severity levels
 
 #### Alert System
-- Automatic alerts for DHU > 5%
-- Automatic alerts for failed inspections
-- Automatic alerts for critical defects
+- Automatic alerts for DHU > 5% (severity: HIGH)
+- Automatic alerts for efficiency < 70% (severity: MEDIUM)
+- Automatic alerts for failed inspections (severity: HIGH)
+- Automatic alerts for critical defects (severity: HIGH)
+- Missing report dates detection
 
 ### ERP Phase 3: Traceability & Sustainability Module (April 6, 2026)
 Complete PO-wise and Season-wise traceability tracking system:

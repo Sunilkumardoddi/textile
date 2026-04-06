@@ -269,10 +269,20 @@ const POTraceabilityDetail = () => {
                         Supplier: {po.supplier_name} • Status: {po.status}
                     </p>
                 </div>
-                <Button variant="outline" onClick={fetchData} className="border-slate-600 text-slate-300">
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Refresh
-                </Button>
+                <div className="flex items-center gap-3">
+                    <Button 
+                        variant="outline" 
+                        onClick={() => navigate(`/dashboard/brand/po/${poId}/reports`)}
+                        className="border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+                    >
+                        <FileText className="h-4 w-4 mr-2" />
+                        View Reports
+                    </Button>
+                    <Button variant="outline" onClick={fetchData} className="border-slate-600 text-slate-300">
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Refresh
+                    </Button>
+                </div>
             </div>
 
             {/* Score Cards */}
