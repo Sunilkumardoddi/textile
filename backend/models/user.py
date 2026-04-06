@@ -10,6 +10,7 @@ class UserRole(str, Enum):
     MANUFACTURER = "manufacturer"  # Manufacturers also act as suppliers
     BRAND = "brand"
     AUDITOR = "auditor"
+    DESIGNER = "designer"  # Internal or supplier-linked designer
 
 
 class UserStatus(str, Enum):

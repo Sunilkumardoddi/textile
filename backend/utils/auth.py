@@ -93,5 +93,6 @@ require_admin = require_roles(["admin"])
 require_manufacturer = require_roles(["admin", "manufacturer"])
 require_brand = require_roles(["admin", "brand"])
 require_auditor = require_roles(["admin", "auditor"])
+require_designer = require_roles(["admin", "designer", "brand"])
 require_manufacturer_as_supplier = require_roles(["admin", "manufacturer"])  # Manufacturers act as suppliers
-require_any_authenticated = require_roles(["admin", "manufacturer", "brand", "auditor"])
+require_any_authenticated = require_roles(["admin", "manufacturer", "brand", "auditor", "designer"])

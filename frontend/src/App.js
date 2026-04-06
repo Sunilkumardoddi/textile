@@ -15,6 +15,10 @@ import ManufacturerDashboard from '@/pages/dashboards/ManufacturerDashboard';
 import BrandDashboard from '@/pages/dashboards/BrandDashboard';
 import AuditorDashboard from '@/pages/dashboards/AuditorDashboard';
 
+// Brand Pages
+import SeasonManagement from '@/pages/brand/SeasonManagement';
+import SeasonDetail from '@/pages/brand/SeasonDetail';
+
 import './App.css';
 
 // Protected Route Component
@@ -173,6 +177,21 @@ function AppRoutes() {
             <Route path="/dashboard/brand/reports" element={
                 <ProtectedRoute allowedRoles={['admin', 'brand']}>
                     <DashboardLayout><ComingSoon title="Reports" /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/brand/seasons" element={
+                <ProtectedRoute allowedRoles={['admin', 'brand']}>
+                    <DashboardLayout><SeasonManagement /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/brand/seasons/:seasonId" element={
+                <ProtectedRoute allowedRoles={['admin', 'brand']}>
+                    <DashboardLayout><SeasonDetail /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/brand/compliance" element={
+                <ProtectedRoute allowedRoles={['admin', 'brand']}>
+                    <DashboardLayout><ComingSoon title="Compliance" /></DashboardLayout>
                 </ProtectedRoute>
             } />
             

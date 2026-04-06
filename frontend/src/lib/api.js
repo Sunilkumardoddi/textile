@@ -158,4 +158,30 @@ export const purchaseOrdersAPI = {
     getHistory: (id) => api.get(`/purchase-orders/${id}/history`),
 };
 
+// Seasons API
+export const seasonsAPI = {
+    getAll: (params) => api.get('/seasons/', { params }),
+    getById: (id) => api.get(`/seasons/${id}`),
+    create: (data) => api.post('/seasons/', data),
+    update: (id, data) => api.put(`/seasons/${id}`, data),
+    getStats: (id) => api.get(`/seasons/${id}/stats`),
+    // Mood Boards
+    getMoodBoards: (seasonId) => api.get(`/seasons/${seasonId}/mood-boards`),
+    createMoodBoard: (seasonId, formData) => api.post(`/seasons/${seasonId}/mood-boards`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    getMoodBoard: (id) => api.get(`/seasons/mood-boards/${id}`),
+    addMoodBoardImages: (id, formData) => api.post(`/seasons/mood-boards/${id}/images`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    // Designs
+    getDesigns: (seasonId, params) => api.get(`/seasons/${seasonId}/designs`, { params }),
+    submitDesign: (seasonId, formData) => api.post(`/seasons/${seasonId}/designs`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    getDesign: (id) => api.get(`/seasons/designs/${id}`),
+    selectDesigns: (seasonId, data) => api.post(`/seasons/${seasonId}/designs/select`, data),
+    getDuplicates: (seasonId) => api.get(`/seasons/${seasonId}/designs/duplicates`),
+};
+
 export default api;

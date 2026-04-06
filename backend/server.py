@@ -1,5 +1,6 @@
 from fastapi import FastAPI, APIRouter, Request
 from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 import os
@@ -22,9 +23,18 @@ from routes.dashboard import router as dashboard_router
 from routes.reports import router as reports_router
 from routes.suppliers import router as suppliers_router
 from routes.purchase_orders import router as purchase_orders_router
+from routes.seasons import router as seasons_router
 
 # Import database utilities
 from utils.database import create_indexes, close_connection
+
+# Create upload directories
+UPLOAD_DIR = ROOT_DIR / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
+(UPLOAD_DIR / "mood_boards").mkdir(exist_ok=True)
+(UPLOAD_DIR / "designs").mkdir(exist_ok=True)
+(UPLOAD_DIR / "cads").mkdir(exist_ok=True)
+(UPLOAD_DIR / "documents").mkdir(exist_ok=True)
 
 
 # Lifespan context manager for startup/shutdown
@@ -84,9 +94,13 @@ api_router.include_router(dashboard_router)
 api_router.include_router(reports_router)
 api_router.include_router(suppliers_router)
 api_router.include_router(purchase_orders_router)
+api_router.include_router(seasons_router)
 
 # Include the router in the main app
 app.include_router(api_router)
+
+# Mount static files for uploads
+app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 # CORS middleware
 app.add_middleware(

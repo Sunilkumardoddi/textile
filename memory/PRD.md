@@ -4,10 +4,11 @@
 ### Original Problem Statement
 Build a Cloud-Based Textile Supply Chain ERP and Brand Dashboard Platform with end-to-end traceability. The system allows a Brand (top-level user) to monitor and control the entire supply chain, while multiple Suppliers (manufacturers, fabric mills, yarn suppliers, processors) enter real-time production and material data.
 
-The portal supports 4 roles (expandable to multi-tier suppliers):
+The portal supports 5 roles (expandable to multi-tier suppliers):
 - **Super Admin**: System management, user approvals, overall monitoring
-- **Brand**: Track supply chain, view analytics, create Purchase Orders, monitor compliance
+- **Brand**: Track supply chain, view analytics, create Purchase Orders, monitor compliance, manage seasons
 - **Manufacturer**: Create batches, manage production, shipments, receive/manage Purchase Orders
+- **Designer**: Create designs, CADs, submit to seasons
 - **Auditor**: Verify transactions, approve/reject batches
 
 Future: Fabric Supplier, Yarn Supplier roles for multi-tier supply chain
@@ -18,7 +19,37 @@ System tracks: Fiber → Yarn → Fabric → Garment → Dispatch
 
 ## What's Been Implemented (March 2, 2026)
 
-### Phase 1: Power BI-Style Brand Dashboard (NEW - March 2, 2026)
+### ERP Phase 1: Season & Mood Board Module (NEW - March 2, 2026)
+Complete Season Management system for brand design workflow:
+
+#### Backend API Endpoints
+- [x] `/api/seasons/` - Full CRUD for Season management
+- [x] `/api/seasons/{id}/stats` - Season statistics (designs by status, category, supplier)
+- [x] `/api/seasons/{id}/mood-boards` - Create/list mood boards for a season
+- [x] `/api/seasons/mood-boards/{id}` - Get mood board details
+- [x] `/api/seasons/mood-boards/{id}/images` - Add images to mood board
+- [x] `/api/seasons/{id}/designs` - Submit/list designs for a season
+- [x] `/api/seasons/designs/{id}` - Get design details
+- [x] `/api/seasons/{id}/designs/select` - Bulk select/reject designs
+- [x] `/api/seasons/{id}/designs/duplicates` - Get duplicate design alerts
+
+#### Frontend Features
+- [x] **Season Management Page** (`/dashboard/brand/seasons`)
+  - Season cards with code (FW26, SS26), status, progress
+  - Stats: Total Seasons, In Design Phase, Designs Selected, Total Submissions
+  - Create Season dialog with type, year, target styles, budget
+  - Search and filter by status
+- [x] **Season Detail Page** (`/dashboard/brand/seasons/:id`)
+  - Stats: Designs Submitted, Selected, Pending Review, Mood Boards, Selection Rate
+  - Progress bar showing progress to target styles
+  - Tabs: Overview, Mood Boards, Designs, Suppliers
+  - Overview: Designs by Category, Top Suppliers
+  - Mood Boards: Create/view mood boards with image uploads
+  - Designs: Grid/List view with bulk select/reject
+  - Suppliers: Performance metrics by supplier
+- [x] **Designer Role** - Added to user roles for design submissions
+
+### Phase 1: Power BI-Style Brand Dashboard (March 2, 2026)
 Enhanced Brand Dashboard with real-time KPIs and interactive charts:
 
 #### KPI Metrics (Power BI Style)
