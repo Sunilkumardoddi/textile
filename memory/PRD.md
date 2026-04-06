@@ -19,7 +19,53 @@ System tracks: Fiber → Yarn → Fabric → Garment → Dispatch
 
 ## What's Been Implemented (April 6, 2026)
 
-### ERP Phase 2: Manufacturer Collection Module (NEW - April 6, 2026)
+### ERP Phase 3: Traceability & Sustainability Module (NEW - April 6, 2026)
+Complete PO-wise and Season-wise traceability tracking system:
+
+#### Backend API Endpoints
+- [x] `/api/traceability/stats/overview` - Overall traceability statistics
+- [x] `/api/traceability/po/{po_id}` - Create/Get traceability record for a PO
+- [x] `/api/traceability/po/{po_id}/supply-chain` - Update supply chain stages (Fiber→Yarn→Fabric→Garment→Dispatch)
+- [x] `/api/traceability/po/{po_id}/suppliers` - Update tier-wise supplier mapping (Tier 1/2/3)
+- [x] `/api/traceability/po/{po_id}/materials` - Update material details (GSM, composition, certifications)
+- [x] `/api/traceability/po/{po_id}/documents` - Upload sustainability/compliance documents
+- [x] `/api/traceability/po/{po_id}/documents/{doc_id}/verify` - Verify/reject documents
+- [x] `/api/traceability/season/{season_id}` - Aggregated season traceability stats
+- [x] `/api/traceability/season/{season_id}/pos` - POs with traceability status for a season
+- [x] `/api/traceability/alerts` - Get active traceability alerts
+- [x] `/api/traceability/alerts/{alert_id}/resolve` - Resolve an alert
+
+#### Frontend Features
+- [x] **Traceability Dashboard** (`/dashboard/brand/traceability`)
+  - Stats cards: Avg Traceability Score, Compliance Score, Tracked POs, Active Alerts
+  - Status Distribution: Verified, Complete, Partial, Missing counts
+  - Tabs: Purchase Orders, Alerts, By Season
+  - PO list with traceability indicators (color-coded icons)
+  - Search and filter by status
+- [x] **PO Traceability Detail Page** (`/dashboard/brand/traceability/:poId`)
+  - PO header with traceability symbol indicator
+  - Score cards: Traceability %, Compliance %, Tier Suppliers, Documents
+  - Alerts banner for action items
+  - **5 Tabs**:
+    1. Supply Chain: Visual flow diagram (Fiber→Yarn→Fabric→Garment→Dispatch) with clickable stages
+    2. Supplier Mapping: Tier 1/2/3 supplier cards
+    3. Materials: Composition, GSM, certifications, sustainability tags
+    4. Documents: Upload/view sustainability reports, verify/reject
+    5. Alerts: Active alerts with severity badges
+
+#### Database Schema Additions
+- `traceability_records`: po_id, supply_chain[], tier_suppliers[], material_details, documents[], status, traceability_score, compliance_score
+- `traceability_alerts`: po_id, alert_type, severity, title, description, is_resolved
+
+#### Key Features
+- Automatic traceability score calculation based on completeness (0-100%)
+- Automatic compliance score based on document verification
+- Auto-generated alerts for missing data, expired certifications, incomplete mapping
+- Visual supply chain flow with green (complete) / gray (pending) stages
+- Document upload with expiry tracking and verification workflow
+- Color-coded status indicators: Green (Verified), Blue (Complete), Yellow (Partial), Red (Missing)
+
+### ERP Phase 2: Manufacturer Collection Module (April 6, 2026)
 Complete Fabric Swatch Collection system for brand design workflow:
 
 #### Backend API Endpoints
@@ -289,17 +335,18 @@ GET /api/reports/analytics/overview - Dashboard analytics
 - [ ] **Manufacturer Swatch Upload Interface** - Frontend for manufacturers to bulk upload swatches with metadata
 - [ ] **Duplicate & Similarity Detection** - Backend logic to detect similar designs across suppliers
 - [ ] **Swatch Shortlisting Flow** - Enable Brands to convert shortlisted swatches to Design Development stage
+- [ ] **Manufacturer Traceability Input** - Allow manufacturers to upload traceability data for their stages
 
-### P1 - Medium Priority (ERP Phase 3)
+### P1 - Medium Priority (ERP Phase 4)
 - [ ] **Image Storage & CDN Optimization** - AWS S3 integration for handling 100K+ swatch images efficiently
 - [ ] **Manufacturer Performance Analytics** - Rank suppliers by swatch selection ratio and quality
+- [x] ~~**Full Traceability System** - Fiber → Yarn → Fabric → Garment → Dispatch tracking~~ (DONE - Phase 3)
+- [x] ~~**Compliance & Certifications Module** - Track Sedex, BSCI, WRAP certifications~~ (DONE - Phase 3)
 - [ ] **Multi-Tier Supplier Hierarchy** - Add Fabric Supplier, Yarn Supplier roles
-- [ ] **Full Traceability System** - Fiber → Yarn → Fabric → Garment → Dispatch tracking
-- [ ] **Compliance & Certifications Module** - Track Sedex, BSCI, WRAP certifications
 
 ### P2 - Lower Priority
 - [ ] **Inventory Management** - Raw materials, WIP, Finished goods tracking
-- [ ] **Alert System** - Delay alerts, low production alerts, compliance expiry
+- [x] ~~**Alert System** - Delay alerts, compliance expiry~~ (DONE - Phase 3)
 - [ ] Batch creation form page
 - [ ] QR code generation for batch/order tracking
 - [ ] PDF report generation
@@ -350,7 +397,9 @@ GET /api/reports/analytics/overview - Dashboard analytics
 ---
 
 ## Testing Status
-- Backend: 100% (20/20 tests passed for Collections/Swatches module)
+- Backend: 100% (20/20 tests passed for Traceability module)
 - Frontend: 100%
 - Last tested: April 6, 2026
-- Test report: `/app/test_reports/iteration_5.json`
+- Test reports: 
+  - `/app/test_reports/iteration_5.json` (Collections module)
+  - `/app/test_reports/iteration_6.json` (Traceability module)
