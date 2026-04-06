@@ -27,6 +27,7 @@ from routes.seasons import router as seasons_router
 from routes.collections import router as collections_router
 from routes.traceability import router as traceability_router
 from routes.po_reports import router as po_reports_router
+from routes.incoming import router as incoming_router
 
 # Import database utilities
 from utils.database import create_indexes, close_connection
@@ -40,6 +41,7 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 (UPLOAD_DIR / "documents").mkdir(exist_ok=True)
 (UPLOAD_DIR / "sustainability_docs").mkdir(exist_ok=True)
 (UPLOAD_DIR / "reports").mkdir(exist_ok=True)
+(UPLOAD_DIR / "dispatch_docs").mkdir(exist_ok=True)
 
 
 # Lifespan context manager for startup/shutdown
@@ -103,6 +105,7 @@ api_router.include_router(seasons_router)
 api_router.include_router(collections_router)
 api_router.include_router(traceability_router)
 api_router.include_router(po_reports_router)
+api_router.include_router(incoming_router)
 
 # Include the router in the main app
 app.include_router(api_router)

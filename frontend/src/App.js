@@ -22,6 +22,8 @@ import ManufacturerCollection from '@/pages/brand/ManufacturerCollection';
 import TraceabilityDashboard from '@/pages/brand/TraceabilityDashboard';
 import POTraceabilityDetail from '@/pages/brand/POTraceabilityDetail';
 import POReportsDashboard from '@/pages/brand/POReportsDashboard';
+import IncomingDashboard from '@/pages/brand/IncomingDashboard';
+import POIncomingDetail from '@/pages/brand/POIncomingDetail';
 
 import './App.css';
 
@@ -180,7 +182,17 @@ function AppRoutes() {
             } />
             <Route path="/dashboard/brand/shipments" element={
                 <ProtectedRoute allowedRoles={['admin', 'brand']}>
-                    <DashboardLayout><ComingSoon title="Incoming Shipments" /></DashboardLayout>
+                    <DashboardLayout><IncomingDashboard /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/brand/incoming" element={
+                <ProtectedRoute allowedRoles={['admin', 'brand']}>
+                    <DashboardLayout><IncomingDashboard /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/brand/incoming/po/:poId" element={
+                <ProtectedRoute allowedRoles={['admin', 'brand']}>
+                    <DashboardLayout><POIncomingDetail /></DashboardLayout>
                 </ProtectedRoute>
             } />
             <Route path="/dashboard/brand/audits" element={

@@ -288,4 +288,51 @@ export const poReportsAPI = {
     resolveReportAlert: (alertId, notes) => api.put(`/reports/alerts/${alertId}/resolve`, null, { params: { notes } }),
 };
 
+// Incoming & Dispatch Management API
+export const incomingAPI = {
+    // Destinations
+    getDestinations: (params) => api.get('/incoming/destinations', { params }),
+    getDestination: (id) => api.get(`/incoming/destinations/${id}`),
+    createDestination: (data) => api.post('/incoming/destinations', data),
+    updateDestination: (id, data) => api.put(`/incoming/destinations/${id}`, data),
+    deleteDestination: (id) => api.delete(`/incoming/destinations/${id}`),
+    
+    // Invoices
+    getInvoices: (params) => api.get('/incoming/invoices', { params }),
+    getInvoice: (id) => api.get(`/incoming/invoices/${id}`),
+    createInvoice: (data) => api.post('/incoming/invoices', data),
+    uploadInvoiceDocument: (invoiceId, formData) => api.post(`/incoming/invoices/${invoiceId}/documents`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    
+    // Dispatches
+    getDispatches: (params) => api.get('/incoming/dispatches', { params }),
+    getDispatch: (id) => api.get(`/incoming/dispatches/${id}`),
+    createDispatch: (data) => api.post('/incoming/dispatches', data),
+    updateTracking: (id, params) => api.put(`/incoming/dispatches/${id}/tracking`, null, { params }),
+    receiveDispatch: (id, data) => api.put(`/incoming/dispatches/${id}/receive`, null, { params: data }),
+    uploadDispatchDocument: (dispatchId, formData) => api.post(`/incoming/dispatches/${dispatchId}/documents`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    simulateTracking: (id) => api.post(`/incoming/dispatches/${id}/simulate-tracking`),
+    
+    // PO-specific
+    getPOSummary: (poId) => api.get(`/incoming/po/${poId}/summary`),
+    getPOInvoices: (poId) => api.get(`/incoming/po/${poId}/invoices`),
+    getPODispatches: (poId) => api.get(`/incoming/po/${poId}/dispatches`),
+    
+    // Alerts
+    getAlerts: (params) => api.get('/incoming/alerts', { params }),
+    resolveAlert: (alertId, notes) => api.put(`/incoming/alerts/${alertId}/resolve`, null, { params: { notes } }),
+    
+    // Analytics
+    getDeliveryPerformance: (params) => api.get('/incoming/analytics/delivery-performance', { params }),
+    getSupplierLogistics: () => api.get('/incoming/analytics/supplier-logistics'),
+    getDistanceDeliveryAnalysis: () => api.get('/incoming/analytics/distance-delivery'),
+    
+    // Dashboard
+    getDashboardOverview: () => api.get('/incoming/dashboard/overview'),
+    getPOsWithShipments: (params) => api.get('/incoming/dashboard/pos-with-shipments', { params }),
+};
+
 export default api;
