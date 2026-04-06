@@ -19,6 +19,63 @@ System tracks: Fiber → Yarn → Fabric → Garment → Dispatch
 
 ## What's Been Implemented (April 6, 2026)
 
+### ERP Phase 5: Incoming & Dispatch Management Module (April 6, 2026)
+Comprehensive inbound logistics tracking system for all shipments from manufacturers against each PO:
+
+#### Backend API Endpoints
+- [x] `/api/incoming/destinations` - CRUD for store/warehouse destinations with GPS coordinates
+- [x] `/api/incoming/invoices` - Create/manage invoices (manufacturer); View invoices (brand)
+- [x] `/api/incoming/dispatches` - Create/manage dispatches with vehicle, driver, transporter info
+- [x] `/api/incoming/dispatches/{id}/tracking` - Update dispatch status and GPS location
+- [x] `/api/incoming/dispatches/{id}/receive` - Mark dispatch as received (brand only)
+- [x] `/api/incoming/dispatches/{id}/simulate-tracking` - Simulate GPS tracking updates (DEMO)
+- [x] `/api/incoming/dispatches/{id}/documents` - Upload dispatch documents (challan, e-way bill)
+- [x] `/api/incoming/invoices/{id}/documents` - Upload invoice documents
+- [x] `/api/incoming/po/{po_id}/summary` - Get complete PO incoming summary with invoices & dispatches
+- [x] `/api/incoming/po/{po_id}/invoices` - Get all invoices for a PO
+- [x] `/api/incoming/po/{po_id}/dispatches` - Get all dispatches for a PO
+- [x] `/api/incoming/alerts` - Get/resolve incoming alerts (delay, stuck, partial delivery)
+- [x] `/api/incoming/dashboard/overview` - Brand dashboard stats
+- [x] `/api/incoming/dashboard/pos-with-shipments` - POs with shipment summaries
+- [x] `/api/incoming/analytics/delivery-performance` - On-time %, avg delay, avg transit time
+- [x] `/api/incoming/analytics/supplier-logistics` - Supplier performance rankings
+- [x] `/api/incoming/analytics/distance-delivery` - Distance range vs delivery time analysis
+
+#### Frontend Features
+- [x] **Incoming Dashboard** (`/dashboard/brand/incoming` or `/dashboard/brand/shipments`)
+  - Summary Cards: Total Invoices, In Transit, Delivered, Pending, Delayed, Active Alerts
+  - Quantity Metrics: Dispatched, Received (green), Pending (amber) with progress bars
+  - **4 Tabs:**
+    1. Overview: Delivery Performance (PieChart), Distance vs Delivery Time (BarChart), Supplier Logistics Performance (Table)
+    2. PO Shipments: Searchable/filterable list with color indicators (green/yellow/red/blue), invoice count, quantity stats, status badges
+    3. Analytics: Detailed delivery performance breakdown, Top performing suppliers rankings
+    4. Alerts: Active alerts with severity badges and resolve functionality
+- [x] **PO Incoming Detail** (`/dashboard/brand/incoming/po/:poId`)
+  - Summary Cards: Invoices, Ordered, Dispatched, Received, In Transit, Delayed
+  - Progress bar showing % received
+  - **3 Tabs:**
+    1. Invoices: Expandable invoice cards with dispatch details, Track/Simulate/Receive buttons
+    2. Live Tracking: OpenStreetMap (Leaflet) with source (blue), current (yellow), destination (green) markers, route visualization
+    3. Documents: Uploaded dispatch documents with download
+
+#### Database Schema Additions
+- `destinations`: {id, brand_id, name, address, city, country, latitude, longitude, contact_person, contact_phone, destination_type}
+- `invoices`: {id, invoice_number, po_id, supplier_id, brand_id, destination_id, line_items, quantity_shipped/received/pending, status, delivery_status, delay_hours, distance_km, documents}
+- `dispatches`: {id, dispatch_number, invoice_id, po_id, supplier_id, destination_id, quantity_dispatched/received, status, delivery_status, vehicle_number, driver_name, current_location, tracking_history, documents}
+- `incoming_alerts`: {id, alert_type, severity, title, description, po_id, invoice_id, dispatch_id, is_resolved}
+
+#### Alert System
+- Automatic alerts for delivery delays > 24 hours (HIGH/CRITICAL severity)
+- Automatic alerts for partial deliveries
+- Manual alerts for shipment stuck, missing documents
+
+#### Map Integration
+- Leaflet/OpenStreetMap for live tracking visualization
+- Haversine formula for distance calculation
+- Simulated GPS tracking for demo purposes
+
+---
+
 ### ERP Phase 4: PO Reports Management Module - ENHANCED (April 6, 2026)
 Comprehensive reporting system for production, quality, and testing at PO level with Power BI-style analytics:
 
