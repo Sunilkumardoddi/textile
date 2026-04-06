@@ -19,7 +19,51 @@ System tracks: Fiber → Yarn → Fabric → Garment → Dispatch
 
 ## What's Been Implemented (April 6, 2026)
 
-### ERP Phase 3: Traceability & Sustainability Module (NEW - April 6, 2026)
+### ERP Phase 4: PO Reports Management Module (NEW - April 6, 2026)
+Comprehensive reporting system for production, quality, and testing at PO level:
+
+#### Backend API Endpoints
+- [x] `/api/reports/po/{po_id}` - Get PO reports summary (counts, averages)
+- [x] `/api/reports/po/{po_id}/analytics` - Get charts data (production trends, quality trends, defect breakdown)
+- [x] `/api/reports/po/{po_id}/timeline` - Get chronological reports list
+- [x] `/api/reports/production` - CRUD for Daily Production Reports (DPR)
+- [x] `/api/reports/quality` - CRUD for Daily Quality Reports (DQR) with defect tracking
+- [x] `/api/reports/inspection` - CRUD for Final Inspection Reports (AQL, pass/fail)
+- [x] `/api/reports/fabric-tests` - CRUD for Fabric Test Reports (GSM, shrinkage, color fastness)
+- [x] `/api/reports/trims` - CRUD for Trims & Accessories Reports
+- [x] `/api/reports/{type}/{id}/approve` - Approval workflow (Brand only)
+- [x] `/api/reports/alerts` - Report alerts (high DHU, failed inspection)
+- [x] `/api/reports/upload` - File upload for report attachments
+
+#### Frontend Features
+- [x] **PO Reports Dashboard** (`/dashboard/brand/po/:poId/reports`)
+  - Summary cards: Production, Quality, Inspections, Test Reports, Pending count
+  - KPI cards: Avg Efficiency %, Avg DHU %, Inspection Pass Rate %
+  - Active alerts banner
+  - **6 Tabs:**
+    1. Overview: Production Trend chart (target vs actual), Quality Trend chart (DHU%)
+    2. Production: DPR list with efficiency, line details, status badges
+    3. Quality: DQR list with DHU, defect breakdown, critical badges
+    4. Inspection: Inspection list with PASS/FAIL result, AQL levels
+    5. Tests: Fabric Test and Trims reports
+    6. Timeline: Chronological view with color-coded dots
+  - Approval workflow dialog (Approve/Reject/Under Review)
+  - "Reports" button added to Brand Dashboard PO list
+
+#### Database Schema Additions
+- `production_reports`: lines, target/actual, efficiency, WIP
+- `quality_reports`: defects (major/minor/critical), DHU%, rejection rate
+- `inspection_reports`: AQL level, pass/fail result, findings
+- `fabric_test_reports`: GSM, shrinkage, color fastness tests
+- `trims_reports`: button/zipper/label tests
+- `report_alerts`: missing report, high defect, failed inspection alerts
+
+#### Alert System
+- Automatic alerts for DHU > 5%
+- Automatic alerts for failed inspections
+- Automatic alerts for critical defects
+
+### ERP Phase 3: Traceability & Sustainability Module (April 6, 2026)
 Complete PO-wise and Season-wise traceability tracking system:
 
 #### Backend API Endpoints
@@ -397,9 +441,10 @@ GET /api/reports/analytics/overview - Dashboard analytics
 ---
 
 ## Testing Status
-- Backend: 100% (20/20 tests passed for Traceability module)
+- Backend: 100% (22/22 tests passed for PO Reports module)
 - Frontend: 100%
 - Last tested: April 6, 2026
 - Test reports: 
   - `/app/test_reports/iteration_5.json` (Collections module)
   - `/app/test_reports/iteration_6.json` (Traceability module)
+  - `/app/test_reports/iteration_7.json` (PO Reports module)
