@@ -14,13 +14,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
-import { dashboardAPI, suppliersAPI, purchaseOrdersAPI } from '@/lib/api';
+import { dashboardAPI, suppliersAPI, purchaseOrdersAPI, seasonsAPI } from '@/lib/api';
 import { toast } from 'sonner';
 import {
     LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
     XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
     Area, AreaChart
 } from 'recharts';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Power BI style colors
 const COLORS = {
@@ -109,6 +110,9 @@ const BrandDashboard = () => {
     const [stats, setStats] = useState(null);
     const [suppliers, setSuppliers] = useState([]);
     const [purchaseOrders, setPurchaseOrders] = useState([]);
+    const [seasons, setSeasons] = useState([]);
+    const [selectedSeasonId, setSelectedSeasonId] = useState('all');
+    const [filteredPOs, setFilteredPOs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showPODialog, setShowPODialog] = useState(false);
     const [selectedSupplier, setSelectedSupplier] = useState(null);
@@ -120,20 +124,24 @@ const BrandDashboard = () => {
         unit_price: '',
         delivery_date: '',
         delivery_address: '',
-        notes: ''
+        notes: '',
+        season_id: ''
     });
 
     const fetchData = async () => {
         try {
             setLoading(true);
-            const [dashboardRes, suppliersRes, posRes] = await Promise.all([
+            const [dashboardRes, suppliersRes, posRes, seasonsRes] = await Promise.all([
                 dashboardAPI.getBrand(),
                 suppliersAPI.getAll({ limit: 20 }),
-                purchaseOrdersAPI.getAll({ limit: 20 })
+                purchaseOrdersAPI.getAll({ limit: 50 }),
+                seasonsAPI.getAll({ limit: 20 })
             ]);
             setStats(dashboardRes.data);
             setSuppliers(suppliersRes.data);
             setPurchaseOrders(posRes.data);
+            setFilteredPOs(posRes.data);
+            setSeasons(seasonsRes.data);
         } catch (error) {
             toast.error('Failed to load dashboard data');
         } finally {
@@ -142,6 +150,21 @@ const BrandDashboard = () => {
     };
 
     useEffect(() => { fetchData(); }, []);
+
+    // Filter POs when season selection changes
+    useEffect(() => {
+        if (selectedSeasonId === 'all') {
+            setFilteredPOs(purchaseOrders);
+        } else {
+            setFilteredPOs(purchaseOrders.filter(po => po.season_id === selectedSeasonId));
+        }
+    }, [selectedSeasonId, purchaseOrders]);
+
+    // Get selected season info
+    const selectedSeason = seasons.find(s => s.id === selectedSeasonId);
+    const seasonDisplayName = selectedSeasonId === 'all' 
+        ? 'All Seasons' 
+        : selectedSeason?.season_code || 'Unknown Season';
 
     // Generate chart data from real data
     const generateProductionData = () => {
@@ -199,6 +222,7 @@ const BrandDashboard = () => {
         try {
             await purchaseOrdersAPI.create({
                 supplier_id: selectedSupplier.id,
+                season_id: poForm.season_id || null,
                 line_items: [{
                     product_name: poForm.product_name,
                     quantity: parseFloat(poForm.quantity),
@@ -213,7 +237,7 @@ const BrandDashboard = () => {
             toast.success('Purchase order created successfully');
             setShowPODialog(false);
             setSelectedSupplier(null);
-            setPOForm({ product_name: '', quantity: '', unit_price: '', delivery_date: '', delivery_address: '', notes: '' });
+            setPOForm({ product_name: '', quantity: '', unit_price: '', delivery_date: '', delivery_address: '', notes: '', season_id: '' });
             fetchData();
         } catch (error) {
             toast.error(error.response?.data?.detail || 'Failed to create purchase order');
@@ -533,26 +557,61 @@ const BrandDashboard = () => {
                 </Card>
             </div>
 
-            {/* Recent Orders with Drill-down capability */}
+            {/* Recent Orders with Season Filter */}
             <Card className="bg-slate-800/50 border-slate-700">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle className="text-white flex items-center gap-2">
                             <ShoppingCart className="h-5 w-5 text-purple-400" />
-                            Recent Purchase Orders
+                            {selectedSeasonId === 'all' 
+                                ? 'Recent Purchase Orders' 
+                                : `${seasonDisplayName} Season – Recent Purchase Orders`}
                         </CardTitle>
-                        <CardDescription className="text-slate-400">Click to view full traceability</CardDescription>
+                        <CardDescription className="text-slate-400">
+                            {selectedSeasonId === 'all' 
+                                ? 'Click to view full traceability' 
+                                : `Showing ${filteredPOs.length} PO${filteredPOs.length !== 1 ? 's' : ''} for ${seasonDisplayName}`}
+                        </CardDescription>
                     </div>
-                    <Button variant="outline" size="sm" className="border-slate-600 text-slate-300">
-                        View All <ArrowRight className="h-4 w-4 ml-1" />
-                    </Button>
+                    <div className="flex items-center gap-3">
+                        {/* Season Selector */}
+                        <Select value={selectedSeasonId} onValueChange={setSelectedSeasonId}>
+                            <SelectTrigger className="w-[180px] bg-slate-900 border-slate-600 text-white" data-testid="season-selector">
+                                <SelectValue placeholder="Select Season" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-slate-800 border-slate-700">
+                                <SelectItem value="all" className="text-white hover:bg-slate-700">
+                                    All Seasons
+                                </SelectItem>
+                                {seasons.map((season) => (
+                                    <SelectItem 
+                                        key={season.id} 
+                                        value={season.id}
+                                        className="text-white hover:bg-slate-700"
+                                    >
+                                        {season.season_code} - {season.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <Button variant="outline" size="sm" className="border-slate-600 text-slate-300">
+                            View All <ArrowRight className="h-4 w-4 ml-1" />
+                        </Button>
+                    </div>
                 </CardHeader>
                 <CardContent>
+                    {filteredPOs.length === 0 ? (
+                        <div className="text-center py-8 text-slate-500">
+                            <Package className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                            <p>No purchase orders {selectedSeasonId !== 'all' ? `for ${seasonDisplayName}` : 'found'}</p>
+                        </div>
+                    ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-slate-700">
                                     <th className="text-left py-3 px-4 text-sm font-medium text-slate-400">PO Number</th>
+                                    <th className="text-left py-3 px-4 text-sm font-medium text-slate-400">Season</th>
                                     <th className="text-left py-3 px-4 text-sm font-medium text-slate-400">Supplier</th>
                                     <th className="text-left py-3 px-4 text-sm font-medium text-slate-400">Status</th>
                                     <th className="text-left py-3 px-4 text-sm font-medium text-slate-400">Progress</th>
@@ -562,7 +621,7 @@ const BrandDashboard = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {purchaseOrders.slice(0, 5).map((po) => {
+                                {filteredPOs.slice(0, 5).map((po) => {
                                     const progressMap = {
                                         'awaiting_acceptance': 10,
                                         'accepted': 25,
@@ -577,6 +636,15 @@ const BrandDashboard = () => {
                                         <tr key={po.id} className="border-b border-slate-700/50 hover:bg-slate-800/50 cursor-pointer" data-testid={`po-row-${po.id}`}>
                                             <td className="py-3 px-4">
                                                 <span className="font-medium text-white">{po.po_number}</span>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                {po.season_code ? (
+                                                    <Badge variant="outline" className="border-purple-500/30 text-purple-400 bg-purple-500/10">
+                                                        {po.season_code}
+                                                    </Badge>
+                                                ) : (
+                                                    <span className="text-slate-500">-</span>
+                                                )}
                                             </td>
                                             <td className="py-3 px-4 text-slate-300">{po.supplier_name}</td>
                                             <td className="py-3 px-4">
@@ -622,6 +690,7 @@ const BrandDashboard = () => {
                             </tbody>
                         </table>
                     </div>
+                    )}
                 </CardContent>
             </Card>
 
@@ -719,6 +788,25 @@ const BrandDashboard = () => {
                                 className="bg-slate-900/50 border-slate-600 text-white"
                                 data-testid="po-delivery-date"
                             />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-slate-300">Season</Label>
+                            <Select value={poForm.season_id} onValueChange={(value) => setPOForm(prev => ({ ...prev, season_id: value }))}>
+                                <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white" data-testid="po-season-selector">
+                                    <SelectValue placeholder="Select season (optional)" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-slate-800 border-slate-700">
+                                    {seasons.map((season) => (
+                                        <SelectItem 
+                                            key={season.id} 
+                                            value={season.id}
+                                            className="text-white hover:bg-slate-700"
+                                        >
+                                            {season.season_code} - {season.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                         <div className="space-y-2">
                             <Label className="text-slate-300">Delivery Address *</Label>

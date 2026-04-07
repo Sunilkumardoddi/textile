@@ -49,6 +49,7 @@ class PurchaseOrderBase(BaseModel):
     payment_terms: Optional[str] = None
     shipping_terms: Optional[str] = None
     notes: Optional[str] = None
+    season_id: Optional[str] = None
 
 
 class PurchaseOrderCreate(PurchaseOrderBase):
@@ -63,6 +64,7 @@ class PurchaseOrder(PurchaseOrderBase):
     brand_id: str
     brand_name: str = ""
     supplier_name: str = ""
+    season_code: str = ""  # e.g., "AW27", "SS28"
     
     status: POStatus = POStatus.AWAITING_ACCEPTANCE
     
@@ -111,6 +113,8 @@ class PurchaseOrderResponse(BaseModel):
     brand_name: str
     supplier_id: str
     supplier_name: str
+    season_id: Optional[str] = None
+    season_code: str = ""
     line_items: List[POLineItem]
     delivery_date: datetime
     delivery_address: str

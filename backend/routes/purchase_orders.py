@@ -19,6 +19,7 @@ pos_collection = db.purchase_orders
 suppliers_collection = db.suppliers
 users_collection = db.users
 po_logs_collection = db.po_status_logs
+seasons_collection = db.seasons
 
 
 async def log_po_status_change(po_id: str, po_number: str, prev_status: str, new_status: str, user_id: str, user_role: str, notes: str = None):
@@ -64,6 +65,13 @@ async def create_purchase_order(
     brand = await users_collection.find_one({"id": current_user["user_id"]})
     brand_name = brand.get("company_name", brand.get("name", "Unknown")) if brand else "Unknown"
     
+    # Get season info if provided
+    season_code = ""
+    if po_data.season_id:
+        season = await seasons_collection.find_one({"id": po_data.season_id}, {"_id": 0})
+        if season:
+            season_code = season.get("season_code", "")
+    
     # Generate PO number
     po_number = f"PO-{datetime.now().strftime('%Y%m%d')}-{str(uuid.uuid4())[:6].upper()}"
     
@@ -79,6 +87,8 @@ async def create_purchase_order(
         brand_name=brand_name,
         supplier_id=supplier["id"],
         supplier_name=supplier["company_name"],
+        season_id=po_data.season_id,
+        season_code=season_code,
         line_items=po_data.line_items,
         delivery_date=po_data.delivery_date,
         delivery_address=po_data.delivery_address,
@@ -164,6 +174,7 @@ async def get_purchase_orders(
     status: Optional[POStatus] = None,
     priority: Optional[POPriority] = None,
     supplier_id: Optional[str] = None,
+    season_id: Optional[str] = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
     current_user: dict = Depends(require_any_authenticated)
@@ -189,6 +200,8 @@ async def get_purchase_orders(
         query["priority"] = priority.value
     if supplier_id and current_user["role"] in ["admin", "brand", "auditor"]:
         query["supplier_id"] = supplier_id
+    if season_id:
+        query["season_id"] = season_id
     
     pos = await pos_collection.find(query).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
     
@@ -225,6 +238,8 @@ async def get_purchase_orders(
             brand_name=po.get("brand_name", ""),
             supplier_id=po["supplier_id"],
             supplier_name=po.get("supplier_name", ""),
+            season_id=po.get("season_id"),
+            season_code=po.get("season_code", ""),
             line_items=po.get("line_items", []),
             delivery_date=delivery_date,
             delivery_address=po["delivery_address"],

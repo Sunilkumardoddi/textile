@@ -17,7 +17,30 @@ System tracks: Fiber → Yarn → Fabric → Garment → Dispatch
 
 ---
 
-## What's Been Implemented (April 6, 2026)
+## What's Been Implemented (April 7, 2026)
+
+### Brand Dashboard UI Enhancement: Season-Specific PO Section (April 7, 2026)
+Updated the "Recent Purchase Orders" section to be season-specific:
+
+#### Features
+- [x] **Dynamic Season-Based Title**: Changes based on selected season
+  - "Recent Purchase Orders" → "AW27 Season – Recent Purchase Orders"
+  - "Recent Purchase Orders" → "SS28 Season – Recent Purchase Orders"
+- [x] **Season Selector Dropdown**: Above the PO section with all available seasons
+- [x] **Season Column**: Added to PO table with colored badges (purple)
+- [x] **Filtered PO List**: Only shows POs belonging to selected season
+- [x] **Dynamic Subtitle**: "Showing X POs for [Season]" when filtered
+- [x] **Season in PO Creation**: Added season selector to Create PO dialog
+
+#### Backend Changes
+- [x] Added `season_id` and `season_code` fields to PurchaseOrder model
+- [x] Added `season_id` filter parameter to GET /api/purchase-orders/
+- [x] PO creation now stores season info (season_id, season_code)
+
+#### Database Schema Update
+- `purchase_orders`: Added `season_id` (optional), `season_code` (e.g., "AW27", "SS28")
+
+---
 
 ### ERP Phase 5: Incoming & Dispatch Management Module (April 6, 2026)
 Comprehensive inbound logistics tracking system for all shipments from manufacturers against each PO:
