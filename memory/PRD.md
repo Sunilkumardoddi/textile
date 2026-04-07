@@ -19,6 +19,48 @@ System tracks: Fiber → Yarn → Fabric → Garment → Dispatch
 
 ## What's Been Implemented (April 7, 2026)
 
+### Supply Chain Command Center (April 7, 2026)
+Power BI-style dashboard for Brands to evaluate supplier-specific, season-wise performance:
+
+#### Backend API Endpoints (/api/command-center/*)
+- [x] `/api/command-center/suppliers` - Get list of suppliers for dropdown
+- [x] `/api/command-center/supplier/{supplier_id}/overview` - Complete supplier overview (total_pos, active_pos, completed_pos, delayed_pos, total_value, po_status_breakdown)
+- [x] `/api/command-center/supplier/{supplier_id}/production` - Production metrics (overall_progress, daily_output_trend, production_by_po)
+- [x] `/api/command-center/supplier/{supplier_id}/quality` - Quality metrics (average_dhu, quality_score, defect_breakdown, dhu_trend)
+- [x] `/api/command-center/supplier/{supplier_id}/delivery` - Delivery performance (on_time_rate, average_delay_hours, delivery_trend)
+- [x] `/api/command-center/supplier/{supplier_id}/compliance` - Compliance & traceability (traceability_completion, compliance_score, risk_indicators)
+- [x] `/api/command-center/supplier/{supplier_id}/reports` - Reports summary (total_reports, by_type, pending, approved, rejected)
+- [x] `/api/command-center/supplier/{supplier_id}/alerts` - Active alerts (total_alerts, critical_alerts, alerts list)
+- [x] `/api/command-center/supplier/{supplier_id}/kpis` - Combined KPI summary for all metrics
+
+#### Frontend Features
+- [x] **Supply Chain Command Center Page** (`/dashboard/brand/command-center`)
+  - Supplier Selector dropdown with all linked suppliers
+  - Season Filter dropdown (All Seasons or specific season)
+  - **KPI Cards Row**: Total POs, Production %, Quality Score, On-Time Delivery %, Compliance %, Active Alerts
+  - Supplier Header Card: Name, country, risk badge, critical alerts badge
+  - **7 Tabs**:
+    1. Overview: PO Status Breakdown (pie chart), Production Trend (area chart), Quality Trend (DHU % bar chart), Delivery Performance grid, Recent Alerts
+    2. Production: Overall Progress, Total Target/Actual, WIP, Daily Output Trend (line chart), Production by PO list
+    3. Quality: Quality Score, Avg DHU, Total/Critical Defects, DHU Trend (line chart), Defect Breakdown, Quality by PO
+    4. Delivery: Total Deliveries, On-Time Rate, Avg Delay, Pending, Weekly Delivery Performance (bar chart)
+    5. Compliance: Traceability Score, Compliance Score, Completion Rate, Certified POs, Risk Indicators, Traceability by PO
+    6. Reports: Total/Pending/Approved/Rejected Reports, Reports by Type breakdown
+    7. Alerts: Active Alerts list with severity badges, View PO buttons
+
+#### Technical Implementation
+- Uses Recharts for all visualizations (LineChart, AreaChart, BarChart, PieChart)
+- Color-coded KPI thresholds (green/yellow/red based on performance)
+- Empty data states handled gracefully
+- Cross-module drill-down to PO Traceability pages
+
+#### Testing Status
+- Backend: 100% (11/11 tests passed)
+- Frontend: 100%
+- Test report: `/app/test_reports/iteration_10.json`
+
+---
+
 ### Brand Dashboard UI Enhancement: Season-Specific PO Section (April 7, 2026)
 Updated the "Recent Purchase Orders" section to be season-specific:
 
@@ -531,10 +573,13 @@ GET /api/reports/analytics/overview - Dashboard analytics
 ---
 
 ## Testing Status
-- Backend: 100% (22/22 tests passed for PO Reports module)
+- Backend: 100%
 - Frontend: 100%
-- Last tested: April 6, 2026
+- Last tested: April 7, 2026
 - Test reports: 
   - `/app/test_reports/iteration_5.json` (Collections module)
   - `/app/test_reports/iteration_6.json` (Traceability module)
   - `/app/test_reports/iteration_7.json` (PO Reports module)
+  - `/app/test_reports/iteration_8.json` (PO Reports Enhanced)
+  - `/app/test_reports/iteration_9.json` (Incoming & Dispatch module)
+  - `/app/test_reports/iteration_10.json` (Supply Chain Command Center)
