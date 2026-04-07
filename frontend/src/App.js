@@ -24,6 +24,7 @@ import POTraceabilityDetail from '@/pages/brand/POTraceabilityDetail';
 import POReportsDashboard from '@/pages/brand/POReportsDashboard';
 import IncomingDashboard from '@/pages/brand/IncomingDashboard';
 import POIncomingDetail from '@/pages/brand/POIncomingDetail';
+import SupplyChainCommandCenter from '@/pages/brand/SupplyChainCommandCenter';
 
 import './App.css';
 
@@ -193,6 +194,11 @@ function AppRoutes() {
             <Route path="/dashboard/brand/incoming/po/:poId" element={
                 <ProtectedRoute allowedRoles={['admin', 'brand']}>
                     <DashboardLayout><POIncomingDetail /></DashboardLayout>
+                </ProtectedRoute>
+            } />
+            <Route path="/dashboard/brand/command-center" element={
+                <ProtectedRoute allowedRoles={['admin', 'brand']}>
+                    <DashboardLayout><SupplyChainCommandCenter /></DashboardLayout>
                 </ProtectedRoute>
             } />
             <Route path="/dashboard/brand/audits" element={

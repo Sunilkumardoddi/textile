@@ -4,7 +4,7 @@ import {
     Globe, LogOut, Bell, Menu, X,
     LayoutDashboard, Users, Package, Factory, Truck, 
     ClipboardCheck, BarChart3, FileText, AlertTriangle, Settings,
-    Building2, ShoppingCart, Calendar, Layers, Palette
+    Building2, ShoppingCart, Calendar, Layers, Palette, Activity
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -49,6 +49,7 @@ const DashboardLayout = ({ children }) => {
                 { id: 'seasons', label: 'Seasons', icon: Calendar, path: '/dashboard/brand/seasons' },
                 { id: 'traceability', label: 'Traceability', icon: Layers, path: '/dashboard/brand/traceability' },
                 { id: 'shipments', label: 'Incoming', icon: Truck, path: '/dashboard/brand/shipments' },
+                { id: 'command-center', label: 'Command Center', icon: Activity, path: '/dashboard/brand/command-center' },
                 { id: 'audits', label: 'Audit Requests', icon: ClipboardCheck, path: '/dashboard/brand/audits' },
                 { id: 'reports', label: 'Reports', icon: BarChart3, path: '/dashboard/brand/reports' },
             ],

@@ -335,4 +335,20 @@ export const incomingAPI = {
     getPOsWithShipments: (params) => api.get('/incoming/dashboard/pos-with-shipments', { params }),
 };
 
+// Supply Chain Command Center API
+export const commandCenterAPI = {
+    // Get suppliers for dropdown
+    getSuppliers: () => api.get('/command-center/suppliers'),
+    
+    // Supplier-specific data (all accept optional season_id param)
+    getOverview: (supplierId, seasonId) => api.get(`/command-center/supplier/${supplierId}/overview`, { params: { season_id: seasonId } }),
+    getProduction: (supplierId, seasonId) => api.get(`/command-center/supplier/${supplierId}/production`, { params: { season_id: seasonId } }),
+    getQuality: (supplierId, seasonId) => api.get(`/command-center/supplier/${supplierId}/quality`, { params: { season_id: seasonId } }),
+    getDelivery: (supplierId, seasonId) => api.get(`/command-center/supplier/${supplierId}/delivery`, { params: { season_id: seasonId } }),
+    getCompliance: (supplierId, seasonId) => api.get(`/command-center/supplier/${supplierId}/compliance`, { params: { season_id: seasonId } }),
+    getReports: (supplierId, seasonId) => api.get(`/command-center/supplier/${supplierId}/reports`, { params: { season_id: seasonId } }),
+    getAlerts: (supplierId, seasonId) => api.get(`/command-center/supplier/${supplierId}/alerts`, { params: { season_id: seasonId } }),
+    getKPIs: (supplierId, seasonId) => api.get(`/command-center/supplier/${supplierId}/kpis`, { params: { season_id: seasonId } }),
+};
+
 export default api;
