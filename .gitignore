@@ -20,25 +20,8 @@ node_modules/
 /coverage
 
 # Next.js
-require('dotenv').config();
-const { MongoClient } = require('mongodb');
-
-const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri);
-
-async function main() {
-  try {
-    await client.connect();
-    console.log("✅ MongoDB Connected Successfully!");
-  } catch (err) {
-    console.error("❌ Connection Failed:", err);
-  } finally {
-    await client.close();
-  }
-}
-
-main();
-
+.next/
+out/
 # Production builds
 /build
 dist/
