@@ -145,12 +145,14 @@ const ManufacturerCollection = () => {
             fetchCollection();
             fetchSwatches(true);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [collectionId, fetchCollection]);
 
     useEffect(() => {
         if (!loading && collectionId) {
             fetchSwatches(true);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters]);
 
     const handleCreateCollection = async () => {
