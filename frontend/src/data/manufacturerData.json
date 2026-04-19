@@ -1,0 +1,79 @@
+{
+  "supplier": {
+    "name": "Arvind Mills Ltd",
+    "tier": "Tier 1",
+    "location": "Ahmedabad, Gujarat",
+    "activity": "Fabric Weaving & Processing"
+  },
+  "kpis": {
+    "activePOs": { "value": 12, "subtitle": "3 awaiting confirmation" },
+    "openRequirements": { "value": 8, "subtitle": "2 overdue" },
+    "higgFEMScore": { "value": 68, "target": 75, "unit": "%" },
+    "certCompliance": { "value": 81, "pending": 3, "unit": "%" }
+  },
+  "brands": [
+    { "name": "H&M Group", "poRef": "PO-2027-001", "certBadge": "GOTS", "tracePercent": 92, "status": "Active" },
+    { "name": "Zara / Inditex", "poRef": "PO-2027-003", "certBadge": "GRS", "tracePercent": 87, "status": "Active" },
+    { "name": "Gap Inc.", "poRef": "PO-2027-007", "certBadge": "OEKO-TEX", "tracePercent": 74, "status": "Pending" },
+    { "name": "PVH Corp.", "poRef": "PO-2027-011", "certBadge": "BCI", "tracePercent": 68, "status": "Active" },
+    { "name": "VF Corporation", "poRef": "PO-2027-015", "certBadge": "Higg", "tracePercent": 55, "status": "Gap" }
+  ],
+  "poDetail": {
+    "poRef": "PO-2027-001",
+    "styleCount": 24,
+    "quantity": "48,000 pcs",
+    "suppliersLinked": 3,
+    "checklist": [
+      { "item": "Fabric booking confirmed", "status": "done" },
+      { "item": "Yarn supplier mapped (Tier 3)", "status": "done" },
+      { "item": "GOTS cert uploaded", "status": "done" },
+      { "item": "Higg FEM self-assessment submitted", "status": "done" },
+      { "item": "QC pre-production inspection scheduled", "status": "pending" },
+      { "item": "Dispatch schedule confirmed", "status": "pending" }
+    ]
+  },
+  "higgFEM": [
+    { "module": "Energy", "score": 72, "target": 80, "status": "below" },
+    { "module": "Water", "score": 65, "target": 75, "status": "below" },
+    { "module": "Wastewater", "score": 78, "target": 80, "status": "close" },
+    { "module": "Air Emissions", "score": 85, "target": 85, "status": "met" },
+    { "module": "Waste", "score": 80, "target": 80, "status": "met" },
+    { "module": "Chemical / ZDHC", "score": 60, "target": 75, "status": "below" }
+  ],
+  "certificationStatus": [
+    { "name": "GOTS", "status": "Verified", "expiry": "2025-09-30", "action": "Renew" },
+    { "name": "GRS", "status": "Verified", "expiry": "2025-12-15", "action": "View" },
+    { "name": "OEKO-TEX", "status": "Verified", "expiry": "2026-03-20", "action": "View" },
+    { "name": "ZDHC MRSL", "status": "Pending", "expiry": "Under Review", "action": "Upload" },
+    { "name": "Higg FEM", "status": "Partial", "expiry": "2025-08-01", "action": "Complete" },
+    { "name": "SA8000", "status": "Gap", "expiry": "Not held", "action": "Apply" },
+    { "name": "ISO 14001", "status": "Verified", "expiry": "2026-07-10", "action": "View" }
+  ],
+  "traceabilityTiers": [
+    { "tier": "Tier 1", "name": "Arvind Mills Ltd", "location": "Ahmedabad, India", "activity": "Fabric Weaving & Processing", "progress": 100, "status": "Complete" },
+    { "tier": "Tier 2", "name": "Sutlej Textiles", "location": "Bhilwara, India", "activity": "Yarn Spinning", "progress": 78, "status": "Mapped" },
+    { "tier": "Tier 3", "name": "Shree Ram Fibres", "location": "Surat, India", "activity": "Raw Fibre Processing", "progress": 41, "status": "Partial" },
+    { "tier": "Tier 4", "name": "Multiple Farms", "location": "Gujarat / Rajasthan", "activity": "Cotton Farming", "progress": 18, "status": "Unverified" }
+  ],
+  "auditor": {
+    "name": "Rajesh Nair",
+    "firm": "Bureau Veritas India",
+    "assessmentDate": "2025-03-15",
+    "auditItems": [
+      { "item": "Worker welfare & wage compliance", "status": "Verified" },
+      { "item": "Chemical storage & ZDHC alignment", "status": "Warning" },
+      { "item": "Effluent treatment plant check", "status": "Verified" },
+      { "item": "Fire safety & emergency protocols", "status": "Verified" },
+      { "item": "Child labour & forced labour declaration", "status": "Verified" }
+    ]
+  },
+  "ess": {
+    "score": 74,
+    "max": 100,
+    "alerts": [
+      { "severity": "Critical", "message": "ZDHC chemical storage non-compliance" },
+      { "severity": "Warning", "message": "Energy usage 10% above target this quarter" },
+      { "severity": "Info", "message": "SA8000 application in progress — due Q3 2025" }
+    ]
+  }
+}

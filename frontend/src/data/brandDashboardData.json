@@ -1,0 +1,29 @@
+{
+  "kpis": {
+    "sustainabilityScore": { "value": 78, "max": 100, "trend": "+4 vs last season" },
+    "activeSuppliers": { "value": 124, "trend": "+6 new this season" },
+    "certifiedMaterials": { "value": 68, "unit": "%", "trend": "+3% vs AW2026" },
+    "openAlerts": { "total": 7, "critical": 3, "low": 4 }
+  },
+  "seasons": ["AW2027", "SS2026", "AW2026", "SS2025", "AW2025", "SS2024"],
+  "suppliers": [
+    "Arvind Mills Ltd", "Vardhman Textiles", "Raymond Ltd", "Welspun India",
+    "Trident Group", "RSWM Ltd", "Sutlej Textiles", "Nahar Spinning",
+    "Indo Count Industries", "Bombay Rayon"
+  ],
+  "sustainabilitySnapshot": [
+    { "category": "Sourcing & Norms", "value": 82, "color": "green", "status": "Good" },
+    { "category": "Certifications & Labels", "value": 75, "color": "green", "status": "Good" },
+    { "category": "Traceability", "value": 61, "color": "orange", "status": "Needs Improvement" },
+    { "category": "Cert Comparisons", "value": 70, "color": "orange", "status": "Needs Improvement" }
+  ],
+  "quickAlerts": [
+    { "id": 1, "severity": "Critical", "message": "GOTS certification expiring in 18 days — Arvind Mills", "time": "2h ago" },
+    { "id": 2, "severity": "Critical", "message": "Traceability gap detected at Tier 3 — Yarn suppliers", "time": "4h ago" },
+    { "id": 3, "severity": "Critical", "message": "ZDHC MRSL non-compliance flagged — Fabric Processor", "time": "6h ago" },
+    { "id": 4, "severity": "Warning", "message": "GRS certificate pending renewal — Vardhman Textiles", "time": "1d ago" },
+    { "id": 5, "severity": "Warning", "message": "Higg FEM score below target — Tier 2 supplier", "time": "1d ago" },
+    { "id": 6, "severity": "Info", "message": "AW2027 season supplier list finalised — 124 active", "time": "2d ago" },
+    { "id": 7, "severity": "Info", "message": "BCI Cotton allocation confirmed for SS2026 planning", "time": "3d ago" }
+  ]
+}

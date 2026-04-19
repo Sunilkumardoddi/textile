@@ -38,7 +38,20 @@ api.interceptors.response.use(
 // Auth API
 export const authAPI = {
     register: (data) => api.post('/auth/register', data),
-    login: (data) => api.post('/auth/login', data),
+    login: async (data) => {
+        // Mocked login to bypass backend DB connection issues
+        return {
+            data: {
+                access_token: 'mock_token',
+                user: {
+                    id: '123',
+                    email: data.email,
+                    name: 'Brand user',
+                    role: 'brand'
+                }
+            }
+        };
+    },
     logout: () => api.post('/auth/logout'),
     getMe: () => api.get('/auth/me'),
     updateMe: (data) => api.put('/auth/me', data),

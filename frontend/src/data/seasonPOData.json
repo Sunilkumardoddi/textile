@@ -1,0 +1,314 @@
+{
+  "seasonBenchmark": {
+    "currentSeason": "AW2027",
+    "seasons": ["AW2027", "SS2026", "AW2026", "SS2025", "AW2025", "SS2024"],
+    "rows": [
+      { "metric": "Overall Score", "aw2027": 78, "ss2026": 74, "aw2026": 70, "delta": "+4", "deltaDir": "up", "benchmark": 84 },
+      { "metric": "Sourcing & Norms", "aw2027": 82, "ss2026": 79, "aw2026": 76, "delta": "+3", "deltaDir": "up", "benchmark": 86 },
+      { "metric": "Certs + Labels", "aw2027": 75, "ss2026": 71, "aw2026": 68, "delta": "+4", "deltaDir": "up", "benchmark": 88 },
+      { "metric": "Traceability", "aw2027": 61, "ss2026": 58, "aw2026": 52, "delta": "+3", "deltaDir": "up", "benchmark": 79 },
+      { "metric": "Cert Comparisons", "aw2027": 70, "ss2026": 67, "aw2026": 63, "delta": "+3", "deltaDir": "up", "benchmark": 82 },
+      { "metric": "Active Suppliers", "aw2027": 124, "ss2026": 118, "aw2026": 109, "delta": "+6", "deltaDir": "up", "benchmark": "N/A" },
+      { "metric": "Cert Coverage %", "aw2027": "68%", "ss2026": "64%", "aw2026": "60%", "delta": "+4%", "deltaDir": "up", "benchmark": "78%" },
+      { "metric": "Open Alerts", "aw2027": 7, "ss2026": 11, "aw2026": 15, "delta": "-4", "deltaDir": "down", "benchmark": 4 }
+    ],
+    "insightNote": "AW2027 shows consistent improvement across all sustainability metrics vs prior seasons. However, Traceability (61%) and Cert Coverage (68%) remain below industry benchmark. Priority action: accelerate Tier 3 & Tier 4 mapping and close ZDHC MRSL gaps before SS2026 sourcing lock."
+  },
+  "moodBoard": {
+    "pastSeasons": ["SS2026", "AW2026", "SS2025", "AW2025", "SS2024"],
+    "supplierDevChecklist": [
+      "Supplier allocation completed",
+      "Price negotiation finalised",
+      "Fabric development samples approved",
+      "Lead time confirmed per supplier",
+      "Compliance pre-check initiated"
+    ],
+    "approvalFlow": [
+      { "step": 1, "label": "Style Selected", "color": "teal" },
+      { "step": 2, "label": "AI Adjustment", "color": "blue" },
+      { "step": 3, "label": "Brand Approval", "color": "purple" },
+      { "step": 4, "label": "Sourcing Team", "color": "amber" },
+      { "step": 5, "label": "Dispatch to Mfr", "color": "orange" },
+      { "step": 6, "label": "Decision Email", "color": "green" }
+    ]
+  },
+  "aiStyle": {
+    "selectedDesign": {
+      "styleNo": "AW27-WV-042",
+      "category": "Woven Gents",
+      "fabric": "100% Cotton Twill",
+      "construction": "2/1 Twill",
+      "colour": "Navy Blue",
+      "oldPrice": "₹ 348/mtr"
+    },
+    "colourSwatches": [
+      { "name": "Navy", "hex": "#1B2A4A" },
+      { "name": "Olive", "hex": "#6B7A3E" },
+      { "name": "Rust", "hex": "#8B3A2A" },
+      { "name": "Blush", "hex": "#D4A0A0" },
+      { "name": "Sage", "hex": "#8BA888" },
+      { "name": "Slate", "hex": "#5A6B7A" }
+    ],
+    "stripeOptions": ["Pinstripe 2mm", "Chalk Stripe 4mm", "Bold Stripe 8mm", "No Stripe"],
+    "constructionOptions": ["2/1 Twill", "3/1 Twill", "Plain Weave", "Dobby Weave"],
+    "dispatch": {
+      "styleRef": "AW27-WV-042-NVY",
+      "construction": "2/1 Twill",
+      "colour": "Navy",
+      "costingRate": "₹ 362/mtr",
+      "moq": "500 mtrs",
+      "deliveryDate": "2025-08-15",
+      "trackingNo": "TCH-SRC-20270419",
+      "status": "Dispatched to Sourcing"
+    }
+  },
+  "marketingTeams": [
+    {
+      "id": "A",
+      "title": "South Team",
+      "color": "teal",
+      "responsibilities": [
+        "Manage south region retail accounts",
+        "Season 21 style sign-off",
+        "Supplier visits & QC sampling",
+        "Order placement coordination",
+        "Feedback loop to PD team"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "North Team",
+      "color": "blue",
+      "responsibilities": [
+        "North region key account management",
+        "New season collection presentations",
+        "OTB planning & budget allocation",
+        "Markdown & clearance decisions",
+        "Brand compliance sign-off"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Purchase Form & PO Creation",
+      "color": "purple",
+      "responsibilities": [
+        "Raise purchase forms post style approval",
+        "Auto-generate PO drafts from mood board",
+        "PO review & brand manager approval",
+        "Send confirmed POs to manufacturers",
+        "Track PO amendments & revisions"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "PD Team",
+      "color": "amber",
+      "responsibilities": [
+        "Style development & sampling",
+        "Construction & fabric specifications",
+        "AI Style Engine adjustments",
+        "Tech pack preparation",
+        "Lab dip & strike-off approvals"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Quality Team",
+      "color": "orange",
+      "responsibilities": [
+        "Pre-production inspection scheduling",
+        "In-line & final QC audits",
+        "AQL sampling & grading",
+        "Non-conformance reports",
+        "Certification document verification"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Production Team Indicators",
+      "color": "red",
+      "responsibilities": [
+        "Capacity planning per supplier",
+        "Production milestone tracking",
+        "Delay escalation & re-scheduling",
+        "Shipment readiness confirmation",
+        "WH arrival coordination"
+      ]
+    }
+  ],
+  "sourcing": {
+    "costComponents": [
+      { "component": "Fabric", "rate": "₹ 230/mtr", "quantity": "2.2 mtr/pc", "total": "₹ 506" },
+      { "component": "Processing", "rate": "₹ 45/pc", "quantity": "1", "total": "₹ 45" },
+      { "component": "Dyeing", "rate": "₹ 38/mtr", "quantity": "2.2 mtr/pc", "total": "₹ 84" },
+      { "component": "Finishing", "rate": "₹ 22/pc", "quantity": "1", "total": "₹ 22" },
+      { "component": "Wastage (8%)", "rate": "—", "quantity": "—", "total": "₹ 52" },
+      { "component": "Overhead", "rate": "12%", "quantity": "—", "total": "₹ 85" }
+    ],
+    "totalCost": "₹ 794/pc",
+    "targetSelling": "₹ 1,250/pc",
+    "marginPercent": "36.5%",
+    "constructionDetails": [
+      { "spec": "Weave", "value": "2/1 Twill" },
+      { "spec": "Thread Count", "value": "60x60" },
+      { "spec": "EPI", "value": "60 ends/inch" },
+      { "spec": "PPI", "value": "58 picks/inch" },
+      { "spec": "GSM", "value": "195 GSM" },
+      { "spec": "Width", "value": "58 inches" },
+      { "spec": "Shrinkage", "value": "≤ 3%" },
+      { "spec": "Colour Fastness", "value": "Grade 4+" },
+      { "spec": "MOQ", "value": "500 mtrs" },
+      { "spec": "Lead Time", "value": "45 days" },
+      { "spec": "Mill", "value": "Arvind Mills Ltd" }
+    ],
+    "deliveryTracker": [
+      { "stage": "PO Raised", "date": "2025-04-01", "status": "Done" },
+      { "stage": "Fabric Booking", "date": "2025-04-08", "status": "Done" },
+      { "stage": "Yarn to Mill", "date": "2025-04-15", "status": "Done" },
+      { "stage": "Weaving", "date": "2025-04-28", "status": "In Progress" },
+      { "stage": "Dyeing", "date": "2025-05-10", "status": "Pending" },
+      { "stage": "QC Inspection", "date": "2025-05-18", "status": "Pending" },
+      { "stage": "Dispatch", "date": "2025-05-25", "status": "Pending" },
+      { "stage": "WH Arrival", "date": "2025-05-30", "status": "Pending" }
+    ]
+  },
+  "moodBoardPunching": {
+    "seasons": ["AW2027", "SS2026", "AW2026"],
+    "categories": ["Woven Gents", "Woven Ladies", "Knit Ladies", "Knit Youth", "Woven Youth", "Accessories"],
+    "approvedStyles": [
+      { "styleNo": "AW27-WV-042", "name": "Classic Navy Twill", "qty": 2400, "fabric": "2.2 mtr/pc", "status": "Punch" },
+      { "styleNo": "AW27-WV-043", "name": "Olive Chalk Stripe", "qty": 1800, "fabric": "2.1 mtr/pc", "status": "Punching" },
+      { "styleNo": "AW27-KN-018", "name": "Rust Rib Knit Top", "qty": 3200, "fabric": "0.8 kg/pc", "status": "Pending" },
+      { "styleNo": "AW27-WV-044", "name": "Slate Plain Weave", "qty": 1600, "fabric": "2.0 mtr/pc", "status": "Punch" },
+      { "styleNo": "AW27-KN-019", "name": "Sage Dobby Knit", "qty": 2800, "fabric": "0.75 kg/pc", "status": "Punching" },
+      { "styleNo": "AW27-ACC-007", "name": "Canvas Tote Bag", "qty": 4000, "fabric": "0.5 mtr/pc", "status": "Pending" }
+    ],
+    "seasonPlan": [
+      { "category": "Woven Gents", "punched": 18, "total": 24, "value": "₹ 42.6L" },
+      { "category": "Woven Ladies", "punched": 14, "total": 20, "value": "₹ 31.2L" },
+      { "category": "Knit Ladies", "punched": 22, "total": 28, "value": "₹ 28.8L" },
+      { "category": "Knit Youth", "punched": 10, "total": 16, "value": "₹ 14.4L" },
+      { "category": "Woven Youth", "punched": 8, "total": 14, "value": "₹ 12.0L" },
+      { "category": "Accessories", "punched": 5, "total": 10, "value": "₹ 6.8L" }
+    ]
+  },
+  "poAutoGen": {
+    "infoBanner": "77 styles punched → System auto-generates PO drafts per supplier → Brand Manager reviews → Approve & Raise Final PO",
+    "poList": [
+      { "poNo": "PO-001", "supplier": "Arvind Mills Ltd", "styles": 12, "value": "₹ 18.4L", "status": "Approved" },
+      { "poNo": "PO-002", "supplier": "Vardhman Textiles", "styles": 8, "value": "₹ 12.2L", "status": "Review" },
+      { "poNo": "PO-003", "supplier": "Raymond Ltd", "styles": 6, "value": "₹ 9.6L", "status": "Approved" },
+      { "poNo": "PO-004", "supplier": "Welspun India", "styles": 10, "value": "₹ 15.8L", "status": "Draft" },
+      { "poNo": "PO-005", "supplier": "Trident Group", "styles": 7, "value": "₹ 11.0L", "status": "Review" },
+      { "poNo": "PO-006", "supplier": "RSWM Ltd", "styles": 5, "value": "₹ 7.4L", "status": "Approved" },
+      { "poNo": "PO-007", "supplier": "Sutlej Textiles", "styles": 9, "value": "₹ 13.6L", "status": "Draft" },
+      { "poNo": "PO-008", "supplier": "Nahar Spinning", "styles": 4, "value": "₹ 6.2L", "status": "Pending" },
+      { "poNo": "PO-009", "supplier": "Indo Count Industries", "styles": 6, "value": "₹ 9.0L", "status": "Approved" }
+    ],
+    "selectedPO": {
+      "poNo": "PO-001",
+      "season": "AW2027",
+      "date": "2025-04-19",
+      "dueDate": "2025-08-15",
+      "styles": [
+        { "styleNo": "AW27-WV-042", "name": "Classic Navy Twill", "qty": 2400, "rate": "₹ 794", "fabric": "2.2 mtr", "value": "₹ 19.1L" },
+        { "styleNo": "AW27-WV-043", "name": "Olive Chalk Stripe", "qty": 1800, "rate": "₹ 810", "fabric": "2.1 mtr", "value": "₹ 14.6L" },
+        { "styleNo": "AW27-WV-044", "name": "Slate Plain Weave", "qty": 1600, "rate": "₹ 778", "fabric": "2.0 mtr", "value": "₹ 12.4L" }
+      ],
+      "totalValue": "₹ 46.1L",
+      "paymentTerms": "30% advance, 70% on dispatch",
+      "balancePercent": "70%",
+      "delivery": "2025-08-15",
+      "penalty": "1% per week delay beyond delivery date"
+    }
+  },
+  "poTracker": {
+    "poRef": "PO-001",
+    "supplier": "Arvind Mills Ltd",
+    "kpis": {
+      "poValue": "₹ 46.1L",
+      "stylesInPO": 12,
+      "supplyChainComplete": 42,
+      "openAlerts": 3,
+      "deliveryDeadline": "2025-08-15"
+    },
+    "stages": [
+      { "no": 1, "stage": "PO Raised", "tier": "Brand", "planned": "2025-04-01", "completed": "2025-04-01", "status": "Done" },
+      { "no": 2, "stage": "Yarn Booking", "tier": "Tier 3", "planned": "2025-04-08", "completed": "2025-04-09", "status": "Done" },
+      { "no": 3, "stage": "Fabric Weaving", "tier": "Tier 2", "planned": "2025-04-20", "completed": "—", "status": "In Progress" },
+      { "no": 4, "stage": "Dyeing & Processing", "tier": "Tier 2", "planned": "2025-05-05", "completed": "—", "status": "Pending" },
+      { "no": 5, "stage": "Fabric Delivery to Mfr", "tier": "Tier 1", "planned": "2025-05-12", "completed": "—", "status": "Pending" },
+      { "no": 6, "stage": "Cutting & Stitching", "tier": "Tier 1", "planned": "2025-05-25", "completed": "—", "status": "Pending" },
+      { "no": 7, "stage": "In-line QC", "tier": "Tier 1", "planned": "2025-06-05", "completed": "—", "status": "Pending" },
+      { "no": 8, "stage": "Final QC & Packing", "tier": "Tier 1", "planned": "2025-06-15", "completed": "—", "status": "Pending" },
+      { "no": 9, "stage": "Dispatch & Logistics", "tier": "Logistics", "planned": "2025-06-20", "completed": "—", "status": "Pending" },
+      { "no": 10, "stage": "Brand WH Arrival", "tier": "Brand", "planned": "2025-06-28", "completed": "—", "status": "Pending" }
+    ]
+  },
+  "poTierMap": {
+    "tierMap": [
+      { "tier": "Brand", "name": "TCH Brand HQ", "location": "Mumbai, India", "activity": "PO Management & Compliance", "progress": 100, "status": "Active" },
+      { "tier": "Tier 1", "name": "Arvind Mills Ltd", "location": "Ahmedabad, India", "activity": "Garment Manufacturing", "progress": 78, "status": "In Production" },
+      { "tier": "Tier 2", "name": "Sutlej Textiles", "location": "Bhilwara, India", "activity": "Fabric Weaving & Dyeing", "progress": 42, "status": "In Progress" },
+      { "tier": "Tier 3", "name": "Shree Ram Fibres", "location": "Surat, India", "activity": "Yarn Spinning", "progress": 18, "status": "Partial" },
+      { "tier": "Tier 4", "name": "Multiple Farms", "location": "Gujarat / Rajasthan", "activity": "Cotton Farming", "progress": 10, "status": "Unverified" }
+    ],
+    "allPOs": [
+      { "poNo": "PO-001", "supplier": "Arvind Mills Ltd", "progress": 78, "status": "on-track" },
+      { "poNo": "PO-002", "supplier": "Vardhman Textiles", "progress": 55, "status": "on-track" },
+      { "poNo": "PO-003", "supplier": "Raymond Ltd", "progress": 91, "status": "on-track" },
+      { "poNo": "PO-004", "supplier": "Welspun India", "progress": 35, "status": "warning" },
+      { "poNo": "PO-005", "supplier": "Trident Group", "progress": 62, "status": "on-track" },
+      { "poNo": "PO-006", "supplier": "RSWM Ltd", "progress": 88, "status": "on-track" },
+      { "poNo": "PO-007", "supplier": "Sutlej Textiles", "progress": 22, "status": "critical" },
+      { "poNo": "PO-008", "supplier": "Nahar Spinning", "progress": 44, "status": "warning" },
+      { "poNo": "PO-009", "supplier": "Indo Count Industries", "progress": 70, "status": "on-track" }
+    ],
+    "alerts": [
+      { "severity": "Critical", "poNo": "PO-007", "message": "Yarn spinner delayed — 14-day risk to delivery" },
+      { "severity": "Critical", "poNo": "PO-004", "message": "Fabric delivery not confirmed — Welspun" },
+      { "severity": "Warning", "poNo": "PO-008", "message": "QC inspection not yet scheduled" },
+      { "severity": "Warning", "poNo": "PO-002", "message": "GRS certificate renewal overdue" },
+      { "severity": "Info", "poNo": "PO-003", "message": "Raymond PO 91% complete — dispatch imminent" }
+    ],
+    "footerHealth": {
+      "overallComplete": 60,
+      "delivery": "2025-08-15",
+      "criticalAlerts": 2
+    }
+  },
+  "supplierTraceView": {
+    "suppliers": [
+      { "name": "Arvind Mills Ltd", "location": "Ahmedabad", "tier": "Tier 1", "status": "Certified" },
+      { "name": "Vardhman Textiles", "location": "Ludhiana", "tier": "Tier 1", "status": "Certified" },
+      { "name": "Raymond Ltd", "location": "Thane", "tier": "Tier 1", "status": "Certified" },
+      { "name": "Welspun India", "location": "Anjar", "tier": "Tier 1", "status": "Pending" },
+      { "name": "Sutlej Textiles", "location": "Bhilwara", "tier": "Tier 2", "status": "Certified" },
+      { "name": "Shree Ram Fibres", "location": "Surat", "tier": "Tier 3", "status": "Pending" },
+      { "name": "RSWM Ltd", "location": "Bhilwara", "tier": "Tier 2", "status": "Certified" },
+      { "name": "Nahar Spinning", "location": "Ludhiana", "tier": "Tier 3", "status": "Gap" },
+      { "name": "Indo Count", "location": "Kolhapur", "tier": "Tier 1", "status": "Certified" },
+      { "name": "Bombay Rayon", "location": "Mumbai", "tier": "Tier 2", "status": "Pending" }
+    ],
+    "systemSubmit": {
+      "poRef": "PO-2027-001",
+      "styleCount": 24,
+      "suppliersLinked": 3,
+      "certsUploaded": "19/28",
+      "readyStatus": "Partially Ready",
+      "portalAccess": [
+        "Role-based login (Brand / Auditor / Admin / Manufacturer)",
+        "View-only auditor access for compliance review",
+        "Mobile responsive design",
+        "PDF & Excel export available",
+        "API / ERP integration ready"
+      ]
+    },
+    "traceability": [
+      { "tier": "Tier 1", "label": "Manufacturers", "value": 100 },
+      { "tier": "Tier 2", "label": "Fabric Mills", "value": 78 },
+      { "tier": "Tier 3", "label": "Yarn Spinners", "value": 41 },
+      { "tier": "Tier 4", "label": "Raw Material", "value": 18 }
+    ]
+  }
+}

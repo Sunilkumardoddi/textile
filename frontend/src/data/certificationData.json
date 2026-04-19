@@ -1,0 +1,83 @@
+{
+  "summary": {
+    "totalRequired": 28,
+    "obtained": 19,
+    "pendingExpiring": 6,
+    "missingGap": 3,
+    "expiringWithin90Days": 4
+  },
+  "certifications": [
+    {
+      "name": "GOTS",
+      "requiredFor": "Organic Cotton Styles",
+      "suppliersCovered": "19/24",
+      "validUntil": "2025-09-30",
+      "status": "Partial",
+      "daysToExpiry": 164
+    },
+    {
+      "name": "GRS",
+      "requiredFor": "Recycled Fibre Products",
+      "suppliersCovered": "14/18",
+      "validUntil": "2025-12-15",
+      "status": "Partial",
+      "daysToExpiry": 240
+    },
+    {
+      "name": "OEKO-TEX 100",
+      "requiredFor": "All Dyed Fabrics",
+      "suppliersCovered": "22/22",
+      "validUntil": "2026-03-20",
+      "status": "Verified",
+      "daysToExpiry": 335
+    },
+    {
+      "name": "BCI Cotton",
+      "requiredFor": "Cotton Sourcing",
+      "suppliersCovered": "All Cotton Suppliers",
+      "validUntil": "2025-06-30",
+      "status": "Good",
+      "daysToExpiry": 72
+    },
+    {
+      "name": "ZDHC MRSL",
+      "requiredFor": "Chemical Management",
+      "suppliersCovered": "8/28",
+      "validUntil": "N/A",
+      "status": "Gap",
+      "daysToExpiry": null
+    },
+    {
+      "name": "Higg FEM",
+      "requiredFor": "Tier 1 Factories",
+      "suppliersCovered": "11/14",
+      "validUntil": "2025-08-01",
+      "status": "Partial",
+      "daysToExpiry": 104
+    },
+    {
+      "name": "Higg FSLM",
+      "requiredFor": "Social Compliance",
+      "suppliersCovered": "9/14",
+      "validUntil": "2025-07-15",
+      "status": "Partial",
+      "daysToExpiry": 87
+    },
+    {
+      "name": "REACH",
+      "requiredFor": "EU Market Compliance",
+      "suppliersCovered": "All EU Exporters",
+      "validUntil": "2026-01-10",
+      "status": "Verified",
+      "daysToExpiry": 266
+    },
+    {
+      "name": "FSC",
+      "requiredFor": "Paper & Packaging",
+      "suppliersCovered": "0/3",
+      "validUntil": "N/A",
+      "status": "Gap",
+      "daysToExpiry": null
+    }
+  ]
+}
