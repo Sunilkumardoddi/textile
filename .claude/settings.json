@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(npm run *)",
-      "Bash(git remote *)"
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://github.com/Sunilkumardoddi/textile)",
+      "Bash(git credential-manager *)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }
