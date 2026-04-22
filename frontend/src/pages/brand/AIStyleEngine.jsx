@@ -1,24 +1,37 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Palette, Shirt, CheckCircle, XCircle, ArrowLeft, Send, Zap } from 'lucide-react';
+import { Shirt, CheckCircle, XCircle, ArrowLeft, Send, Zap, RotateCcw } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import data from '@/data/seasonPOData.json';
 
 const { aiStyle } = data;
 
+// Construction → price adjustment map
+const CONSTRUCTION_PRICE = {
+    '2/1 Twill':   '₹ 362/mtr',
+    '3/1 Twill':   '₹ 378/mtr',
+    'Plain Weave': '₹ 340/mtr',
+    'Dobby Weave': '₹ 410/mtr',
+};
+
 const AIStyleEngine = () => {
     const navigate = useNavigate();
-    const [selectedColor, setSelectedColor] = useState('Navy');
-    const [selectedStripe, setSelectedStripe] = useState('No Stripe');
+    const [selectedColor, setSelectedColor]               = useState('Navy');
+    const [selectedStripe, setSelectedStripe]             = useState('No Stripe');
     const [selectedConstruction, setSelectedConstruction] = useState('2/1 Twill');
-    const [approved, setApproved] = useState(null);
+    const [approved, setApproved]                         = useState(null); // null | true | false
+    const [dispatched, setDispatched]                     = useState(false);
 
-    const dispatchData = {
-        ...aiStyle.dispatch,
-        colour: selectedColor,
-        construction: selectedConstruction,
-    };
+    const selectedSwatch = aiStyle.colourSwatches.find(s => s.name === selectedColor);
+    const costingRate    = CONSTRUCTION_PRICE[selectedConstruction] || '₹ 362/mtr';
+    const stripeLabel    = selectedStripe === 'No Stripe' ? '' : ` + ${selectedStripe}`;
+    const styleRef       = `AW27-WV-042-${selectedColor.slice(0, 3).toUpperCase()}`;
+
+    const handleApprove = () => { setApproved(true);  setDispatched(false); };
+    const handleReject  = () => { setApproved(false); setDispatched(false); };
+    const handleReset   = () => { setApproved(null);  setDispatched(false); };
+    const handleDispatch = () => setDispatched(true);
 
     return (
         <div className="space-y-6 pb-8" data-testid="ai-style-engine">
@@ -35,7 +48,7 @@ const AIStyleEngine = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* LEFT — Selected Design */}
+                {/* LEFT — Selected Design (live-updates with selections) */}
                 <Card className="bg-slate-800/50 border-slate-700">
                     <CardHeader>
                         <CardTitle className="text-white flex items-center gap-2">
@@ -44,25 +57,33 @@ const AIStyleEngine = () => {
                     </CardHeader>
                     <CardContent className="space-y-3">
                         {[
-                            { label: 'Style No.', value: aiStyle.selectedDesign.styleNo },
-                            { label: 'Category', value: aiStyle.selectedDesign.category },
-                            { label: 'Fabric', value: aiStyle.selectedDesign.fabric },
-                            { label: 'Construction', value: aiStyle.selectedDesign.construction },
-                            { label: 'Colour', value: aiStyle.selectedDesign.colour },
-                            { label: 'Old Price', value: aiStyle.selectedDesign.oldPrice },
+                            { label: 'Style No.',     value: aiStyle.selectedDesign.styleNo },
+                            { label: 'Category',      value: aiStyle.selectedDesign.category },
+                            { label: 'Fabric',        value: aiStyle.selectedDesign.fabric },
+                            { label: 'Construction',  value: selectedConstruction },
+                            { label: 'Pattern',       value: selectedStripe },
+                            { label: 'Colour',        value: selectedColor },
+                            { label: 'Base Price',    value: '₹ 348/mtr' },
+                            { label: 'Adj. Price',    value: costingRate },
                         ].map(({ label, value }) => (
                             <div key={label} className="flex justify-between py-1.5 border-b border-slate-700/50">
                                 <span className="text-slate-400 text-sm">{label}</span>
-                                <span className="text-white text-sm font-medium">{value}</span>
+                                <span className={`text-sm font-medium ${
+                                    label === 'Adj. Price' ? 'text-teal-300' :
+                                    label === 'Colour' ? 'text-white' : 'text-white'
+                                }`}>{value}</span>
                             </div>
                         ))}
 
-                        {/* Placeholder image area */}
-                        <div className="mt-4 h-36 rounded-xl bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-600 flex items-center justify-center">
-                            <div className="text-center">
-                                <Shirt className="h-10 w-10 text-slate-500 mx-auto mb-2" />
-                                <p className="text-slate-500 text-xs">Style Preview</p>
-                                <p className="text-slate-600 text-xs">{aiStyle.selectedDesign.styleNo}</p>
+                        {/* Live colour preview swatch */}
+                        <div className="mt-4 h-28 rounded-xl border border-slate-600 flex items-center justify-center gap-4 transition-all"
+                            style={{ backgroundColor: selectedSwatch ? selectedSwatch.hex + '33' : '#1e293b' }}>
+                            <div className="w-14 h-14 rounded-full border-4 border-white/20 shadow-lg transition-all"
+                                style={{ backgroundColor: selectedSwatch?.hex || '#1B2A4A' }} />
+                            <div className="text-left">
+                                <p className="text-white font-medium text-sm">{selectedColor}</p>
+                                <p className="text-slate-400 text-xs">{selectedConstruction}{stripeLabel}</p>
+                                <p className="text-teal-300 text-xs mt-1">{costingRate}</p>
                             </div>
                         </div>
                     </CardContent>
@@ -83,8 +104,8 @@ const AIStyleEngine = () => {
                                 {aiStyle.colourSwatches.map(swatch => (
                                     <button
                                         key={swatch.name}
-                                        onClick={() => setSelectedColor(swatch.name)}
-                                        className={`flex flex-col items-center gap-1 group`}
+                                        onClick={() => { setSelectedColor(swatch.name); setApproved(null); setDispatched(false); }}
+                                        className="flex flex-col items-center gap-1 group"
                                     >
                                         <div
                                             className={`w-10 h-10 rounded-full shadow-lg border-4 transition-all ${selectedColor === swatch.name ? 'border-white scale-110' : 'border-transparent group-hover:border-slate-400'}`}
@@ -102,11 +123,11 @@ const AIStyleEngine = () => {
                             <div className="grid grid-cols-2 gap-2">
                                 {aiStyle.stripeOptions.map(opt => (
                                     <button key={opt}
-                                        onClick={() => setSelectedStripe(opt)}
+                                        onClick={() => { setSelectedStripe(opt); setApproved(null); setDispatched(false); }}
                                         className={`py-2 px-3 rounded-lg text-xs font-medium border transition-all ${
                                             selectedStripe === opt
-                                                ? 'bg-teal-600/30 border-teal-500 text-teal-300'
-                                                : 'bg-slate-900/50 border-slate-700 text-slate-400 hover:border-slate-500'
+                                                ? 'bg-teal-600/20 border-teal-500/50 text-teal-300'
+                                                : 'bg-slate-900/50 border-slate-700 text-slate-400 hover:border-slate-500 hover:text-white'
                                         }`}>
                                         {opt}
                                     </button>
@@ -120,11 +141,11 @@ const AIStyleEngine = () => {
                             <div className="grid grid-cols-2 gap-2">
                                 {aiStyle.constructionOptions.map(opt => (
                                     <button key={opt}
-                                        onClick={() => setSelectedConstruction(opt)}
+                                        onClick={() => { setSelectedConstruction(opt); setApproved(null); setDispatched(false); }}
                                         className={`py-2 px-3 rounded-lg text-xs font-medium border transition-all ${
                                             selectedConstruction === opt
-                                                ? 'bg-blue-600/30 border-blue-500 text-blue-300'
-                                                : 'bg-slate-900/50 border-slate-700 text-slate-400 hover:border-slate-500'
+                                                ? 'bg-teal-600/20 border-teal-500/50 text-teal-300'
+                                                : 'bg-slate-900/50 border-slate-700 text-slate-400 hover:border-slate-500 hover:text-white'
                                         }`}>
                                         {opt}
                                     </button>
@@ -133,29 +154,43 @@ const AIStyleEngine = () => {
                         </div>
 
                         {/* Approve / Reject */}
-                        <div className="grid grid-cols-2 gap-3 pt-2">
-                            <Button
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                                onClick={() => setApproved(true)}>
-                                <CheckCircle className="h-4 w-4 mr-2" />Approve Style
-                            </Button>
-                            <Button
-                                className="bg-red-600 hover:bg-red-700 text-white"
-                                onClick={() => setApproved(false)}>
-                                <XCircle className="h-4 w-4 mr-2" />Reject / Re-do
-                            </Button>
-                        </div>
+                        {approved === null && (
+                            <div className="grid grid-cols-2 gap-3 pt-2">
+                                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={handleApprove}>
+                                    <CheckCircle className="h-4 w-4 mr-2" />Approve Style
+                                </Button>
+                                <Button className="bg-red-600 hover:bg-red-700 text-white" onClick={handleReject}>
+                                    <XCircle className="h-4 w-4 mr-2" />Reject / Re-do
+                                </Button>
+                            </div>
+                        )}
 
-                        {approved !== null && (
-                            <div className={`p-3 rounded-lg text-sm text-center font-medium ${approved ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/10 text-red-400 border border-red-500/30'}`}>
-                                {approved ? '✓ Style Approved — dispatching to sourcing…' : '✗ Style rejected — returned for revision'}
+                        {approved === true && (
+                            <div className="space-y-2 pt-2">
+                                <div className="p-3 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-sm text-center font-medium">
+                                    ✓ Style Approved — ready to dispatch
+                                </div>
+                                <button onClick={handleReset} className="w-full flex items-center justify-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors">
+                                    <RotateCcw className="h-3 w-3" /> Reset & re-adjust
+                                </button>
+                            </div>
+                        )}
+
+                        {approved === false && (
+                            <div className="space-y-2 pt-2">
+                                <div className="p-3 rounded-lg bg-red-500/10 text-red-400 border border-red-500/30 text-sm text-center font-medium">
+                                    ✗ Style rejected — adjust selections above
+                                </div>
+                                <button onClick={handleReset} className="w-full flex items-center justify-center gap-1 text-xs text-slate-500 hover:text-slate-300 transition-colors">
+                                    <RotateCcw className="h-3 w-3" /> Re-open for editing
+                                </button>
                             </div>
                         )}
                     </CardContent>
                 </Card>
 
                 {/* RIGHT — Dispatch to Sourcing */}
-                <Card className="bg-slate-800/50 border-slate-700">
+                <Card className={`bg-slate-800/50 border-slate-700 transition-all ${approved === true ? 'border-emerald-500/30' : ''}`}>
                     <CardHeader>
                         <CardTitle className="text-white flex items-center gap-2">
                             <Send className="h-5 w-5 text-orange-400" />Dispatch to Sourcing
@@ -164,25 +199,46 @@ const AIStyleEngine = () => {
                     </CardHeader>
                     <CardContent className="space-y-2">
                         {[
-                            { label: 'Style Ref', value: dispatchData.styleRef },
-                            { label: 'Construction', value: dispatchData.construction },
-                            { label: 'Colour', value: dispatchData.colour },
-                            { label: 'Costing Rate', value: dispatchData.costingRate },
-                            { label: 'MOQ', value: dispatchData.moq },
-                            { label: 'Delivery Date', value: dispatchData.deliveryDate },
-                            { label: 'Tracking No.', value: dispatchData.trackingNo },
-                            { label: 'Status', value: dispatchData.status },
+                            { label: 'Style Ref',      value: styleRef },
+                            { label: 'Construction',   value: selectedConstruction },
+                            { label: 'Pattern',        value: selectedStripe },
+                            { label: 'Colour',         value: selectedColor },
+                            { label: 'Costing Rate',   value: costingRate },
+                            { label: 'MOQ',            value: aiStyle.dispatch.moq },
+                            { label: 'Delivery Date',  value: aiStyle.dispatch.deliveryDate },
+                            { label: 'Tracking No.',   value: styleRef.replace('AW27-WV-', 'TCH-SRC-AW27-') },
+                            { label: 'Status',         value: dispatched ? 'Dispatched to Sourcing' : approved === true ? 'Approved — Pending Dispatch' : 'Pending Approval' },
                         ].map(({ label, value }) => (
                             <div key={label} className="flex justify-between py-1.5 border-b border-slate-700/50">
                                 <span className="text-slate-400 text-sm">{label}</span>
-                                <span className={`text-sm font-medium ${label === 'Status' ? 'text-teal-400' : 'text-white'}`}>{value}</span>
+                                <span className={`text-sm font-medium ${
+                                    label === 'Status' && dispatched ? 'text-emerald-400' :
+                                    label === 'Status' && approved === true ? 'text-teal-400' :
+                                    label === 'Status' ? 'text-amber-400' :
+                                    label === 'Costing Rate' ? 'text-teal-300' : 'text-white'
+                                }`}>{value}</span>
                             </div>
                         ))}
 
-                        <Button className="w-full mt-4 bg-orange-600 hover:bg-orange-700 text-white"
-                            onClick={() => navigate('/dashboard/brand/sourcing-costing')}>
-                            Track in Sourcing Module <Send className="h-4 w-4 ml-2" />
-                        </Button>
+                        <div className="pt-4 space-y-2">
+                            {approved === true && !dispatched && (
+                                <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white" onClick={handleDispatch}>
+                                    <Send className="h-4 w-4 mr-2" />Dispatch to Sourcing
+                                </Button>
+                            )}
+                            {dispatched && (
+                                <Button className="w-full bg-emerald-700 hover:bg-emerald-800 text-white"
+                                    onClick={() => navigate('/dashboard/brand/sourcing-costing')}>
+                                    <CheckCircle className="h-4 w-4 mr-2" />Track in Sourcing Module
+                                </Button>
+                            )}
+                            {(approved === null || approved === false) && (
+                                <Button className="w-full" variant="outline" disabled
+                                    className="w-full border-slate-700 text-slate-600 cursor-not-allowed">
+                                    Approve style to enable dispatch
+                                </Button>
+                            )}
+                        </div>
                     </CardContent>
                 </Card>
             </div>
