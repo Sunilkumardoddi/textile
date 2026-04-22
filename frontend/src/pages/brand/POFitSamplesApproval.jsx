@@ -153,7 +153,7 @@ export default function POFitSamplesApproval() {
                           <div className="flex flex-col items-center gap-1.5">
                             <StatusBadge status={status} />
                             <span className="text-xs text-slate-500">{due}</span>
-                            {status === 'Pending' && (
+                            {(status === 'Pending' || status === 'In Review') && (
                               <div className="flex gap-1">
                                 <button onClick={() => setStatus(style.styleNo, stage, 'Approved')}
                                   className="px-2 py-0.5 text-xs rounded bg-emerald-600/30 text-emerald-300 hover:bg-emerald-600/50 border border-emerald-600/40 transition-all">
@@ -164,6 +164,12 @@ export default function POFitSamplesApproval() {
                                   Reject
                                 </button>
                               </div>
+                            )}
+                            {status === 'Rejected' && (
+                              <button onClick={() => setStatus(style.styleNo, stage, 'Pending')}
+                                className="px-2 py-0.5 text-xs rounded bg-amber-600/30 text-amber-300 hover:bg-amber-600/50 border border-amber-600/40 transition-all">
+                                Re-open
+                              </button>
                             )}
                           </div>
                         </td>

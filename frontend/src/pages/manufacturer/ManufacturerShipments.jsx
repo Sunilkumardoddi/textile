@@ -82,13 +82,18 @@ const FILTER_TABS = ['All', 'Booking Confirmed', 'In Transit', 'Delivered', 'Pen
 export default function ManufacturerShipments() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [expandedShipment, setExpandedShipment] = useState(null);
+  const [statusOverrides, setStatusOverrides] = useState({});
 
-  const filtered = activeFilter === 'All' ? SHIPMENTS : SHIPMENTS.filter(s => s.status === activeFilter);
+  const getStatus = (id, seed) => statusOverrides[id] ?? seed;
+  const bookShipment = (id) => setStatusOverrides(prev => ({ ...prev, [id]: 'Booking Confirmed' }));
+
+  const shipmentsWithStatus = SHIPMENTS.map(s => ({ ...s, status: getStatus(s.id, s.status) }));
+  const filtered = activeFilter === 'All' ? shipmentsWithStatus : shipmentsWithStatus.filter(s => s.status === activeFilter);
 
   const total = SHIPMENTS.length;
-  const inTransit = SHIPMENTS.filter(s => s.status === 'In Transit').length;
-  const delivered = SHIPMENTS.filter(s => s.status === 'Delivered').length;
-  const pending = SHIPMENTS.filter(s => s.status === 'Pending' || s.status === 'Booking Confirmed').length;
+  const inTransit = shipmentsWithStatus.filter(s => s.status === 'In Transit').length;
+  const delivered = shipmentsWithStatus.filter(s => s.status === 'Delivered').length;
+  const pending = shipmentsWithStatus.filter(s => s.status === 'Pending' || s.status === 'Booking Confirmed').length;
 
   return (
     <div className="min-h-screen bg-slate-900 p-6 text-white">
@@ -189,7 +194,18 @@ export default function ManufacturerShipments() {
               </div>
 
               {expandedShipment === shp.id && (
-                <div className="border-t border-slate-700 bg-slate-900/50 p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="border-t border-slate-700 bg-slate-900/50 p-5 space-y-4">
+                  {shp.status === 'Pending' && (
+                    <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
+                      <p className="text-amber-300 text-sm">Booking not yet confirmed. Schedule with freight forwarder to proceed.</p>
+                      <button
+                        onClick={e => { e.stopPropagation(); bookShipment(shp.id); }}
+                        className="ml-4 flex-shrink-0 px-4 py-1.5 rounded-lg bg-teal-600/20 border border-teal-500/50 text-teal-300 text-sm font-medium hover:bg-teal-600/30 transition-colors">
+                        Book Shipment
+                      </button>
+                    </div>
+                  )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Packing List */}
                   <div>
                     <p className="text-slate-400 text-xs uppercase tracking-wide mb-3 flex items-center gap-1"><Package className="w-3 h-3" /> Packing List Summary</p>
@@ -227,6 +243,7 @@ export default function ManufacturerShipments() {
                       ))}
                     </div>
                   </div>
+                </div>
                 </div>
               )}
             </Card>

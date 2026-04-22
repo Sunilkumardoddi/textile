@@ -53,6 +53,15 @@ const PO_DATA = [
       { style: 'HM-SS27-PL002', desc: 'Linen Playsuit', cat: 'Dresses', qty: 3200, fob: 14.80, delivery: '15 Feb 2027', status: 'Completed' },
     ],
   },
+  {
+    po: 'PO-AW28-1001', buyer: 'Primark', initials: 'PK', color: 'bg-indigo-600', season: 'AW2028',
+    value: 182400, qty: 11000, delivery: '01 Oct 2028', status: 'Pending Confirmation', styles: 3,
+    breakdown: [
+      { style: 'PK-AW28-HO001', desc: 'Fleece Hoodie', cat: 'Tops', qty: 4000, fob: 9.80, delivery: '01 Sep 2028', status: 'Pending Confirmation' },
+      { style: 'PK-AW28-JG002', desc: 'Jogger Pants', cat: 'Bottoms', qty: 4000, fob: 8.20, delivery: '01 Sep 2028', status: 'Pending Confirmation' },
+      { style: 'PK-AW28-JK003', desc: 'Padded Jacket', cat: 'Outerwear', qty: 3000, fob: 18.60, delivery: '15 Sep 2028', status: 'Pending Confirmation' },
+    ],
+  },
 ];
 
 const STATUS_COLORS = {
@@ -71,10 +80,15 @@ const FILTER_TABS = ['All', 'Active', 'Completed', 'Pending Confirmation'];
 export default function ManufacturerOrders() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [expandedPO, setExpandedPO] = useState(null);
+  const [confirmedPOs, setConfirmedPOs] = useState(new Set());
 
-  const filtered = activeFilter === 'All' ? PO_DATA : PO_DATA.filter(p => p.status === activeFilter);
+  const confirmPO = (poId) => setConfirmedPOs(prev => new Set([...prev, poId]));
+  const getStatus = (po) => confirmedPOs.has(po.po) ? 'Active' : po.status;
+  const dataWithStatus = PO_DATA.map(p => ({ ...p, status: getStatus(p) }));
 
-  const activePOs = PO_DATA.filter(p => p.status === 'Active').length;
+  const filtered = activeFilter === 'All' ? dataWithStatus : dataWithStatus.filter(p => p.status === activeFilter);
+
+  const activePOs = dataWithStatus.filter(p => p.status === 'Active').length;
   const totalValue = PO_DATA.reduce((s, p) => s + p.value, 0);
   const avgLeadTime = '112 days';
   const onTimeDelivery = '96.4%';
@@ -129,7 +143,7 @@ export default function ManufacturerOrders() {
         {/* PO Cards */}
         <div className="space-y-4">
           {filtered.map(po => (
-            <Card key={po.po} className="bg-slate-800 border-slate-700 overflow-hidden">
+            <Card key={po.po} className={`bg-slate-800 border-slate-700 overflow-hidden ${po.status === 'Pending Confirmation' ? 'border-amber-500/30' : ''}`}>
               <div
                 className="p-5 cursor-pointer hover:bg-slate-700/30 transition-colors"
                 onClick={() => setExpandedPO(expandedPO === po.po ? null : po.po)}
@@ -171,6 +185,16 @@ export default function ManufacturerOrders() {
 
               {expandedPO === po.po && (
                 <div className="border-t border-slate-700 px-5 py-4 bg-slate-900/50">
+                  {po.status === 'Pending Confirmation' && (
+                    <div className="mb-4 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
+                      <p className="text-amber-300 text-sm">This PO is awaiting your confirmation to proceed to production.</p>
+                      <button
+                        onClick={e => { e.stopPropagation(); confirmPO(po.po); }}
+                        className="ml-4 flex-shrink-0 px-4 py-1.5 rounded-lg bg-teal-600/20 border border-teal-500/50 text-teal-300 text-sm font-medium hover:bg-teal-600/30 transition-colors">
+                        Confirm Order
+                      </button>
+                    </div>
+                  )}
                   <p className="text-slate-400 text-xs uppercase tracking-wide mb-3">Style Breakdown</p>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">

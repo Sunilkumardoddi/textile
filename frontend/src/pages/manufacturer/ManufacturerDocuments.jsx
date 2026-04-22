@@ -24,6 +24,9 @@ const DOCS = [
   // Commercial
   { name: 'Export License 2025-26', type: 'Commercial', issued: 'Apr 2025', expiry: '31 Mar 2026', issuer: 'DGFT India', status: 'Expiring Soon', category: 'Commercial' },
   { name: 'IEC Certificate', type: 'Commercial', issued: 'Jan 2018', expiry: null, issuer: 'DGFT India', status: 'Valid', category: 'Commercial' },
+  // Pending Renewal
+  { name: 'GOTS Certificate (Renewal)', type: 'Certification', issued: '01 Jan 2026', expiry: '31 Dec 2026', issuer: 'Control Union', status: 'Pending Renewal', category: 'Certifications' },
+  { name: 'Higg FEM Level 2 (Renewal)', type: 'Certification', issued: '01 Jan 2026', expiry: '31 Dec 2026', issuer: 'Higg Co', status: 'Pending Renewal', category: 'Certifications' },
 ];
 
 const STATUS_STYLES = {
@@ -40,14 +43,18 @@ const TYPE_BADGE = {
   Commercial: 'bg-orange-500/20 text-orange-300 border-orange-500/40',
 };
 
-const FILTER_TABS = ['All', 'Certifications', 'Test Reports', 'Shipping Docs', 'Commercial'];
+const FILTER_TABS = ['All', 'Certifications', 'Test Reports', 'Shipping Docs', 'Commercial', 'Pending Renewal'];
 
 export default function ManufacturerDocuments() {
   const [activeTab, setActiveTab] = useState('All');
   const [search, setSearch] = useState('');
 
   const filtered = DOCS.filter(doc => {
-    const matchesTab = activeTab === 'All' || doc.category === activeTab;
+    const matchesTab = activeTab === 'All'
+      ? true
+      : activeTab === 'Pending Renewal'
+        ? doc.status === 'Pending Renewal'
+        : doc.category === activeTab;
     const matchesSearch = doc.name.toLowerCase().includes(search.toLowerCase()) ||
       doc.issuer.toLowerCase().includes(search.toLowerCase());
     return matchesTab && matchesSearch;

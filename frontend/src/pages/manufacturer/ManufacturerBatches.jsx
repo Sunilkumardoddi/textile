@@ -5,6 +5,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
+const STATUS_FLOW = {
+  'Pending Start': 'In Production',
+  'In Production': 'QC',
+  'QC': 'Completed',
+  'Completed': 'Shipped',
+};
+const STATUS_ACTIONS = {
+  'Pending Start': 'Start Production',
+  'In Production': 'Send to QC',
+  'QC': 'Mark Completed',
+  'Completed': 'Mark Shipped',
+};
+
 const batches = [
   { id: 'BATCH-001', style: 'ZR-AW27-JK001', buyer: 'Zara', po: 'PO-AW27-4812', qty: 800, start: '01 Jan', target: '28 Feb', status: 'Completed', progress: 100, fabric: 'Wool Blend 400gsm', trim: 'YKK Zipper, Snap Buttons', line: 'Line-1', supervisor: 'Rajesh Kumar', defect: '1.2%' },
   { id: 'BATCH-002', style: 'ZR-AW27-SW002', buyer: 'Zara', po: 'PO-AW27-4812', qty: 1200, start: '05 Jan', target: '10 Mar', status: 'Completed', progress: 100, fabric: 'Cotton Fleece 320gsm', trim: 'Ribbed Cuff, Drawcord', line: 'Line-2', supervisor: 'Priya Menon', defect: '0.9%' },
@@ -31,13 +44,21 @@ const FILTER_TABS = ['All', 'In Production', 'QC', 'Completed', 'Shipped'];
 export default function ManufacturerBatches() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [expandedBatch, setExpandedBatch] = useState(null);
+  const [statusOverrides, setStatusOverrides] = useState({});
 
-  const filtered = activeFilter === 'All' ? batches : batches.filter(b => b.status === activeFilter);
+  const getStatus = (id, seed) => statusOverrides[id] ?? seed;
+  const advanceStatus = (id, currentStatus) => {
+    const next = STATUS_FLOW[currentStatus];
+    if (next) setStatusOverrides(prev => ({ ...prev, [id]: next }));
+  };
 
-  const activeBatches = batches.filter(b => b.status === 'In Production' || b.status === 'QC').length;
-  const onTime = batches.filter(b => b.status === 'Completed' || b.status === 'Shipped').length;
+  const batchesWithStatus = batches.map(b => ({ ...b, status: getStatus(b.id, b.status) }));
+  const filtered = activeFilter === 'All' ? batchesWithStatus : batchesWithStatus.filter(b => b.status === activeFilter);
+
+  const activeBatches = batchesWithStatus.filter(b => b.status === 'In Production' || b.status === 'QC').length;
+  const onTime = batchesWithStatus.filter(b => b.status === 'Completed' || b.status === 'Shipped').length;
   const qcPassRate = '94.2%';
-  const completedMonth = batches.filter(b => b.status === 'Completed').length;
+  const completedMonth = batchesWithStatus.filter(b => b.status === 'Completed').length;
 
   const progressColor = (status) => {
     if (status === 'Completed' || status === 'Shipped') return 'bg-emerald-500';
@@ -153,6 +174,15 @@ export default function ManufacturerBatches() {
                                 <p className={`font-semibold ${batch.defect === '—' ? 'text-slate-500' : parseFloat(batch.defect) > 2 ? 'text-red-400' : 'text-emerald-400'}`}>{batch.defect}</p>
                               </div>
                             </div>
+                            {STATUS_ACTIONS[batch.status] && (
+                              <div className="mt-4">
+                                <button
+                                  onClick={e => { e.stopPropagation(); advanceStatus(batch.id, batch.status); }}
+                                  className="px-4 py-1.5 rounded-lg bg-teal-600/20 border border-teal-500/50 text-teal-300 text-xs font-medium hover:bg-teal-600/30 transition-colors">
+                                  {STATUS_ACTIONS[batch.status]}
+                                </button>
+                              </div>
+                            )}
                           </td>
                         </tr>
                       )}
