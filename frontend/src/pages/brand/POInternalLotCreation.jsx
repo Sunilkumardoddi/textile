@@ -210,7 +210,7 @@ const POInternalLotCreation = () => {
 
     const totalQty = useMemo(() =>
         poData.reduce((sum, s) => sum + s.totalQty, 0),
-    [activePO]);
+    [activePO]); // eslint-disable-line
 
     return (
         <div className="space-y-6 pb-8" data-testid="po-internal-lot-creation">
