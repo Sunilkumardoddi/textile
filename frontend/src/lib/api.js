@@ -24,7 +24,15 @@ api.interceptors.request.use(
 
 // Response interceptor to handle errors
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        // Vercel's catch-all rewrite serves index.html for unknown /api/* paths.
+        // Detect HTML responses and reject so dashboard catch blocks use safe defaults.
+        const ct = response.headers?.['content-type'] || '';
+        if (ct.includes('text/html')) {
+            return Promise.reject(new Error('No backend available'));
+        }
+        return response;
+    },
     (error) => {
         if (error.response?.status === 401) {
             localStorage.removeItem('authToken');

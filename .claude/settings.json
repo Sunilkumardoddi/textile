@@ -6,7 +6,13 @@
       "Bash(git push *)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://github.com/Sunilkumardoddi/textile)",
       "Bash(git credential-manager *)",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(npx vercel *)",
+      "Bash(npx craco *)",
+      "Bash(python -c \"import json; d=json.load\\(open\\('c:/Users/sunil/Downloads/traceability/frontend/src/data/seasonPOData.json'\\)\\); print\\(list\\(d.keys\\(\\)\\)\\)\")",
+      "Bash(python -c \"import json; d=json.load\\(open\\('c:/Users/sunil/Downloads/traceability/frontend/src/data/seasonPOData.json'\\)\\); print\\(json.dumps\\(d['aiStyle'], indent=2\\)\\)\")"
     ]
   }
 }

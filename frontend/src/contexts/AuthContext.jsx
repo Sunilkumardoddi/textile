@@ -83,10 +83,10 @@ export const AuthProvider = ({ children }) => {
         logout,
         updateUser,
         isAuthenticated: !!user,
-        isAdmin: user?.role === 'admin',
-        isManufacturer: user?.role === 'manufacturer',
-        isBrand: user?.role === 'brand',
-        isAuditor: user?.role === 'auditor',
+        isAdmin: user?.role?.toLowerCase() === 'admin',
+        isManufacturer: user?.role?.toLowerCase() === 'manufacturer',
+        isBrand: user?.role?.toLowerCase() === 'brand',
+        isAuditor: user?.role?.toLowerCase() === 'auditor',
     };
 
     return (

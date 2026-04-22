@@ -60,7 +60,7 @@ const LoginPage = () => {
                 brand: '/dashboard/brand',
                 auditor: '/dashboard/auditor'
             };
-            navigate(dashboardRoutes[user.role] || '/dashboard');
+            navigate(dashboardRoutes[user.role?.toLowerCase()] || '/dashboard');
         } catch (error) {
             toast.error(error.message || 'Login failed');
             setErrors({ ...errors, password: error.message });
@@ -185,7 +185,7 @@ const LoginPage = () => {
                                                 const user = await login(cred.email, cred.password);
                                                 toast.success(`Welcome, ${user.name}!`);
                                                 const routes = { admin: '/dashboard/admin', manufacturer: '/dashboard/manufacturer', brand: '/dashboard/brand', auditor: '/dashboard/auditor' };
-                                                navigate(routes[user.role] || '/dashboard');
+                                                navigate(routes[user.role?.toLowerCase()] || '/dashboard');
                                             } catch (err) {
                                                 toast.error(err.message || 'Login failed');
                                             } finally {
