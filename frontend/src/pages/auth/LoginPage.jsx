@@ -178,12 +178,21 @@ const LoginPage = () => {
                                     <button
                                         key={cred.role}
                                         type="button"
-                                        onClick={() => {
-                                            setEmail(cred.email);
-                                            setPassword(cred.password);
+                                        onClick={async () => {
                                             setErrors({ email: '', password: '' });
+                                            setIsLoading(true);
+                                            try {
+                                                const user = await login(cred.email, cred.password);
+                                                toast.success(`Welcome, ${user.name}!`);
+                                                const routes = { admin: '/dashboard/admin', manufacturer: '/dashboard/manufacturer', brand: '/dashboard/brand', auditor: '/dashboard/auditor' };
+                                                navigate(routes[user.role] || '/dashboard');
+                                            } catch (err) {
+                                                toast.error(err.message || 'Login failed');
+                                            } finally {
+                                                setIsLoading(false);
+                                            }
                                         }}
-                                        className="text-xs px-3 py-2 rounded-md bg-slate-700/50 hover:bg-slate-700 text-slate-300 transition-colors"
+                                        className="text-xs px-3 py-2 rounded-md bg-slate-700/50 hover:bg-teal-700/40 hover:text-teal-300 text-slate-300 border border-slate-700 hover:border-teal-600/50 transition-colors"
                                         data-testid={`demo-${cred.role.toLowerCase()}`}
                                     >
                                         {cred.role}

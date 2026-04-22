@@ -39,16 +39,19 @@ api.interceptors.response.use(
 export const authAPI = {
     register: (data) => api.post('/auth/register', data),
     login: async (data) => {
-        // Mocked login to bypass backend DB connection issues
+        // Mock users keyed by email — each has the correct role, name, and company
+        const MOCK_USERS = {
+            'admin@textile.com':        { id: '1', role: 'admin',        name: 'Alex Admin',          company_name: 'TextileTrace HQ' },
+            'manufacturer@textile.com': { id: '2', role: 'manufacturer', name: 'TCH Garments Pvt Ltd', company_name: 'TCH Garments Pvt Ltd' },
+            'brand@textile.com':        { id: '3', role: 'brand',        name: 'Zara Brand Team',      company_name: 'Zara (Inditex)' },
+            'auditor@textile.com':      { id: '4', role: 'auditor',      name: 'SGS Auditor',          company_name: 'SGS Group' },
+        };
+        const matched = MOCK_USERS[data.email.toLowerCase()];
+        if (!matched) throw { response: { data: { detail: 'Invalid email or password' } } };
         return {
             data: {
-                access_token: 'mock_token',
-                user: {
-                    id: '123',
-                    email: data.email,
-                    name: 'Brand user',
-                    role: 'brand'
-                }
+                access_token: 'mock_token_' + matched.role,
+                user: { ...matched, email: data.email },
             }
         };
     },
