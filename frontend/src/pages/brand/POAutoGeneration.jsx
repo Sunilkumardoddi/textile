@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Info, CheckCircle, Clock, AlertTriangle, FileText, Edit, Send, Download, ArrowLeft } from 'lucide-react';
+import { Info, CheckCircle, Clock, AlertTriangle, FileText, Edit, Send, Download, ArrowLeft, Filter, ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import data from '@/data/seasonPOData.json';
 
 const { poAutoGen } = data;
@@ -15,10 +16,35 @@ const statusColors = {
     Pending:  'bg-blue-500/20 text-blue-400 border-blue-500/40',
 };
 
+const SUPPLIERS = [
+    'All Suppliers',
+    'Arvind Mills Ltd', 'Vardhman Textiles', 'Welspun India', 'Raymond Ltd',
+    'Bombay Dyeing', 'Trident Group', 'Indo Count Industries', 'Sutlej Textiles',
+    'RSWM Limited', 'Grasim Industries', 'KPR Mill Ltd', 'Siyaram Silk Mills',
+    'Nitin Spinners', 'Sportking India', 'Alok Industries',
+];
+
+const CERTIFICATIONS = [
+    'All Certifications',
+    'GOTS', 'OCS', 'GRS', 'RCS', 'HIGG FEM', 'HIGG FSLM',
+    'ZDHC', 'Fair Trade', 'OEKO-TEX STD 100', 'OEKO-TEX STEP',
+    'OEKO-TEX Organic', 'SUPIMA', 'CMIA', 'PCP', 'BCI',
+    'Egyptian Cotton', 'Australian Cotton',
+];
+
 const POAutoGeneration = () => {
     const navigate = useNavigate();
     const [selectedPO, setSelectedPO] = useState(poAutoGen.poList[0].poNo);
+    const [team, setTeam] = useState('all');
+    const [supplier, setSupplier] = useState('All Suppliers');
+    const [certification, setCertification] = useState('All Certifications');
     const detail = poAutoGen.selectedPO;
+
+    const filteredPOs = poAutoGen.poList.filter(po => {
+        const teamMatch = team === 'all' || (team === 'north' ? po.team === 'North' : po.team === 'South');
+        const supplierMatch = supplier === 'All Suppliers' || po.supplier.includes(supplier.split(' ')[0]);
+        return teamMatch && supplierMatch;
+    });
 
     return (
         <div className="space-y-6 pb-8" data-testid="po-auto-generation">
@@ -34,6 +60,107 @@ const POAutoGeneration = () => {
                 </Button>
             </div>
 
+            {/* PO Management Filters */}
+            <Card className="bg-slate-800/50 border-slate-700">
+                <CardHeader className="pb-3">
+                    <CardTitle className="text-white text-base flex items-center gap-2">
+                        <Filter className="h-4 w-4 text-teal-400" /> PO Management Filters
+                    </CardTitle>
+                    <CardDescription className="text-slate-400">
+                        Filter POs by team, supplier, and buyer certification requirements
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Team Filter */}
+                        <div>
+                            <p className="text-slate-400 text-xs uppercase tracking-wide mb-2">Team</p>
+                            <div className="flex gap-2">
+                                {[
+                                    { value: 'all',   label: 'All Teams' },
+                                    { value: 'north', label: 'North Team' },
+                                    { value: 'south', label: 'South Team' },
+                                ].map(opt => (
+                                    <button
+                                        key={opt.value}
+                                        onClick={() => setTeam(opt.value)}
+                                        className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors border ${
+                                            team === opt.value
+                                                ? 'bg-teal-600/20 border-teal-500/50 text-teal-300'
+                                                : 'bg-slate-900/40 border-slate-700 text-slate-400 hover:border-slate-500'
+                                        }`}>
+                                        {opt.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Supplier Dropdown */}
+                        <div>
+                            <p className="text-slate-400 text-xs uppercase tracking-wide mb-2">Supplier</p>
+                            <Select value={supplier} onValueChange={setSupplier}>
+                                <SelectTrigger className="bg-slate-900/40 border-slate-700 text-white">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="bg-slate-800 border-slate-700 max-h-60">
+                                    {SUPPLIERS.map(s => (
+                                        <SelectItem key={s} value={s} className="text-white hover:bg-slate-700">
+                                            {s}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {/* Certification Filter (Buyer Requirement) */}
+                        <div>
+                            <p className="text-slate-400 text-xs uppercase tracking-wide mb-2">
+                                Certification (Buyer Requirement)
+                            </p>
+                            <Select value={certification} onValueChange={setCertification}>
+                                <SelectTrigger className="bg-slate-900/40 border-slate-700 text-white">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="bg-slate-800 border-slate-700 max-h-60">
+                                    {CERTIFICATIONS.map(c => (
+                                        <SelectItem key={c} value={c} className="text-white hover:bg-slate-700">
+                                            {c}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+
+                    {/* Active filter pills */}
+                    {(team !== 'all' || supplier !== 'All Suppliers' || certification !== 'All Certifications') && (
+                        <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-700">
+                            <span className="text-slate-500 text-xs self-center">Active filters:</span>
+                            {team !== 'all' && (
+                                <span className="px-2 py-0.5 rounded bg-teal-600/20 border border-teal-500/40 text-teal-300 text-xs">
+                                    {team === 'north' ? 'North Team' : 'South Team'}
+                                </span>
+                            )}
+                            {supplier !== 'All Suppliers' && (
+                                <span className="px-2 py-0.5 rounded bg-blue-600/20 border border-blue-500/40 text-blue-300 text-xs">
+                                    {supplier}
+                                </span>
+                            )}
+                            {certification !== 'All Certifications' && (
+                                <span className="px-2 py-0.5 rounded bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 text-xs">
+                                    {certification}
+                                </span>
+                            )}
+                            <button
+                                onClick={() => { setTeam('all'); setSupplier('All Suppliers'); setCertification('All Certifications'); }}
+                                className="text-slate-500 hover:text-slate-300 text-xs underline ml-1">
+                                Clear all
+                            </button>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+
             {/* Info Banner */}
             <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
                 <Info className="h-5 w-5 text-blue-400 shrink-0 mt-0.5" />
@@ -46,7 +173,7 @@ const POAutoGeneration = () => {
                 <Card className="lg:col-span-2 bg-slate-800/50 border-slate-700">
                     <CardHeader>
                         <CardTitle className="text-white text-base">PO List — AW2027</CardTitle>
-                        <CardDescription className="text-slate-400">{poAutoGen.poList.length} purchase orders generated</CardDescription>
+                        <CardDescription className="text-slate-400">{filteredPOs.length} purchase orders</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
                         <div className="overflow-x-auto">
@@ -61,7 +188,7 @@ const POAutoGeneration = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {poAutoGen.poList.map((po, i) => (
+                                    {filteredPOs.map((po, i) => (
                                         <tr
                                             key={po.poNo}
                                             onClick={() => setSelectedPO(po.poNo)}
@@ -77,6 +204,11 @@ const POAutoGeneration = () => {
                                             </td>
                                         </tr>
                                     ))}
+                                    {filteredPOs.length === 0 && (
+                                        <tr>
+                                            <td colSpan={5} className="py-8 text-center text-slate-500 text-sm">No POs match the selected filters</td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>

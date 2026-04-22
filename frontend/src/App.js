@@ -31,17 +31,18 @@ import SustainabilityModule from '@/pages/brand/SustainabilityModule';
 import CertificationTracker from '@/pages/brand/CertificationTracker';
 import SupplierTraceabilityView from '@/pages/brand/SupplierTraceabilityView';
 import SeasonBenchmark from '@/pages/brand/SeasonBenchmark';
-import UserRolesFlow from '@/pages/brand/UserRolesFlow';
 
 // Brand Pages — Module C Season & PO Workflow
 import SeasonMoodBoard from '@/pages/brand/SeasonMoodBoard';
 import AIStyleEngine from '@/pages/brand/AIStyleEngine';
-import MarketingTeamConfig from '@/pages/brand/MarketingTeamConfig';
 import SourcingCostingTracking from '@/pages/brand/SourcingCostingTracking';
 import MoodBoardPunching from '@/pages/brand/MoodBoardPunching';
 import POAutoGeneration from '@/pages/brand/POAutoGeneration';
-import POSupplyChainTracker from '@/pages/brand/POSupplyChainTracker';
-import POTierMapAlerts from '@/pages/brand/POTierMapAlerts';
+
+// Brand Pages — PO & Supply Chain Management
+import POSCManagement from '@/pages/brand/POSCManagement';
+import POGarmentCosting from '@/pages/brand/POGarmentCosting';
+import POInternalLotCreation from '@/pages/brand/POInternalLotCreation';
 
 // Manufacturer Pages — Module B new screens
 import MfrDashboardOverview from '@/pages/manufacturer/MfrDashboardOverview';
@@ -153,17 +154,22 @@ function AppRoutes() {
             <Route path="/dashboard/brand/certifications"   element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><CertificationTracker /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/supplier-trace"   element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><SupplierTraceabilityView /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/season-benchmark" element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><SeasonBenchmark /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/brand/roles-flow"       element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><UserRolesFlow /></DashboardLayout></ProtectedRoute>} />
 
             {/* Brand Routes — Module C Season & PO Workflow */}
             <Route path="/dashboard/brand/seasons/mood-board"   element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><SeasonMoodBoard /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/ai-style"             element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><AIStyleEngine /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/brand/marketing-config"     element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><MarketingTeamConfig /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/sourcing-costing"     element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><SourcingCostingTracking /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/mood-punching"        element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><MoodBoardPunching /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/po-auto"              element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POAutoGeneration /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/brand/po-tracker"           element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POSupplyChainTracker /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/brand/po-tier-map"          element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POTierMapAlerts /></DashboardLayout></ProtectedRoute>} />
+
+            {/* Brand Routes — PO & Supply Chain Management */}
+            <Route path="/dashboard/brand/po-sc-management"    element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POSCManagement /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/po-garment-costing"  element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POGarmentCosting /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/po-fit-samples"       element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ComingSoon title="Approved PO Fit Samples Approval & Follow Ups" /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/po-lot-creation"      element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POInternalLotCreation /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/po-traceability"      element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ComingSoon title="PO Wise Traceability" /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/po-sustainability"    element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ComingSoon title="PO Wise Sustainability" /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/po-qr-scan"           element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ComingSoon title="Supply Chain QR Code Scan Visibility" /></DashboardLayout></ProtectedRoute>} />
 
             {/* Auditor Routes */}
             <Route path="/dashboard/auditor"           element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><AuditorDashboard /></DashboardLayout></ProtectedRoute>} />

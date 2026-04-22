@@ -6,7 +6,7 @@ import {
     ClipboardCheck, BarChart3, FileText, AlertTriangle, Settings,
     Building2, ShoppingCart, Calendar, Layers, Activity,
     Leaf, Award, GitBranch, ChevronRight, Palette, DollarSign,
-    BarChart2, Shield, Zap, MapPin
+    BarChart2, Zap, MapPin
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +19,7 @@ const DashboardLayout = ({ children }) => {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [expandedGroups, setExpandedGroups] = useState({ brand_sustainability: true, brand_season_po: false, mfr_new: true });
+    const [expandedGroups, setExpandedGroups] = useState({ brand_season_po: false, brand_po_sc: false, mfr_new: true });
 
     const handleLogout = async () => {
         await logout();
@@ -37,51 +37,47 @@ const DashboardLayout = ({ children }) => {
 
         const roleItems = {
             admin: [
-                { id: 'users',   label: 'User Management',   icon: Users,          path: '/dashboard/admin/users' },
-                { id: 'batches', label: 'All Batches',        icon: Package,        path: '/dashboard/admin/batches' },
-                { id: 'audits',  label: 'All Audits',         icon: ClipboardCheck, path: '/dashboard/admin/audits' },
-                { id: 'reports', label: 'Reports',            icon: BarChart3,      path: '/dashboard/admin/reports' },
-                { id: 'alerts',  label: 'Alerts',             icon: AlertTriangle,  path: '/dashboard/admin/alerts', badge: 3 },
+                { id: 'users', label: 'User Management', icon: Users, path: '/dashboard/admin/users' },
+                { id: 'batches', label: 'All Batches', icon: Package, path: '/dashboard/admin/batches' },
+                { id: 'audits', label: 'All Audits', icon: ClipboardCheck, path: '/dashboard/admin/audits' },
+                { id: 'reports', label: 'Reports', icon: BarChart3, path: '/dashboard/admin/reports' },
+                { id: 'alerts', label: 'Alerts', icon: AlertTriangle, path: '/dashboard/admin/alerts', badge: 3 },
             ],
             manufacturer: [
-                { id: 'batches',        label: 'My Batches',        icon: Package,        path: '/dashboard/manufacturer/batches' },
-                { id: 'orders',         label: 'Purchase Orders',    icon: ShoppingCart,   path: '/dashboard/manufacturer/orders' },
-                { id: 'production',     label: 'Production',         icon: Factory,        path: '/dashboard/manufacturer/production' },
-                { id: 'shipments',      label: 'Shipments',          icon: Truck,          path: '/dashboard/manufacturer/shipments' },
-                { id: 'documents',      label: 'Documents',          icon: FileText,       path: '/dashboard/manufacturer/documents' },
+                { id: 'batches', label: 'My Batches', icon: Package, path: '/dashboard/manufacturer/batches' },
+                { id: 'orders', label: 'Purchase Orders', icon: ShoppingCart, path: '/dashboard/manufacturer/orders' },
+                { id: 'production', label: 'Production', icon: Factory, path: '/dashboard/manufacturer/production' },
+                { id: 'shipments', label: 'Shipments', icon: Truck, path: '/dashboard/manufacturer/shipments' },
+                { id: 'documents', label: 'Documents', icon: FileText, path: '/dashboard/manufacturer/documents' },
                 // ── New Mfr Screens ──
-                { id: 'mfr-overview',   label: 'Mfr Overview',       icon: LayoutDashboard, path: '/dashboard/manufacturer/overview', group: 'mfr_new' },
-                { id: 'higg-fem',       label: 'Higg FEM & Certs',   icon: Leaf,           path: '/dashboard/manufacturer/higg-fem', group: 'mfr_new' },
-                { id: 'trace-ess',      label: 'Traceability & ESS', icon: GitBranch,      path: '/dashboard/manufacturer/traceability-ess', group: 'mfr_new' },
+                { id: 'mfr-overview', label: 'Mfr Overview', icon: LayoutDashboard, path: '/dashboard/manufacturer/overview', group: 'mfr_new' },
+                { id: 'higg-fem', label: 'Higg FEM & Certs', icon: Leaf, path: '/dashboard/manufacturer/higg-fem', group: 'mfr_new' },
+                { id: 'trace-ess', label: 'Traceability & ESS', icon: GitBranch, path: '/dashboard/manufacturer/traceability-ess', group: 'mfr_new' },
             ],
             brand: [
-                // ── Existing brand routes ──
-                { id: 'seasons',        label: 'Seasons',             icon: Calendar,      path: '/dashboard/brand/seasons' },
-                { id: 'traceability',   label: 'Traceability',        icon: Layers,        path: '/dashboard/brand/traceability' },
-                { id: 'shipments',      label: 'Incoming',            icon: Truck,         path: '/dashboard/brand/shipments' },
-                { id: 'command-center', label: 'Command Center',      icon: Activity,      path: '/dashboard/brand/command-center' },
-                { id: 'audits',         label: 'Audit Requests',      icon: ClipboardCheck, path: '/dashboard/brand/audits' },
-                { id: 'reports',        label: 'Reports',             icon: BarChart3,     path: '/dashboard/brand/reports' },
-                // ── Sustainability group ──
-                { id: 'sustainability', label: 'Sustainability',       icon: Leaf,          path: '/dashboard/brand/sustainability',     group: 'brand_sustainability' },
-                { id: 'certifications', label: 'Cert Tracker',         icon: Award,         path: '/dashboard/brand/certifications',     group: 'brand_sustainability' },
-                { id: 'supplier-trace', label: 'Supplier Trace',       icon: GitBranch,     path: '/dashboard/brand/supplier-trace',     group: 'brand_sustainability' },
-                { id: 'season-bench',   label: 'Season Benchmark',     icon: BarChart2,     path: '/dashboard/brand/season-benchmark',   group: 'brand_sustainability' },
-                { id: 'roles-flow',     label: 'Roles & Flow',         icon: Shield,        path: '/dashboard/brand/roles-flow',         group: 'brand_sustainability' },
                 // ── Season & PO Workflow group ──
-                { id: 'mood-board',     label: 'Season Mood Board',    icon: Palette,       path: '/dashboard/brand/seasons/mood-board', group: 'brand_season_po' },
-                { id: 'ai-style',       label: 'AI Style Engine',      icon: Zap,           path: '/dashboard/brand/ai-style',           group: 'brand_season_po' },
-                { id: 'mkt-config',     label: 'Marketing Config',     icon: Users,         path: '/dashboard/brand/marketing-config',   group: 'brand_season_po' },
-                { id: 'sourcing',       label: 'Sourcing & Costing',   icon: DollarSign,    path: '/dashboard/brand/sourcing-costing',   group: 'brand_season_po' },
-                { id: 'mood-punch',     label: 'Mood Punching',        icon: Package,       path: '/dashboard/brand/mood-punching',      group: 'brand_season_po' },
-                { id: 'po-auto',        label: 'PO Auto-Gen',          icon: FileText,      path: '/dashboard/brand/po-auto',            group: 'brand_season_po' },
-                { id: 'po-tracker',     label: 'PO SC Tracker',        icon: MapPin,        path: '/dashboard/brand/po-tracker',         group: 'brand_season_po' },
-                { id: 'po-tier-map',    label: 'PO Tier Map',          icon: Layers,        path: '/dashboard/brand/po-tier-map',        group: 'brand_season_po' },
+                { id: 'mood-board', label: 'Season Mood Board', icon: Palette, path: '/dashboard/brand/seasons/mood-board', group: 'brand_season_po' },
+                { id: 'ai-style', label: 'AI Style Engine', icon: Zap, path: '/dashboard/brand/ai-style', group: 'brand_season_po' },
+                { id: 'sourcing', label: 'Developments Sourcing & Costing', icon: DollarSign, path: '/dashboard/brand/sourcing-costing', group: 'brand_season_po' },
+                { id: 'mood-punch', label: 'Mood Board Punching', icon: Package, path: '/dashboard/brand/mood-punching', group: 'brand_season_po' },
+                { id: 'po-auto', label: 'PO Auto-Gen', icon: FileText, path: '/dashboard/brand/po-auto', group: 'brand_season_po' },
+                // ── PO & Supply Chain Management group ──
+                { id: 'po-sc-mgmt', label: 'PO & SC Management', icon: ShoppingCart, path: '/dashboard/brand/po-sc-management', group: 'brand_po_sc' },
+                { id: 'po-garment-costing', label: 'PO Garment Costing', icon: DollarSign, path: '/dashboard/brand/po-garment-costing', group: 'brand_po_sc' },
+                { id: 'po-fit-samples', label: 'PO Fit Samples Approval', icon: ClipboardCheck, path: '/dashboard/brand/po-fit-samples', group: 'brand_po_sc' },
+                { id: 'po-lot-creation', label: 'PO Internal Lot Creation', icon: Layers, path: '/dashboard/brand/po-lot-creation', group: 'brand_po_sc' },
+                { id: 'po-traceability', label: 'PO Traceability', icon: GitBranch, path: '/dashboard/brand/po-traceability', group: 'brand_po_sc' },
+                { id: 'po-sustainability', label: 'PO Sustainability', icon: Leaf, path: '/dashboard/brand/po-sustainability', group: 'brand_po_sc' },
+                { id: 'po-qr-scan', label: 'Supply Chain QR Scan', icon: MapPin, path: '/dashboard/brand/po-qr-scan', group: 'brand_po_sc' },
+                // ── Sustainability ──
+                { id: 'sustainability', label: 'Sustainability', icon: Leaf, path: '/dashboard/brand/sustainability' },
+                { id: 'supplier-trace', label: 'Supplier Trace', icon: GitBranch, path: '/dashboard/brand/supplier-trace' },
+                { id: 'season-bench', label: 'Season Benchmark', icon: BarChart2, path: '/dashboard/brand/season-benchmark' },
             ],
             auditor: [
-                { id: 'assigned', label: 'Assigned Audits',  icon: ClipboardCheck, path: '/dashboard/auditor/assigned' },
-                { id: 'batches',  label: 'Batch Verification', icon: Package,       path: '/dashboard/auditor/batches' },
-                { id: 'reports',  label: 'Audit Reports',    icon: FileText,       path: '/dashboard/auditor/reports' },
+                { id: 'assigned', label: 'Assigned Audits', icon: ClipboardCheck, path: '/dashboard/auditor/assigned' },
+                { id: 'batches', label: 'Batch Verification', icon: Package, path: '/dashboard/auditor/batches' },
+                { id: 'reports', label: 'Audit Reports', icon: FileText, path: '/dashboard/auditor/reports' },
             ],
         };
 
@@ -92,25 +88,30 @@ const DashboardLayout = ({ children }) => {
     const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
     const roleColors = {
-        admin:        'bg-purple-500/10 text-purple-400 border-purple-500/30',
+        admin: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
         manufacturer: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
-        brand:        'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
-        auditor:      'bg-amber-500/10 text-amber-400 border-amber-500/30',
+        brand: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+        auditor: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
     };
 
     // Group definitions for section headers
     const groupDefs = {
-        brand_sustainability: { title: 'Sustainability', icon: Leaf, color: 'text-teal-400' },
-        brand_season_po:      { title: 'Season & PO Workflow', icon: Calendar, color: 'text-amber-400' },
-        mfr_new:              { title: 'TCH Mfr Portal', icon: Factory, color: 'text-orange-400' },
+        brand_season_po: { title: 'Season & PO Workflow', icon: Calendar, color: 'text-amber-400' },
+        brand_po_sc: { title: 'PO & Supply Chain Mgmt', icon: ShoppingCart, color: 'text-blue-400' },
+        mfr_new: { title: 'TCH Mfr Portal', icon: Factory, color: 'text-orange-400' },
     };
 
-    // Partition items by group
-    const ungrouped = navItems.filter(i => !i.group);
-    const groups = {};
-    navItems.filter(i => i.group).forEach(i => {
-        if (!groups[i.group]) groups[i.group] = [];
-        groups[i.group].push(i);
+    // Process items logically in their defined order
+    const renderList = [];
+    const processedGroups = new Set();
+    navItems.forEach(item => {
+        if (!item.group) {
+            renderList.push({ type: 'single', item });
+        } else if (!processedGroups.has(item.group)) {
+            processedGroups.add(item.group);
+            const groupItems = navItems.filter(i => i.group === item.group);
+            renderList.push({ type: 'group', groupKey: item.group, items: groupItems });
+        }
     });
 
     const renderNavLink = (item) => (
@@ -118,11 +119,10 @@ const DashboardLayout = ({ children }) => {
             key={item.id}
             to={item.path}
             onClick={() => setSidebarOpen(false)}
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                isActive(item.path)
+            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive(item.path)
                     ? 'bg-teal-600/20 text-teal-400'
                     : 'text-slate-400 hover:bg-slate-700/50 hover:text-white'
-            }`}
+                }`}
             data-testid={`nav-${item.id}`}
         >
             <item.icon className="h-4 w-4 shrink-0" />
@@ -166,16 +166,18 @@ const DashboardLayout = ({ children }) => {
 
                     {/* Navigation */}
                     <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-                        {/* Ungrouped items */}
-                        {ungrouped.map(renderNavLink)}
+                        {renderList.map((block, idx) => {
+                            if (block.type === 'single') {
+                                return renderNavLink(block.item);
+                            }
 
-                        {/* Groups with collapsible headers */}
-                        {Object.entries(groups).map(([groupKey, items]) => {
+                            const { groupKey, items } = block;
                             const def = groupDefs[groupKey];
                             if (!def) return items.map(renderNavLink);
+
                             const isOpen = expandedGroups[groupKey];
                             return (
-                                <div key={groupKey} className="mt-3">
+                                <div key={groupKey || idx} className="mt-3">
                                     <button
                                         onClick={() => toggleGroup(groupKey)}
                                         className="w-full flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 hover:text-slate-300 transition-colors"

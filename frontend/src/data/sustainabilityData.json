@@ -1,19 +1,34 @@
 {
-  "quadrants": [
-    {
-      "id": "sourcing",
-      "title": "Sourcing & Norms",
-      "score": 82,
-      "max": 100,
-      "statusIcon": "tick",
-      "color": "green",
-      "bullets": [
-        { "text": "RSL/MRSL compliance across 94% of suppliers", "status": "tick" },
-        { "text": "BCI Cotton used in 78% of cotton styles", "status": "tick" },
-        { "text": "Preferred fibre sourcing target: 80% (current 74%)", "status": "warning" },
-        { "text": "Geographic sourcing risk: Low (India cluster)", "status": "tick" }
-      ]
+  "scopeEmissions": {
+    "scope1": {
+      "title": "Scope 1 — Direct Emissions (Factory)",
+      "value": "1,240",
+      "unit": "tCO₂e",
+      "source": "Fuel combustion, on-site generators",
+      "status": "above_target",
+      "target": "1,100 tCO₂e",
+      "change": "+12.7% vs last year"
     },
+    "scope2Electricity": {
+      "title": "Scope 2 — Electricity (Market-based)",
+      "value": "3,860",
+      "unit": "tCO₂e",
+      "source": "Grid electricity consumption",
+      "status": "on_track",
+      "target": "4,000 tCO₂e",
+      "change": "-4.2% vs last year"
+    },
+    "scope2Downstream": {
+      "title": "Scope 2 — Downstream Supply Chain",
+      "value": "6,520",
+      "unit": "tCO₂e",
+      "source": "Tier 2–4 fabric mills & yarn spinners",
+      "status": "warning",
+      "target": "5,500 tCO₂e",
+      "change": "+18.5% vs last year"
+    }
+  },
+  "quadrants": [
     {
       "id": "certifications",
       "title": "Certifications & Labels",
@@ -25,21 +40,11 @@
         { "label": "GOTS", "obtained": 19, "required": 24, "status": "partial" },
         { "label": "GRS", "obtained": 14, "required": 18, "status": "partial" },
         { "label": "OEKO-TEX 100", "obtained": 22, "required": 22, "status": "verified" },
-        { "label": "Label compliance", "obtained": 87, "required": 100, "unit": "%", "status": "partial" }
-      ]
-    },
-    {
-      "id": "traceability",
-      "title": "Traceability",
-      "score": 61,
-      "max": 100,
-      "statusIcon": "warning",
-      "color": "orange",
-      "tiers": [
-        { "tier": "Tier 1", "label": "Manufacturers", "value": 100, "gap": false },
-        { "tier": "Tier 2", "label": "Fabric Mills", "value": 78, "gap": false },
-        { "tier": "Tier 3", "label": "Yarn Spinners", "value": 41, "gap": true },
-        { "tier": "Tier 4", "label": "Raw Material", "value": 18, "gap": true }
+        { "label": "Label compliance", "obtained": 87, "required": 100, "unit": "%", "status": "partial" },
+        { "label": "HIGG FEM", "obtained": 11, "required": 18, "status": "partial" },
+        { "label": "FSLM", "obtained": 8, "required": 14, "status": "partial" },
+        { "label": "ZDHC Chemical Mgmt", "obtained": 16, "required": 22, "status": "partial" },
+        { "label": "OEKO-TEX STD 100 REACH", "obtained": 20, "required": 22, "status": "partial" }
       ]
     },
     {
