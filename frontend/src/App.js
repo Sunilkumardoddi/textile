@@ -60,6 +60,24 @@ import MfrDashboardOverview from '@/pages/manufacturer/MfrDashboardOverview';
 import HiggFemCertifications from '@/pages/manufacturer/HiggFemCertifications';
 import TraceabilityAuditorESS from '@/pages/manufacturer/TraceabilityAuditorESS';
 
+// Admin Pages
+import AdminUsers from '@/pages/admin/AdminUsers';
+import AdminBatches from '@/pages/admin/AdminBatches';
+import AdminAudits from '@/pages/admin/AdminAudits';
+import AdminReports from '@/pages/admin/AdminReports';
+import AdminAlerts from '@/pages/admin/AdminAlerts';
+
+// Brand Pages — Audits, Reports, Compliance
+import BrandAudits from '@/pages/brand/BrandAudits';
+import BrandReports from '@/pages/brand/BrandReports';
+import BrandCompliance from '@/pages/brand/BrandCompliance';
+
+// Auditor Pages
+import AuditorAssigned from '@/pages/auditor/AuditorAssigned';
+import AuditorBatches from '@/pages/auditor/AuditorBatches';
+import AuditorReports from '@/pages/auditor/AuditorReports';
+import AuditorAuditDetail from '@/pages/auditor/AuditorAuditDetail';
+
 import './App.css';
 
 // Protected Route Component
@@ -122,11 +140,11 @@ function AppRoutes() {
 
             {/* Admin Routes */}
             <Route path="/dashboard/admin" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><AdminDashboard /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/admin/users"   element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ComingSoon title="User Management" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/admin/batches" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ComingSoon title="All Batches" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/admin/audits"  element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ComingSoon title="All Audits" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/admin/reports" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ComingSoon title="Reports" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/admin/alerts"  element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ComingSoon title="Alerts" /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/admin/users"   element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><AdminUsers /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/admin/batches" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><AdminBatches /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/admin/audits"  element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><AdminAudits /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/admin/reports" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><AdminReports /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/admin/alerts"  element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><AdminAlerts /></DashboardLayout></ProtectedRoute>} />
 
             {/* Manufacturer Routes — existing */}
             <Route path="/dashboard/manufacturer" element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ManufacturerDashboard /></DashboardLayout></ProtectedRoute>} />
@@ -152,9 +170,9 @@ function AppRoutes() {
             <Route path="/dashboard/brand/incoming"                                 element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><IncomingDashboard /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/incoming/po/:poId"                        element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POIncomingDetail /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/command-center"                           element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><SupplyChainCommandCenter /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/brand/audits"                                   element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ComingSoon title="Audit Requests" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/brand/reports"                                  element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ComingSoon title="Reports" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/brand/compliance"                               element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ComingSoon title="Compliance" /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/audits"                                   element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><BrandAudits /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/reports"                                  element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><BrandReports /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/compliance"                               element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><BrandCompliance /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/seasons"                                  element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><SeasonManagement /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/seasons/:seasonId"                        element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><SeasonDetail /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/seasons/:seasonId/collections"            element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ManufacturerCollection /></DashboardLayout></ProtectedRoute>} />
@@ -184,10 +202,10 @@ function AppRoutes() {
 
             {/* Auditor Routes */}
             <Route path="/dashboard/auditor"           element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><AuditorDashboard /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/auditor/assigned"  element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><ComingSoon title="Assigned Audits" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/auditor/batches"   element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><ComingSoon title="Batch Verification" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/auditor/reports"   element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><ComingSoon title="Audit Reports" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/auditor/audit/:id" element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><ComingSoon title="Audit Details" /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/auditor/assigned"  element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><AuditorAssigned /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/auditor/batches"   element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><AuditorBatches /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/auditor/reports"   element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><AuditorReports /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/auditor/audit/:id" element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><AuditorAuditDetail /></DashboardLayout></ProtectedRoute>} />
 
             {/* Default redirect */}
             <Route path="/"  element={<Navigate to="/login" replace />} />
