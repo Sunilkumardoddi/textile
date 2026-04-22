@@ -43,6 +43,17 @@ import POAutoGeneration from '@/pages/brand/POAutoGeneration';
 import POSCManagement from '@/pages/brand/POSCManagement';
 import POGarmentCosting from '@/pages/brand/POGarmentCosting';
 import POInternalLotCreation from '@/pages/brand/POInternalLotCreation';
+import POFitSamplesApproval from '@/pages/brand/POFitSamplesApproval';
+import POWiseTraceability from '@/pages/brand/POWiseTraceability';
+import POWiseSustainability from '@/pages/brand/POWiseSustainability';
+import POQRScanVisibility from '@/pages/brand/POQRScanVisibility';
+
+// Manufacturer Pages — sub-pages
+import ManufacturerBatches from '@/pages/manufacturer/ManufacturerBatches';
+import ManufacturerOrders from '@/pages/manufacturer/ManufacturerOrders';
+import ManufacturerProduction from '@/pages/manufacturer/ManufacturerProduction';
+import ManufacturerShipments from '@/pages/manufacturer/ManufacturerShipments';
+import ManufacturerDocuments from '@/pages/manufacturer/ManufacturerDocuments';
 
 // Manufacturer Pages — Module B new screens
 import MfrDashboardOverview from '@/pages/manufacturer/MfrDashboardOverview';
@@ -119,13 +130,13 @@ function AppRoutes() {
 
             {/* Manufacturer Routes — existing */}
             <Route path="/dashboard/manufacturer" element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ManufacturerDashboard /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/manufacturer/batches"    element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ComingSoon title="Batches" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/manufacturer/batches/new" element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ComingSoon title="Create Batch" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/manufacturer/batches/:id" element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ComingSoon title="Batch Details" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/manufacturer/production" element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ComingSoon title="Production" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/manufacturer/shipments"  element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ComingSoon title="Shipments" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/manufacturer/documents"  element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ComingSoon title="Documents" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/manufacturer/orders"     element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ComingSoon title="Purchase Orders" /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/manufacturer/batches"    element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ManufacturerBatches /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/manufacturer/batches/new" element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ManufacturerBatches /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/manufacturer/batches/:id" element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ManufacturerBatches /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/manufacturer/production" element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ManufacturerProduction /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/manufacturer/shipments"  element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ManufacturerShipments /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/manufacturer/documents"  element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ManufacturerDocuments /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/manufacturer/orders"     element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ManufacturerOrders /></DashboardLayout></ProtectedRoute>} />
 
             {/* Manufacturer Routes — Module B new */}
             <Route path="/dashboard/manufacturer/overview"          element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><MfrDashboardOverview /></DashboardLayout></ProtectedRoute>} />
@@ -165,11 +176,11 @@ function AppRoutes() {
             {/* Brand Routes — PO & Supply Chain Management */}
             <Route path="/dashboard/brand/po-sc-management"    element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POSCManagement /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/po-garment-costing"  element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POGarmentCosting /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/brand/po-fit-samples"       element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ComingSoon title="Approved PO Fit Samples Approval & Follow Ups" /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/po-fit-samples"       element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POFitSamplesApproval /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/po-lot-creation"      element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POInternalLotCreation /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/brand/po-traceability"      element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ComingSoon title="PO Wise Traceability" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/brand/po-sustainability"    element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ComingSoon title="PO Wise Sustainability" /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/dashboard/brand/po-qr-scan"           element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ComingSoon title="Supply Chain QR Code Scan Visibility" /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/po-traceability"      element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POWiseTraceability /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/po-sustainability"    element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POWiseSustainability /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/brand/po-qr-scan"           element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POQRScanVisibility /></DashboardLayout></ProtectedRoute>} />
 
             {/* Auditor Routes */}
             <Route path="/dashboard/auditor"           element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><AuditorDashboard /></DashboardLayout></ProtectedRoute>} />
