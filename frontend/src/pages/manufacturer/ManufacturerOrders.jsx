@@ -606,19 +606,75 @@ function SCMapModal({ po, tree, onClose, onTreeChange }) {
   );
 }
 
-// ── Sustainability Modal ──────────────────────────────────────────────────────
+// ── Sustainability Modal (full CRUD) ─────────────────────────────────────────
 
 const SCORE_COLOR = (s) => s >= 80 ? 'text-emerald-400' : s >= 60 ? 'text-amber-400' : 'text-red-400';
 const SCORE_BAR   = (s) => s >= 80 ? 'bg-emerald-500'  : s >= 60 ? 'bg-amber-500'   : 'bg-red-500';
 const SDG_LABELS  = { 6:'Clean Water',8:'Decent Work',12:'Resp. Consumption',13:'Climate Action',15:'Life on Land' };
 
-function SustainabilityModal({ po, tree, sustData, onClose }) {
+const BLANK_SUST = { carbon: 0, water: 0, energy: 0, chemPct: 0, wastePct: 0, score: 0, certs: [], sdgs: [] };
+
+function SustainabilityModal({ po, tree, sustData, onSustChange, onClose }) {
   const nodes     = flattenTree(tree);
   const chainData = sustData || { chainScore: 0, nodes: {} };
+
+  const [editingId,  setEditingId]  = useState(null);
+  const [form,       setForm]       = useState(null);
+  const [certInput,  setCertInput]  = useState('');
+  const [sdgInput,   setSdgInput]   = useState('');
+  const [confirmDel, setConfirmDel] = useState(null);
 
   const totalCarbon = nodes.reduce((s, n) => s + (chainData.nodes[n.id]?.carbon || 0), 0);
   const totalWater  = nodes.reduce((s, n) => s + (chainData.nodes[n.id]?.water  || 0), 0);
 
+  // ── helpers ────────────────────────────────────────────────────────────────
+  const reScore = (nodes) => {
+    const vals = Object.values(nodes).filter(Boolean);
+    return vals.length ? Math.round(vals.reduce((s, n) => s + n.score, 0) / vals.length) : 0;
+  };
+
+  const startEdit = (nodeId, existing) => {
+    setEditingId(nodeId);
+    setForm(existing
+      ? { ...existing, certs: [...existing.certs], sdgs: [...existing.sdgs] }
+      : { ...BLANK_SUST });
+    setCertInput(''); setSdgInput(''); setConfirmDel(null);
+  };
+
+  const cancelEdit = () => { setEditingId(null); setForm(null); };
+
+  const saveEdit = (nodeId) => {
+    const updatedNodes = { ...chainData.nodes, [nodeId]: { ...form } };
+    onSustChange({ ...chainData, chainScore: reScore(updatedNodes), nodes: updatedNodes });
+    cancelEdit();
+  };
+
+  const deleteNode = (nodeId) => {
+    const updatedNodes = { ...chainData.nodes };
+    delete updatedNodes[nodeId];
+    onSustChange({ ...chainData, chainScore: reScore(updatedNodes), nodes: updatedNodes });
+    setConfirmDel(null);
+  };
+
+  const setNum  = (k, v) => setForm(f => ({ ...f, [k]: parseFloat(v) || 0 }));
+  const setInt  = (k, v) => setForm(f => ({ ...f, [k]: Math.min(100, Math.max(0, parseInt(v) || 0)) }));
+
+  const addCert = () => {
+    const c = certInput.trim();
+    if (c && !form.certs.includes(c)) setForm(f => ({ ...f, certs: [...f.certs, c] }));
+    setCertInput('');
+  };
+  const removeCert = (c) => setForm(f => ({ ...f, certs: f.certs.filter(x => x !== c) }));
+
+  const addSdg = () => {
+    const n = parseInt(sdgInput);
+    if (!isNaN(n) && n > 0 && !form.sdgs.includes(n))
+      setForm(f => ({ ...f, sdgs: [...f.sdgs, n].sort((a, b) => a - b) }));
+    setSdgInput('');
+  };
+  const removeSdg = (n) => setForm(f => ({ ...f, sdgs: f.sdgs.filter(x => x !== n) }));
+
+  // ── render ─────────────────────────────────────────────────────────────────
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 overflow-y-auto py-8 px-4">
       <div className="w-full max-w-5xl bg-slate-900 rounded-2xl border border-slate-700 shadow-2xl">
@@ -632,17 +688,27 @@ function SustainabilityModal({ po, tree, sustData, onClose }) {
               <p className="text-xs text-slate-400">{po.po} · {po.buyer} · {po.season}</p>
             </div>
           </div>
-          <button onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700">
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex gap-3 text-xs text-slate-500">
+              <span className="flex items-center gap-1"><Plus className="w-3 h-3 text-teal-400"/>Add data</span>
+              <span className="flex items-center gap-1"><Pencil className="w-3 h-3 text-blue-400"/>Edit</span>
+              <span className="flex items-center gap-1"><Trash2 className="w-3 h-3 text-red-400"/>Clear</span>
+            </div>
+            <button onClick={onClose}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Chain summary KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-6 py-4 border-b border-slate-700 bg-slate-800/50">
           <div className="text-center">
             <p className="text-xs text-slate-400 mb-1">Chain Score</p>
-            <p className={`text-3xl font-bold ${SCORE_COLOR(chainData.chainScore)}`}>{chainData.chainScore}<span className="text-lg">/100</span></p>
+            <p className={`text-3xl font-bold ${SCORE_COLOR(chainData.chainScore)}`}>
+              {chainData.chainScore}<span className="text-lg">/100</span>
+            </p>
+            <p className="text-xs text-slate-600 mt-0.5">auto-avg of node scores</p>
           </div>
           <div className="text-center">
             <p className="text-xs text-slate-400 mb-1">Total Carbon / Garment</p>
@@ -653,30 +719,172 @@ function SustainabilityModal({ po, tree, sustData, onClose }) {
             <p className="text-2xl font-bold text-blue-300">{totalWater.toFixed(0)}<span className="text-sm text-slate-400 ml-1">L</span></p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-slate-400 mb-1">Tiers Mapped</p>
-            <p className="text-2xl font-bold text-teal-300">{nodes.length}</p>
+            <p className="text-xs text-slate-400 mb-1">Tiers with Data</p>
+            <p className="text-2xl font-bold text-teal-300">
+              {Object.keys(chainData.nodes).length}<span className="text-sm text-slate-500">/{nodes.length}</span>
+            </p>
           </div>
         </div>
 
         {/* Per-node cards */}
         <div className="p-6 space-y-4 overflow-y-auto max-h-[65vh]">
-          {nodes.map((node, idx) => {
-            const cfg  = TIER_CFG[node.tier] || TIER_CFG['Tier 4'];
-            const sust = chainData.nodes[node.id];
+          {nodes.map((node) => {
+            const cfg      = TIER_CFG[node.tier] || TIER_CFG['Tier 4'];
+            const sust     = chainData.nodes[node.id];
+            const isEditing = editingId === node.id;
 
             return (
               <div key={node.id} className={`rounded-xl border ${cfg.border} ${cfg.bg} overflow-hidden`}>
-                {/* Node header */}
+
+                {/* Node header row */}
                 <div className="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-white/5">
                   <Badge className={`text-xs ${cfg.badge}`}>{node.tier}</Badge>
                   <span className="text-white font-semibold">{node.name}</span>
                   <span className="text-slate-400 text-xs flex items-center gap-1">
                     <MapPin className="w-3 h-3" />{node.location}
                   </span>
-                  <span className="text-slate-500 text-xs ml-auto">{node.role}</span>
+                  <span className="text-slate-500 text-xs">{node.role}</span>
+
+                  {/* CRUD action buttons */}
+                  <div className="ml-auto flex items-center gap-1">
+                    {!isEditing && (
+                      <button onClick={() => startEdit(node.id, sust)}
+                        title={sust ? 'Edit sustainability data' : 'Add sustainability data'}
+                        className={`flex items-center gap-1 px-2 py-1 rounded text-xs border transition-colors ${
+                          sust
+                            ? 'border-blue-500/40 text-blue-300 hover:bg-blue-500/10'
+                            : 'border-teal-500/40 text-teal-300 hover:bg-teal-500/10'
+                        }`}>
+                        {sust ? <><Pencil className="w-3 h-3"/>Edit</> : <><Plus className="w-3 h-3"/>Add</>}
+                      </button>
+                    )}
+                    {sust && !isEditing && (
+                      confirmDel === node.id ? (
+                        <div className="flex items-center gap-1">
+                          <span className="text-xs text-red-400">Clear data?</span>
+                          <button onClick={() => deleteNode(node.id)}
+                            className="p-1 rounded text-red-400 hover:bg-red-500/20">
+                            <Check className="w-3.5 h-3.5"/>
+                          </button>
+                          <button onClick={() => setConfirmDel(null)}
+                            className="p-1 rounded text-slate-400 hover:bg-slate-700">
+                            <X className="w-3.5 h-3.5"/>
+                          </button>
+                        </div>
+                      ) : (
+                        <button onClick={() => setConfirmDel(node.id)}
+                          title="Clear sustainability data for this node"
+                          className="p-1.5 rounded text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                          <Trash2 className="w-3.5 h-3.5"/>
+                        </button>
+                      )
+                    )}
+                  </div>
                 </div>
 
-                {sust ? (
+                {/* ── EDIT FORM ─────────────────────────────────────────── */}
+                {isEditing && form && (
+                  <div className="px-4 py-4 bg-slate-800/60 space-y-4">
+                    {/* Score */}
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <label className="text-slate-400 font-medium">Sustainability Score</label>
+                        <span className={`font-bold ${SCORE_COLOR(form.score)}`}>{form.score}/100</span>
+                      </div>
+                      <input type="range" min="0" max="100" value={form.score}
+                        onChange={e => setInt('score', e.target.value)}
+                        className="w-full h-2 rounded-full accent-teal-500 bg-slate-700 cursor-pointer" />
+                    </div>
+
+                    {/* Numeric KPIs */}
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                      {[
+                        { key: 'carbon',  label: 'Carbon',         unit: 'kg CO₂e', color: 'text-slate-300',   step: '0.1' },
+                        { key: 'water',   label: 'Water',          unit: 'L',       color: 'text-blue-300',    step: '0.5' },
+                        { key: 'energy',  label: 'Energy',         unit: 'kWh',     color: 'text-yellow-300',  step: '0.1' },
+                        { key: 'chemPct', label: 'Chem Compliance',unit: '%',       color: 'text-emerald-300', step: '1', max: '100' },
+                        { key: 'wastePct',label: 'Waste Diverted', unit: '%',       color: 'text-teal-300',    step: '1', max: '100' },
+                      ].map(f => (
+                        <div key={f.key}>
+                          <label className={`text-xs font-medium mb-1 block ${f.color}`}>{f.label} <span className="text-slate-500">({f.unit})</span></label>
+                          <Input
+                            type="number" min="0" max={f.max || undefined} step={f.step}
+                            value={form[f.key]}
+                            onChange={e => setNum(f.key, e.target.value)}
+                            className="h-7 text-xs bg-slate-900 border-slate-600 text-white" />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Certifications */}
+                    <div>
+                      <label className="text-xs text-slate-400 font-medium mb-2 block">Certifications</label>
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        {form.certs.map(c => (
+                          <span key={c}
+                            className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+                            {c}
+                            <button onClick={() => removeCert(c)} className="hover:text-red-400">
+                              <X className="w-2.5 h-2.5"/>
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Input value={certInput} onChange={e => setCertInput(e.target.value)}
+                          onKeyDown={e => e.key === 'Enter' && addCert()}
+                          placeholder="e.g. GOTS, BCI, OEKO-TEX …"
+                          className="h-7 text-xs bg-slate-900 border-slate-600 text-white flex-1" />
+                        <button onClick={addCert}
+                          className="px-3 py-1 rounded text-xs bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/40">
+                          Add
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* SDGs */}
+                    <div>
+                      <label className="text-xs text-slate-400 font-medium mb-2 block">UN SDG Alignment <span className="text-slate-600">(enter SDG number)</span></label>
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        {form.sdgs.map(n => (
+                          <span key={n} title={SDG_LABELS[n] || `SDG ${n}`}
+                            className="flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-blue-500/15 border border-blue-500/30 text-blue-300 font-medium">
+                            SDG {n}
+                            <button onClick={() => removeSdg(n)} className="hover:text-red-400">
+                              <X className="w-2.5 h-2.5"/>
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Input type="number" min="1" max="17" value={sdgInput}
+                          onChange={e => setSdgInput(e.target.value)}
+                          onKeyDown={e => e.key === 'Enter' && addSdg()}
+                          placeholder="1–17"
+                          className="h-7 text-xs bg-slate-900 border-slate-600 text-white w-24" />
+                        <button onClick={addSdg}
+                          className="px-3 py-1 rounded text-xs bg-blue-600/20 border border-blue-500/40 text-blue-300 hover:bg-blue-600/40">
+                          Add
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Save / Cancel */}
+                    <div className="flex justify-end gap-2 pt-1">
+                      <button onClick={cancelEdit}
+                        className="flex items-center gap-1 px-4 py-1.5 rounded border border-slate-600 text-slate-400 text-xs hover:text-white">
+                        <X className="w-3 h-3"/> Cancel
+                      </button>
+                      <button onClick={() => saveEdit(node.id)}
+                        className="flex items-center gap-1 px-4 py-1.5 rounded bg-teal-600/30 border border-teal-500/50 text-teal-300 text-xs hover:bg-teal-600/50">
+                        <Check className="w-3 h-3"/> Save
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── READ VIEW ─────────────────────────────────────────── */}
+                {!isEditing && sust && (
                   <div className="px-4 py-3 space-y-3">
                     {/* Score bar */}
                     <div>
@@ -690,10 +898,10 @@ function SustainabilityModal({ po, tree, sustData, onClose }) {
                       </div>
                     </div>
 
-                    {/* KPI grid */}
+                    {/* KPI tiles */}
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
                       {[
-                        { icon: Wind,     label: 'Carbon',        val: `${sust.carbon} kg CO₂e`, color: 'text-slate-300'   },
+                        { icon: Wind,     label: 'Carbon',         val: `${sust.carbon} kg CO₂e`, color: 'text-slate-300'   },
                         { icon: Droplets, label: 'Water',          val: `${sust.water} L`,         color: 'text-blue-300'    },
                         { icon: Zap,      label: 'Energy',         val: `${sust.energy} kWh`,      color: 'text-yellow-300'  },
                         { icon: Award,    label: 'Chem Compliance',val: `${sust.chemPct}%`,         color: 'text-emerald-300' },
@@ -734,11 +942,20 @@ function SustainabilityModal({ po, tree, sustData, onClose }) {
                       )}
                     </div>
                   </div>
-                ) : (
-                  <div className="px-4 py-4 text-center text-slate-500 text-sm italic">
-                    No sustainability data recorded for this node yet.
+                )}
+
+                {/* ── NO DATA YET ──────────────────────────────────────── */}
+                {!isEditing && !sust && (
+                  <div className="px-4 py-5 flex flex-col items-center gap-2 text-slate-500">
+                    <Leaf className="w-6 h-6 opacity-40" />
+                    <p className="text-sm">No sustainability data recorded.</p>
+                    <button onClick={() => startEdit(node.id, null)}
+                      className="mt-1 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs bg-teal-600/20 border border-teal-500/40 text-teal-300 hover:bg-teal-600/40">
+                      <Plus className="w-3 h-3"/> Add Data
+                    </button>
                   </div>
                 )}
+
               </div>
             );
           })}
@@ -758,6 +975,7 @@ export default function ManufacturerOrders() {
   const [scModalPO, setScModalPO]         = useState(null);
   const [sustModalPO, setSustModalPO]     = useState(null);
   const [scTrees, setScTrees]             = useState(INITIAL_SC_TREES);
+  const [allSustData, setAllSustData]     = useState(SUST_DATA);
 
   const confirmPO   = (id)  => setConfirmedPOs(prev => new Set([...prev, id]));
   const getStatus   = (po)  => confirmedPOs.has(po.po) ? 'Active' : po.status;
@@ -969,7 +1187,10 @@ export default function ManufacturerOrders() {
         <SustainabilityModal
           po={activeSustPO}
           tree={scTrees[sustModalPO]}
-          sustData={SUST_DATA[sustModalPO]}
+          sustData={allSustData[sustModalPO]}
+          onSustChange={updated =>
+            setAllSustData(prev => ({ ...prev, [sustModalPO]: updated }))
+          }
           onClose={() => setSustModalPO(null)}
         />
       )}
