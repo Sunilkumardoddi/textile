@@ -195,30 +195,30 @@
   "poAutoGen": {
     "infoBanner": "77 styles punched → System auto-generates PO drafts per supplier → Brand Manager reviews → Approve & Raise Final PO",
     "poList": [
-      { "poNo": "PO-001", "supplier": "Arvind Mills Ltd", "styles": 12, "value": "₹ 18.4L", "status": "Approved" },
-      { "poNo": "PO-002", "supplier": "Vardhman Textiles", "styles": 8, "value": "₹ 12.2L", "status": "Review" },
-      { "poNo": "PO-003", "supplier": "Raymond Ltd", "styles": 6, "value": "₹ 9.6L", "status": "Approved" },
-      { "poNo": "PO-004", "supplier": "Welspun India", "styles": 10, "value": "₹ 15.8L", "status": "Draft" },
-      { "poNo": "PO-005", "supplier": "Trident Group", "styles": 7, "value": "₹ 11.0L", "status": "Review" },
-      { "poNo": "PO-006", "supplier": "RSWM Ltd", "styles": 5, "value": "₹ 7.4L", "status": "Approved" },
-      { "poNo": "PO-007", "supplier": "Sutlej Textiles", "styles": 9, "value": "₹ 13.6L", "status": "Draft" },
-      { "poNo": "PO-008", "supplier": "Nahar Spinning", "styles": 4, "value": "₹ 6.2L", "status": "Pending" },
-      { "poNo": "PO-009", "supplier": "Indo Count Industries", "styles": 6, "value": "₹ 9.0L", "status": "Approved" }
+      { "poNo": "PO-AW27-4812", "supplier": "TCH Garments Pvt Ltd", "styles": 14, "value": "$ 186,000", "status": "Approved" },
+      { "poNo": "PO-AW27-3991", "supplier": "Beximco Garments Ltd", "styles": 10, "value": "$ 128,400", "status": "Review" },
+      { "poNo": "PO-SS27-2201", "supplier": "TCH Garments Pvt Ltd", "styles": 8, "value": "$ 93,600", "status": "Approved" },
+      { "poNo": "PO-SS27-2202", "supplier": "Arvind Ltd", "styles": 9, "value": "$ 108,000", "status": "Draft" },
+      { "poNo": "PO-AW27-5003", "supplier": "Beximco Garments Ltd", "styles": 7, "value": "$ 84,700", "status": "Review" },
+      { "poNo": "PO-SS27-2203", "supplier": "TCH Garments Pvt Ltd", "styles": 6, "value": "$ 72,000", "status": "Approved" },
+      { "poNo": "PO-AW27-5011", "supplier": "Pacific Garments Ltd", "styles": 11, "value": "$ 132,000", "status": "Draft" },
+      { "poNo": "PO-SS27-2204", "supplier": "Arvind Ltd", "styles": 5, "value": "$ 60,500", "status": "Pending" },
+      { "poNo": "PO-AW27-5022", "supplier": "Pacific Garments Ltd", "styles": 7, "value": "$ 85,400", "status": "Approved" }
     ],
     "selectedPO": {
-      "poNo": "PO-001",
+      "poNo": "PO-AW27-4812",
       "season": "AW2027",
-      "date": "2025-04-19",
-      "dueDate": "2025-08-15",
+      "date": "2027-04-19",
+      "dueDate": "2027-10-15",
       "styles": [
-        { "styleNo": "AW27-WV-042", "name": "Classic Navy Twill", "qty": 2400, "rate": "₹ 794", "fabric": "2.2 mtr", "value": "₹ 19.1L" },
-        { "styleNo": "AW27-WV-043", "name": "Olive Chalk Stripe", "qty": 1800, "rate": "₹ 810", "fabric": "2.1 mtr", "value": "₹ 14.6L" },
-        { "styleNo": "AW27-WV-044", "name": "Slate Plain Weave", "qty": 1600, "rate": "₹ 778", "fabric": "2.0 mtr", "value": "₹ 12.4L" }
+        { "styleNo": "ZR-AW27-OC001", "name": "Wool Blend Overcoat", "qty": 4200, "rate": "$ 18.50", "fabric": "2.4 mtr", "value": "$ 77,700" },
+        { "styleNo": "ZR-AW27-JK002", "name": "Structured Blazer", "qty": 3800, "rate": "$ 14.20", "fabric": "1.9 mtr", "value": "$ 53,960" },
+        { "styleNo": "ZR-AW27-TR003", "name": "Tailored Trouser", "qty": 4400, "rate": "$ 12.35", "fabric": "1.6 mtr", "value": "$ 54,340" }
       ],
-      "totalValue": "₹ 46.1L",
+      "totalValue": "$ 186,000",
       "paymentTerms": "30% advance, 70% on dispatch",
       "balancePercent": "70%",
-      "delivery": "2025-08-15",
+      "delivery": "2027-10-15",
       "penalty": "1% per week delay beyond delivery date"
     }
   },
