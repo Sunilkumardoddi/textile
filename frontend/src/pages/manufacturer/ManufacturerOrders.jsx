@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   ShoppingBag, ChevronDown, ChevronUp, DollarSign, Clock, TrendingUp,
   GitBranch, Plus, Pencil, Trash2, ChevronRight, X, Check, Filter,
-  Building2, MapPin,
+  Building2, MapPin, Leaf, Droplets, Wind, Recycle, Award, Zap, Globe,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -212,6 +212,73 @@ const INITIAL_SC_TREES = {
   },
 };
 
+// ── Sustainability Seed Data (per PO, keyed by node ID) ──────────────────────
+// carbon/water/energy are per-garment contributions; pct values 0-100
+
+const SUST_DATA = {
+  'PO-AW27-4812': {
+    chainScore: 76,
+    nodes: {
+      'root':   { carbon: 0.3,  water: 8,   energy: 2,    chemPct: 100, wastePct: 85, score: 92, certs: ['ISO 14001','SA8000'],             sdgs: [8,12,13] },
+      't1-001': { carbon: 2.4,  water: 38,  energy: 18,   chemPct: 94,  wastePct: 78, score: 82, certs: ['SA8000','OEKO-TEX','ISO 9001'],   sdgs: [8,12]    },
+      't2-001': { carbon: 3.2,  water: 64,  energy: 28,   chemPct: 88,  wastePct: 72, score: 74, certs: ['GOTS','BCI'],                     sdgs: [6,12,15] },
+      't2-002': { carbon: 1.8,  water: 42,  energy: 14,   chemPct: 91,  wastePct: 80, score: 79, certs: ['OEKO-TEX'],                       sdgs: [12]      },
+      't3-001': { carbon: 0.5,  water: 28,  energy: 6,    chemPct: 76,  wastePct: 55, score: 58, certs: ['BCI'],                            sdgs: [6,15]    },
+      't4-001': { carbon: 0.2,  water: 6,   energy: 0.5,  chemPct: 65,  wastePct: 40, score: 44, certs: [],                                 sdgs: [15]      },
+    },
+  },
+  'PO-AW27-3991': {
+    chainScore: 82,
+    nodes: {
+      'root':   { carbon: 0.2,  water: 6,   energy: 1.5,  chemPct: 100, wastePct: 88, score: 95, certs: ['ISO 14001'],                      sdgs: [8,12,13] },
+      't1-001': { carbon: 2.1,  water: 34,  energy: 16,   chemPct: 96,  wastePct: 82, score: 86, certs: ['SA8000','OEKO-TEX'],              sdgs: [8,12]    },
+      't2-001': { carbon: 2.8,  water: 58,  energy: 24,   chemPct: 92,  wastePct: 76, score: 80, certs: ['GOTS','BCI','OEKO-TEX'],          sdgs: [6,12,15] },
+      't3-001': { carbon: 0.4,  water: 22,  energy: 5,    chemPct: 88,  wastePct: 65, score: 72, certs: ['BCI','GRS'],                      sdgs: [6,15]    },
+      't4-001': { carbon: 0.15, water: 5,   energy: 0.3,  chemPct: 82,  wastePct: 60, score: 68, certs: ['BCI'],                            sdgs: [15]      },
+    },
+  },
+  'PO-AW27-5100': {
+    chainScore: 71,
+    nodes: {
+      'root':   { carbon: 0.4,  water: 10,  energy: 2.5,  chemPct: 100, wastePct: 90, score: 93, certs: ['ISO 14001','SA8000'],             sdgs: [8,12,13] },
+      't1-001': { carbon: 3.1,  water: 46,  energy: 22,   chemPct: 91,  wastePct: 74, score: 79, certs: ['SA8000','OEKO-TEX'],              sdgs: [8,12]    },
+      't2-001': { carbon: 4.2,  water: 72,  energy: 32,   chemPct: 84,  wastePct: 68, score: 68, certs: ['RWS','ISO 9001'],                 sdgs: [6,12,15] },
+      't2-002': { carbon: 1.6,  water: 36,  energy: 12,   chemPct: 89,  wastePct: 76, score: 75, certs: ['OEKO-TEX'],                       sdgs: [12]      },
+      't3-001': { carbon: 1.2,  water: 44,  energy: 8,    chemPct: 72,  wastePct: 50, score: 54, certs: [],                                 sdgs: [15]      },
+      't4-001': { carbon: 0.1,  water: 3,   energy: 0.2,  chemPct: 95,  wastePct: 88, score: 87, certs: ['RWS','ZQ Merino'],               sdgs: [15]      },
+    },
+  },
+  'PO-SS27-2201': {
+    chainScore: 88,
+    nodes: {
+      'root':   { carbon: 0.2,  water: 6,   energy: 1.5,  chemPct: 100, wastePct: 90, score: 95, certs: ['ISO 14001','SA8000'],             sdgs: [8,12,13] },
+      't1-001': { carbon: 1.8,  water: 28,  energy: 14,   chemPct: 97,  wastePct: 86, score: 90, certs: ['SA8000','OEKO-TEX','ISO 9001'],   sdgs: [8,12]    },
+      't2-001': { carbon: 2.2,  water: 50,  energy: 20,   chemPct: 94,  wastePct: 84, score: 86, certs: ['GOTS','OEKO-TEX','EU Flax'],      sdgs: [6,12,15] },
+      't3-001': { carbon: 0.3,  water: 18,  energy: 4,    chemPct: 80,  wastePct: 65, score: 70, certs: ['EU Flax'],                        sdgs: [6,15]    },
+      't4-001': { carbon: 0.1,  water: 4,   energy: 0.4,  chemPct: 88,  wastePct: 72, score: 78, certs: ['EU Flax','Organic'],              sdgs: [15]      },
+    },
+  },
+  'PO-SS27-1890': {
+    chainScore: 67,
+    nodes: {
+      'root':   { carbon: 0.2,  water: 5,   energy: 1.2,  chemPct: 100, wastePct: 88, score: 94, certs: ['ISO 14001'],                      sdgs: [8,12,13] },
+      't1-001': { carbon: 2.0,  water: 32,  energy: 16,   chemPct: 92,  wastePct: 76, score: 80, certs: ['SA8000','OEKO-TEX'],              sdgs: [8,12]    },
+      't2-001': { carbon: 3.6,  water: 68,  energy: 30,   chemPct: 78,  wastePct: 60, score: 62, certs: ['OEKO-TEX'],                       sdgs: [6,12]    },
+      't3-001': { carbon: 0.8,  water: 36,  energy: 10,   chemPct: 64,  wastePct: 42, score: 48, certs: [],                                 sdgs: [15]      },
+    },
+  },
+  'PO-AW28-1001': {
+    chainScore: 61,
+    nodes: {
+      'root':   { carbon: 0.3,  water: 8,   energy: 2,    chemPct: 100, wastePct: 85, score: 90, certs: ['ISO 14001'],                      sdgs: [8,12,13] },
+      't1-001': { carbon: 2.6,  water: 40,  energy: 20,   chemPct: 90,  wastePct: 72, score: 76, certs: ['SA8000','OEKO-TEX'],              sdgs: [8,12]    },
+      't2-001': { carbon: 3.8,  water: 58,  energy: 26,   chemPct: 82,  wastePct: 62, score: 65, certs: ['OEKO-TEX','GRS'],                 sdgs: [6,12]    },
+      't3-001': { carbon: 1.4,  water: 48,  energy: 14,   chemPct: 68,  wastePct: 48, score: 52, certs: ['GRS'],                            sdgs: [12,13]   },
+      't4-001': { carbon: 0.6,  water: 16,  energy: 4,    chemPct: 54,  wastePct: 32, score: 38, certs: [],                                 sdgs: [13]      },
+    },
+  },
+};
+
 // ── Tree Helpers ──────────────────────────────────────────────────────────────
 
 const updateNode = (node, id, data) => {
@@ -231,6 +298,12 @@ const addChild = (node, parentId, child) => {
 
 let nodeCounter = 1000;
 const newId = () => `node-${++nodeCounter}`;
+
+const flattenTree = (node, acc = []) => {
+  acc.push(node);
+  node.children.forEach(c => flattenTree(c, acc));
+  return acc;
+};
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
@@ -533,6 +606,148 @@ function SCMapModal({ po, tree, onClose, onTreeChange }) {
   );
 }
 
+// ── Sustainability Modal ──────────────────────────────────────────────────────
+
+const SCORE_COLOR = (s) => s >= 80 ? 'text-emerald-400' : s >= 60 ? 'text-amber-400' : 'text-red-400';
+const SCORE_BAR   = (s) => s >= 80 ? 'bg-emerald-500'  : s >= 60 ? 'bg-amber-500'   : 'bg-red-500';
+const SDG_LABELS  = { 6:'Clean Water',8:'Decent Work',12:'Resp. Consumption',13:'Climate Action',15:'Life on Land' };
+
+function SustainabilityModal({ po, tree, sustData, onClose }) {
+  const nodes     = flattenTree(tree);
+  const chainData = sustData || { chainScore: 0, nodes: {} };
+
+  const totalCarbon = nodes.reduce((s, n) => s + (chainData.nodes[n.id]?.carbon || 0), 0);
+  const totalWater  = nodes.reduce((s, n) => s + (chainData.nodes[n.id]?.water  || 0), 0);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 overflow-y-auto py-8 px-4">
+      <div className="w-full max-w-5xl bg-slate-900 rounded-2xl border border-slate-700 shadow-2xl">
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700">
+          <div className="flex items-center gap-3">
+            <Leaf className="w-5 h-5 text-teal-400" />
+            <div>
+              <h2 className="text-lg font-semibold text-white">Chain Sustainability Data</h2>
+              <p className="text-xs text-slate-400">{po.po} · {po.buyer} · {po.season}</p>
+            </div>
+          </div>
+          <button onClick={onClose}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Chain summary KPIs */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-6 py-4 border-b border-slate-700 bg-slate-800/50">
+          <div className="text-center">
+            <p className="text-xs text-slate-400 mb-1">Chain Score</p>
+            <p className={`text-3xl font-bold ${SCORE_COLOR(chainData.chainScore)}`}>{chainData.chainScore}<span className="text-lg">/100</span></p>
+          </div>
+          <div className="text-center">
+            <p className="text-xs text-slate-400 mb-1">Total Carbon / Garment</p>
+            <p className="text-2xl font-bold text-slate-200">{totalCarbon.toFixed(1)}<span className="text-sm text-slate-400 ml-1">kg CO₂e</span></p>
+          </div>
+          <div className="text-center">
+            <p className="text-xs text-slate-400 mb-1">Total Water / Garment</p>
+            <p className="text-2xl font-bold text-blue-300">{totalWater.toFixed(0)}<span className="text-sm text-slate-400 ml-1">L</span></p>
+          </div>
+          <div className="text-center">
+            <p className="text-xs text-slate-400 mb-1">Tiers Mapped</p>
+            <p className="text-2xl font-bold text-teal-300">{nodes.length}</p>
+          </div>
+        </div>
+
+        {/* Per-node cards */}
+        <div className="p-6 space-y-4 overflow-y-auto max-h-[65vh]">
+          {nodes.map((node, idx) => {
+            const cfg  = TIER_CFG[node.tier] || TIER_CFG['Tier 4'];
+            const sust = chainData.nodes[node.id];
+
+            return (
+              <div key={node.id} className={`rounded-xl border ${cfg.border} ${cfg.bg} overflow-hidden`}>
+                {/* Node header */}
+                <div className="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-white/5">
+                  <Badge className={`text-xs ${cfg.badge}`}>{node.tier}</Badge>
+                  <span className="text-white font-semibold">{node.name}</span>
+                  <span className="text-slate-400 text-xs flex items-center gap-1">
+                    <MapPin className="w-3 h-3" />{node.location}
+                  </span>
+                  <span className="text-slate-500 text-xs ml-auto">{node.role}</span>
+                </div>
+
+                {sust ? (
+                  <div className="px-4 py-3 space-y-3">
+                    {/* Score bar */}
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-slate-400">Sustainability Score</span>
+                        <span className={`font-bold ${SCORE_COLOR(sust.score)}`}>{sust.score}/100</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-slate-700">
+                        <div className={`h-2 rounded-full transition-all duration-500 ${SCORE_BAR(sust.score)}`}
+                          style={{ width: `${sust.score}%` }} />
+                      </div>
+                    </div>
+
+                    {/* KPI grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                      {[
+                        { icon: Wind,     label: 'Carbon',        val: `${sust.carbon} kg CO₂e`, color: 'text-slate-300'   },
+                        { icon: Droplets, label: 'Water',          val: `${sust.water} L`,         color: 'text-blue-300'    },
+                        { icon: Zap,      label: 'Energy',         val: `${sust.energy} kWh`,      color: 'text-yellow-300'  },
+                        { icon: Award,    label: 'Chem Compliance',val: `${sust.chemPct}%`,         color: 'text-emerald-300' },
+                        { icon: Recycle,  label: 'Waste Diverted', val: `${sust.wastePct}%`,        color: 'text-teal-300'    },
+                      ].map(kpi => (
+                        <div key={kpi.label} className="bg-slate-800/60 rounded-lg p-2 text-center">
+                          <kpi.icon className={`w-3.5 h-3.5 mx-auto mb-1 ${kpi.color}`} />
+                          <p className={`text-sm font-bold ${kpi.color}`}>{kpi.val}</p>
+                          <p className="text-xs text-slate-500 mt-0.5 leading-tight">{kpi.label}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Certs + SDGs */}
+                    <div className="flex flex-wrap items-center gap-4">
+                      {sust.certs.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 items-center">
+                          <span className="text-xs text-slate-500">Certs:</span>
+                          {sust.certs.map(c => (
+                            <span key={c}
+                              className="px-2 py-0.5 rounded-full text-xs bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+                              {c}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {sust.sdgs.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 items-center">
+                          <Globe className="w-3 h-3 text-slate-500" />
+                          <span className="text-xs text-slate-500">SDGs:</span>
+                          {sust.sdgs.map(n => (
+                            <span key={n} title={SDG_LABELS[n] || `SDG ${n}`}
+                              className="px-1.5 py-0.5 rounded text-xs bg-blue-500/15 border border-blue-500/30 text-blue-300 font-medium">
+                              {n}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="px-4 py-4 text-center text-slate-500 text-sm italic">
+                    No sustainability data recorded for this node yet.
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export default function ManufacturerOrders() {
@@ -541,6 +756,7 @@ export default function ManufacturerOrders() {
   const [expandedPO, setExpandedPO]       = useState(null);
   const [confirmedPOs, setConfirmedPOs]   = useState(new Set());
   const [scModalPO, setScModalPO]         = useState(null);
+  const [sustModalPO, setSustModalPO]     = useState(null);
   const [scTrees, setScTrees]             = useState(INITIAL_SC_TREES);
 
   const confirmPO   = (id)  => setConfirmedPOs(prev => new Set([...prev, id]));
@@ -556,7 +772,8 @@ export default function ManufacturerOrders() {
   const activePOs  = withStatus.filter(p => p.status === 'Active').length;
   const totalValue = PO_DATA.reduce((s, p) => s + p.value, 0);
 
-  const activeSCPO = scModalPO ? PO_DATA.find(p => p.po === scModalPO) : null;
+  const activeSCPO   = scModalPO   ? PO_DATA.find(p => p.po === scModalPO)   : null;
+  const activeSustPO = sustModalPO ? PO_DATA.find(p => p.po === sustModalPO) : null;
 
   return (
     <div className="min-h-screen bg-slate-900 p-6 text-white">
@@ -678,6 +895,14 @@ export default function ManufacturerOrders() {
                     SC Map
                   </button>
 
+                  {/* Sustainability button */}
+                  <button
+                    onClick={e => { e.stopPropagation(); setSustModalPO(po.po); }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-700 border border-slate-600 text-slate-300 text-xs font-medium hover:bg-slate-600 hover:text-white transition-colors flex-shrink-0">
+                    <Leaf className="w-3.5 h-3.5 text-emerald-400" />
+                    Sustainability
+                  </button>
+
                   {expandedPO === po.po
                     ? <ChevronUp className="w-5 h-5 text-slate-400" />
                     : <ChevronDown className="w-5 h-5 text-slate-400" />}
@@ -736,6 +961,16 @@ export default function ManufacturerOrders() {
           tree={scTrees[scModalPO]}
           onClose={() => setScModalPO(null)}
           onTreeChange={newTree => setScTrees(prev => ({ ...prev, [scModalPO]: newTree }))}
+        />
+      )}
+
+      {/* Sustainability Modal */}
+      {sustModalPO && activeSustPO && scTrees[sustModalPO] && (
+        <SustainabilityModal
+          po={activeSustPO}
+          tree={scTrees[sustModalPO]}
+          sustData={SUST_DATA[sustModalPO]}
+          onClose={() => setSustModalPO(null)}
         />
       )}
     </div>
