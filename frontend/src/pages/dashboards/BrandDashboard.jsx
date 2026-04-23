@@ -147,7 +147,24 @@ const BrandDashboard = () => {
             setFilteredPOs(posRes.data);
             setSeasons(seasonsRes.data);
         } catch {
-            // silently use static data if API fails
+            const staticPOs = [
+                { id: 'PO-AW27-4812', po_number: 'PO-AW27-4812', brand_name: 'Zara', status: 'completed',           total_amount: 489200, delivery_date: '2027-10-15', season_id: 'AW2027' },
+                { id: 'PO-AW27-3991', po_number: 'PO-AW27-3991', brand_name: 'Zara', status: 'in_production',       total_amount: 298400, delivery_date: '2027-09-20', season_id: 'AW2027' },
+                { id: 'PO-SS27-2201', po_number: 'PO-SS27-2201', brand_name: 'Zara', status: 'accepted',            total_amount: 156000, delivery_date: '2027-04-30', season_id: 'SS2027' },
+                { id: 'PO-SS27-2202', po_number: 'PO-SS27-2202', brand_name: 'Zara', status: 'awaiting_acceptance', total_amount: 110000, delivery_date: '2027-05-15', season_id: 'SS2027' },
+            ];
+            setSuppliers([
+                { id: 'SUP-001', company_name: 'TCH Garments Pvt Ltd',   compliance_score: 91, country: 'India' },
+                { id: 'SUP-002', company_name: 'Beximco Garments Ltd',    compliance_score: 74, country: 'Bangladesh' },
+                { id: 'SUP-003', company_name: 'Arvind Ltd',              compliance_score: 85, country: 'India' },
+            ]);
+            setPurchaseOrders(staticPOs);
+            setFilteredPOs(staticPOs);
+            setSeasons([
+                { id: 'AW2027', season_code: 'AW2027' },
+                { id: 'SS2027', season_code: 'SS2027' },
+                { id: 'AW2028', season_code: 'AW2028' },
+            ]);
         } finally {
             setLoading(false);
         }

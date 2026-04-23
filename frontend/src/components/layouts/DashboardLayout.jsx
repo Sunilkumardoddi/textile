@@ -51,7 +51,7 @@ const DashboardLayout = ({ children }) => {
                 { id: 'documents', label: 'Documents', icon: FileText, path: '/dashboard/manufacturer/documents' },
                 // ── New Mfr Screens ──
                 { id: 'mfr-overview', label: 'Mfr Overview', icon: LayoutDashboard, path: '/dashboard/manufacturer/overview', group: 'mfr_new' },
-                { id: 'higg-fem', label: 'Higg FEM & Certs', icon: Leaf, path: '/dashboard/manufacturer/higg-fem', group: 'mfr_new' },
+                { id: 'higg-fem', label: 'Sustainability & Certs', icon: Leaf, path: '/dashboard/manufacturer/higg-fem', group: 'mfr_new' },
                 { id: 'trace-ess', label: 'Traceability & ESS', icon: GitBranch, path: '/dashboard/manufacturer/traceability-ess', group: 'mfr_new' },
             ],
             brand: [
@@ -71,6 +71,7 @@ const DashboardLayout = ({ children }) => {
                 { id: 'po-qr-scan', label: 'Supply Chain QR Scan', icon: MapPin, path: '/dashboard/brand/po-qr-scan', group: 'brand_po_sc' },
                 // ── Sustainability ──
                 { id: 'sustainability', label: 'Sustainability', icon: Leaf, path: '/dashboard/brand/sustainability' },
+                { id: 'sc-sustainability', label: 'SC · Sustainability · Costing', icon: GitBranch, path: '/dashboard/brand/sc-sustainability' },
                 { id: 'supplier-trace', label: 'Supplier Trace', icon: GitBranch, path: '/dashboard/brand/supplier-trace' },
                 { id: 'season-bench', label: 'Season Benchmark', icon: BarChart2, path: '/dashboard/brand/season-benchmark' },
             ],

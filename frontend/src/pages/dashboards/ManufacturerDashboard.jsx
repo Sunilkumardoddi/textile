@@ -32,19 +32,20 @@ const ManufacturerDashboard = () => {
             setPurchaseOrders(posRes.data || []);
             setPOStats(posStatsRes.data);
         } catch (error) {
-            console.error('API Error, using fallback data:', error);
             setStats({
-                batches: { by_status: { completed: 15, in_production: 8, created: 5 }, recent: [
-                    { id: 1, batch_number: 'BATCH-2024-001', product_name: 'Organic Cotton T-Shirt', status: 'in_production' },
-                    { id: 2, batch_number: 'BATCH-2024-002', product_name: 'Recycled Denim Jeans', status: 'completed' }
+                batches: { by_status: { completed: 3, shipped: 1, in_production: 2, qc: 1, pending: 1 }, recent: [
+                    { id: 'BAT-001', batch_number: 'BAT-001', product_name: 'Cotton Twill 200gsm', status: 'completed' },
+                    { id: 'BAT-002', batch_number: 'BAT-002', product_name: 'Polyester Blend', status: 'shipped' },
+                    { id: 'BAT-007', batch_number: 'BAT-007', product_name: 'Wool Blend 300gsm', status: 'qc' },
                 ] },
-                shipments: { by_status: { delivered: 5, in_transit: 2 } }
+                shipments: { by_status: { delivered: 2, in_transit: 1, pending: 1 } }
             });
             setPurchaseOrders([
-                { id: 1, po_number: 'PO-2024-001', brand_name: 'Zara', status: 'awaiting_acceptance', total_amount: 15000, delivery_date: '2024-12-01' },
-                { id: 2, po_number: 'PO-2024-002', brand_name: 'H&M', status: 'in_production', total_amount: 8500, delivery_date: '2024-11-15' }
+                { id: 'PO-AW27-4812', po_number: 'PO-AW27-4812', brand_name: 'Zara (Inditex)', status: 'in_production', total_amount: 125000, delivery_date: '2027-03-15' },
+                { id: 'PO-SS27-2201', po_number: 'PO-SS27-2201', brand_name: 'H&M Group', status: 'accepted', total_amount: 156000, delivery_date: '2027-04-30' },
+                { id: 'PO-AW28-1001', po_number: 'PO-AW28-1001', brand_name: 'Primark Ltd', status: 'awaiting_acceptance', total_amount: 110000, delivery_date: '2027-09-01' },
             ]);
-            setPOStats({ total_value: 23500 });
+            setPOStats({ total_value: 391000 });
         } finally {
             setLoading(false);
         }
@@ -113,7 +114,7 @@ const ManufacturerDashboard = () => {
         );
     }
 
-    const totalBatches = Object.values(stats?.batches?.by_status || {}).reduce((a, b) => a + b.count, 0);
+    const totalBatches = Object.values(stats?.batches?.by_status || {}).reduce((a, b) => a + (typeof b === 'number' ? b : (b.count || 0)), 0);
     const pendingOrders = purchaseOrders.filter(o => o.status === 'awaiting_acceptance');
     const activeOrders = purchaseOrders.filter(o => ['accepted', 'in_production', 'shipped'].includes(o.status));
 

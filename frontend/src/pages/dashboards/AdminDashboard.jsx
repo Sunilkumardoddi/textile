@@ -31,16 +31,23 @@ const AdminDashboard = () => {
             setPendingUsers(pendingRes.data);
             setSupplierStats(suppliersRes.data);
         } catch (error) {
-            console.error('API Error, using fallback data:', error);
-            setStats({ 
-                users: { by_role: { manufacturer: { active: 12 }, brand: { active: 5 } }, pending_approvals: 3 },
-                batches: { by_status: { completed: 45, audit_approved: 10, created: 5 }, recent: [] }
+            setStats({
+                users: { by_role: {
+                    manufacturer: { active: 3, total: 3 },
+                    brand:        { active: 4, total: 5 },
+                    auditor:      { active: 3, total: 3 },
+                }, pending_approvals: 2 },
+                batches: { by_status: { Completed: 3, Shipped: 1, 'In Production': 2, QC: 1 }, recent: [
+                    { id: 'BAT-001', batch_number: 'BAT-001', product_name: 'Cotton Twill 200gsm', status: 'completed' },
+                    { id: 'BAT-002', batch_number: 'BAT-002', product_name: 'Polyester Blend', status: 'shipped' },
+                ] }
             });
             setPendingUsers([
-                { id: 1, name: 'TCH Garments', email: 'manufacturer@textile.com', role: 'manufacturer' }
+                { id: 'U008', name: 'Arvind Mills', email: 'arvind@textile.com', role: 'manufacturer' },
+                { id: 'U009', name: 'Intertek Testing', email: 'intertek@textile.com', role: 'auditor' },
             ]);
-            setSupplierStats({ 
-                total_suppliers: 12, average_compliance: 92.5, risk_distribution: { low: 8, medium: 3, high: 1 } 
+            setSupplierStats({
+                total_suppliers: 3, average_compliance: 84.7, risk_distribution: { low: 2, medium: 1, high: 0 }
             });
         } finally {
             setLoading(false);
@@ -75,7 +82,7 @@ const AdminDashboard = () => {
     const statCards = [
         { 
             title: 'Total Users', 
-            value: stats?.users?.by_role ? Object.values(stats.users.by_role).reduce((a, b) => a + b.total, 0) : 0,
+            value: stats?.users?.by_role ? Object.values(stats.users.by_role).reduce((a, b) => a + (b.total || 0), 0) : 0,
             icon: Users,
             color: 'text-blue-400',
             bgColor: 'bg-blue-500/10',

@@ -27,6 +27,7 @@ import POIncomingDetail from '@/pages/brand/POIncomingDetail';
 import SupplyChainCommandCenter from '@/pages/brand/SupplyChainCommandCenter';
 
 // Brand Pages — Module A new screens
+import SupplyChainSustainability from '@/pages/brand/SupplyChainSustainability';
 import SustainabilityModule from '@/pages/brand/SustainabilityModule';
 import CertificationTracker from '@/pages/brand/CertificationTracker';
 import SupplierTraceabilityView from '@/pages/brand/SupplierTraceabilityView';
@@ -179,6 +180,7 @@ function AppRoutes() {
             <Route path="/dashboard/brand/seasons/:seasonId/collections/:collectionId" element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><ManufacturerCollection /></DashboardLayout></ProtectedRoute>} />
 
             {/* Brand Routes — Module A new sustainability screens */}
+            <Route path="/dashboard/brand/sc-sustainability" element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><SupplyChainSustainability /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/sustainability"   element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><SustainabilityModule /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/certifications"   element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><CertificationTracker /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/supplier-trace"   element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><SupplierTraceabilityView /></DashboardLayout></ProtectedRoute>} />
