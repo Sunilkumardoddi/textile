@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 
 const PO_OPTIONS = [
     { id: 'PO-AW27-4812', brand: 'Zara (Inditex)',  season: 'AW2027', totalQty: 12400 },
-    { id: 'PO-AW27-3991', brand: 'H&M Group',        season: 'AW2027', totalQty:  8600 },
-    { id: 'PO-AW27-5100', brand: 'Marks & Spencer',  season: 'AW2027', totalQty: 15200 },
+    { id: 'PO-AW27-3991', brand: 'Zara (Inditex)',   season: 'AW2027', totalQty:  8600 },
+    { id: 'PO-SS27-2201', brand: 'Zara (Inditex)',   season: 'SS2027', totalQty:  6200 },
 ];
 
 const SEED_LOT_DATA = {
@@ -53,7 +53,7 @@ const SEED_LOT_DATA = {
     ],
     'PO-AW27-3991': [
         {
-            styleNo: 'HM-AW27-PK001', styleName: 'Quilted Puffer Jacket', category: 'Outerwear', totalQty: 3200,
+            styleNo: 'ZR-AW27-PK001', styleName: 'Quilted Puffer Jacket', category: 'Outerwear', totalQty: 3200,
             lots: [
                 { lotNo: 'LOT-PK001-BLK-01', colour: 'Jet Black',   hex: '#1a1a1a', poRef: 'PO-AW27-3991-A', ratio: '1:2:3:2:1', qty: 800, ef: '20 Sep 2027', fob: '$38.60', status: 'Confirmed'   },
                 { lotNo: 'LOT-PK001-RED-02', colour: 'Cherry Red',  hex: '#b31e2e', poRef: 'PO-AW27-3991-B', ratio: '1:2:3:2:1', qty: 720, ef: '21 Sep 2027', fob: '$38.60', status: 'In Progress' },
@@ -63,7 +63,7 @@ const SEED_LOT_DATA = {
             ],
         },
         {
-            styleNo: 'HM-AW27-CN002', styleName: 'Cable-Knit Cardigan', category: 'Knitwear', totalQty: 2800,
+            styleNo: 'ZR-AW27-CN002', styleName: 'Cable-Knit Cardigan', category: 'Knitwear', totalQty: 2800,
             lots: [
                 { lotNo: 'LOT-CN002-CRM-01', colour: 'Cream',     hex: '#f5ede0', poRef: 'PO-AW27-3991-F', ratio: '1:2:4:2:1', qty: 900, ef: '18 Sep 2027', fob: '$24.40', status: 'Confirmed' },
                 { lotNo: 'LOT-CN002-GRY-02', colour: 'Mid Grey',  hex: '#808080', poRef: 'PO-AW27-3991-G', ratio: '1:2:4:2:1', qty: 800, ef: '19 Sep 2027', fob: '$24.40', status: 'Confirmed' },
@@ -72,7 +72,7 @@ const SEED_LOT_DATA = {
             ],
         },
         {
-            styleNo: 'HM-AW27-TR003', styleName: 'Corduroy Slim Trouser', category: 'Bottoms', totalQty: 2600,
+            styleNo: 'ZR-AW27-TR003B', styleName: 'Corduroy Slim Trouser', category: 'Bottoms', totalQty: 2600,
             lots: [
                 { lotNo: 'LOT-CRTR-TAN-01', colour: 'Tan',       hex: '#c4956a', poRef: 'PO-AW27-3991-J', ratio: '1:2:3:2:1', qty: 700, ef: '17 Sep 2027', fob: '$19.80', status: 'Confirmed' },
                 { lotNo: 'LOT-CRTR-BLK-02', colour: 'Black',     hex: '#1a1a1a', poRef: 'PO-AW27-3991-K', ratio: '1:2:3:2:1', qty: 700, ef: '18 Sep 2027', fob: '$19.80', status: 'Confirmed' },
@@ -81,50 +81,50 @@ const SEED_LOT_DATA = {
             ],
         },
     ],
-    'PO-AW27-5100': [
+    'PO-SS27-2201': [
         {
-            styleNo: 'MS-AW27-CT001', styleName: 'Cashmere Blend Coat', category: 'Outerwear', totalQty: 2400,
+            styleNo: 'ZR-SS27-BL001', styleName: 'Linen Blend Blazer', category: 'Outerwear', totalQty: 1800,
             lots: [
-                { lotNo: 'LOT-CT001-CAM-01', colour: 'Camel',       hex: '#c4956a', poRef: 'PO-AW27-5100-A', ratio: '1:2:3:2:1', qty: 600, ef: '05 Oct 2027', fob: '$92.50', status: 'Confirmed'   },
-                { lotNo: 'LOT-CT001-CHC-02', colour: 'Charcoal',    hex: '#3a3f4a', poRef: 'PO-AW27-5100-B', ratio: '1:2:3:2:1', qty: 600, ef: '06 Oct 2027', fob: '$92.50', status: 'In Progress' },
-                { lotNo: 'LOT-CT001-CRM-03', colour: 'Cream',        hex: '#f5ede0', poRef: 'PO-AW27-5100-C', ratio: '1:2:3:2:1', qty: 600, ef: '07 Oct 2027', fob: '$92.50', status: 'Draft'      },
-                { lotNo: 'LOT-CT001-NVY-04', colour: 'Navy',         hex: '#1b2a4a', poRef: 'PO-AW27-5100-D', ratio: '1:2:3:2:1', qty: 600, ef: '08 Oct 2027', fob: '$92.50', status: 'Draft'      },
+                { lotNo: 'LOT-SS-BL001-CAM', colour: 'Camel',      hex: '#c4956a', poRef: 'PO-SS27-2201-A', ratio: '1:2:3:2:1', qty: 450, ef: '15 Apr 2027', fob: '$56.20', status: 'Confirmed'   },
+                { lotNo: 'LOT-SS-BL001-WHT', colour: 'White',       hex: '#f5f5f5', poRef: 'PO-SS27-2201-B', ratio: '1:2:3:2:1', qty: 450, ef: '16 Apr 2027', fob: '$56.20', status: 'In Progress' },
+                { lotNo: 'LOT-SS-BL001-SAG', colour: 'Sage Green',  hex: '#8ba888', poRef: 'PO-SS27-2201-C', ratio: '1:2:3:2:1', qty: 450, ef: '17 Apr 2027', fob: '$56.20', status: 'Draft'      },
+                { lotNo: 'LOT-SS-BL001-BLK', colour: 'Jet Black',   hex: '#1a1a1a', poRef: 'PO-SS27-2201-D', ratio: '1:2:3:2:1', qty: 450, ef: '18 Apr 2027', fob: '$56.20', status: 'Draft'      },
             ],
         },
         {
-            styleNo: 'MS-AW27-SW002', styleName: 'Lambswool Crew Neck', category: 'Knitwear', totalQty: 3600,
+            styleNo: 'ZR-SS27-SW002', styleName: 'Lambswool Crew Neck', category: 'Knitwear', totalQty: 3600,
             lots: [
-                { lotNo: 'LOT-SW002-NVY-01', colour: 'Navy',     hex: '#1b2a4a', poRef: 'PO-AW27-5100-E', ratio: '1:2:4:2:1', qty: 1200, ef: '01 Oct 2027', fob: '$42.00', status: 'Confirmed' },
-                { lotNo: 'LOT-SW002-BRG-02', colour: 'Burgundy', hex: '#6b1a2e', poRef: 'PO-AW27-5100-F', ratio: '1:2:4:2:1', qty: 1000, ef: '02 Oct 2027', fob: '$42.00', status: 'Confirmed' },
-                { lotNo: 'LOT-SW002-HGR-03', colour: 'Heather Grey',hex: '#9090a0',poRef: 'PO-AW27-5100-G', ratio: '1:2:4:2:1', qty: 800, ef: '03 Oct 2027', fob: '$42.00', status: 'Draft'     },
-                { lotNo: 'LOT-SW002-FOR-04', colour: 'Forest',    hex: '#2e4a2e', poRef: 'PO-AW27-5100-H', ratio: '1:2:4:2:1', qty: 600, ef: '04 Oct 2027', fob: '$42.00', status: 'Draft'     },
+                { lotNo: 'LOT-SW002-NVY-01', colour: 'Navy',     hex: '#1b2a4a', poRef: 'PO-SS27-2201-E', ratio: '1:2:4:2:1', qty: 1200, ef: '01 Oct 2027', fob: '$42.00', status: 'Confirmed' },
+                { lotNo: 'LOT-SW002-BRG-02', colour: 'Burgundy', hex: '#6b1a2e', poRef: 'PO-SS27-2201-F', ratio: '1:2:4:2:1', qty: 1000, ef: '02 Oct 2027', fob: '$42.00', status: 'Confirmed' },
+                { lotNo: 'LOT-SW002-HGR-03', colour: 'Heather Grey',hex: '#9090a0',poRef: 'PO-SS27-2201-G', ratio: '1:2:4:2:1', qty: 800, ef: '03 Oct 2027', fob: '$42.00', status: 'Draft'     },
+                { lotNo: 'LOT-SW002-FOR-04', colour: 'Forest',    hex: '#2e4a2e', poRef: 'PO-SS27-2201-H', ratio: '1:2:4:2:1', qty: 600, ef: '04 Oct 2027', fob: '$42.00', status: 'Draft'     },
             ],
         },
         {
-            styleNo: 'MS-AW27-TR003', styleName: 'Tweed Straight Trouser', category: 'Bottoms', totalQty: 2800,
+            styleNo: 'ZR-SS27-TR003', styleName: 'Tweed Straight Trouser', category: 'Bottoms', totalQty: 2800,
             lots: [
-                { lotNo: 'LOT-TWT-HRB-01', colour: 'Herringbone',hex: '#5a5050', poRef: 'PO-AW27-5100-I', ratio: '1:2:3:2:1', qty: 700, ef: '03 Oct 2027', fob: '$36.20', status: 'Confirmed' },
-                { lotNo: 'LOT-TWT-BLK-02', colour: 'Black',       hex: '#1a1a1a', poRef: 'PO-AW27-5100-J', ratio: '1:2:3:2:1', qty: 700, ef: '04 Oct 2027', fob: '$36.20', status: 'Draft'     },
-                { lotNo: 'LOT-TWT-NVY-03', colour: 'Navy',         hex: '#1b2a4a', poRef: 'PO-AW27-5100-K', ratio: '1:2:3:2:1', qty: 700, ef: '05 Oct 2027', fob: '$36.20', status: 'Draft'     },
-                { lotNo: 'LOT-TWT-CHC-04', colour: 'Charcoal',    hex: '#3a3f4a', poRef: 'PO-AW27-5100-L', ratio: '1:2:3:2:1', qty: 700, ef: '06 Oct 2027', fob: '$36.20', status: 'Draft'     },
+                { lotNo: 'LOT-TWT-HRB-01', colour: 'Herringbone',hex: '#5a5050', poRef: 'PO-SS27-2201-I', ratio: '1:2:3:2:1', qty: 700, ef: '03 Oct 2027', fob: '$36.20', status: 'Confirmed' },
+                { lotNo: 'LOT-TWT-BLK-02', colour: 'Black',       hex: '#1a1a1a', poRef: 'PO-SS27-2201-J', ratio: '1:2:3:2:1', qty: 700, ef: '04 Oct 2027', fob: '$36.20', status: 'Draft'     },
+                { lotNo: 'LOT-TWT-NVY-03', colour: 'Navy',         hex: '#1b2a4a', poRef: 'PO-SS27-2201-K', ratio: '1:2:3:2:1', qty: 700, ef: '05 Oct 2027', fob: '$36.20', status: 'Draft'     },
+                { lotNo: 'LOT-TWT-CHC-04', colour: 'Charcoal',    hex: '#3a3f4a', poRef: 'PO-SS27-2201-L', ratio: '1:2:3:2:1', qty: 700, ef: '06 Oct 2027', fob: '$36.20', status: 'Draft'     },
             ],
         },
         {
-            styleNo: 'MS-AW27-SC004', styleName: 'Merino Scarf & Gloves Set', category: 'Accessories', totalQty: 2400,
+            styleNo: 'ZR-SS27-SC004', styleName: 'Merino Scarf & Gloves Set', category: 'Accessories', totalQty: 2400,
             lots: [
-                { lotNo: 'LOT-SCF-CAM-01', colour: 'Camel',     hex: '#c4956a', poRef: 'PO-AW27-5100-M', ratio: '—', qty: 600, ef: '30 Sep 2027', fob: '$18.80', status: 'Confirmed' },
-                { lotNo: 'LOT-SCF-CHC-02', colour: 'Charcoal',  hex: '#3a3f4a', poRef: 'PO-AW27-5100-N', ratio: '—', qty: 600, ef: '01 Oct 2027', fob: '$18.80', status: 'Confirmed' },
-                { lotNo: 'LOT-SCF-BRG-03', colour: 'Burgundy',  hex: '#6b1a2e', poRef: 'PO-AW27-5100-O', ratio: '—', qty: 600, ef: '02 Oct 2027', fob: '$18.80', status: 'Draft'     },
-                { lotNo: 'LOT-SCF-NVY-04', colour: 'Navy',      hex: '#1b2a4a', poRef: 'PO-AW27-5100-P', ratio: '—', qty: 600, ef: '03 Oct 2027', fob: '$18.80', status: 'Draft'     },
+                { lotNo: 'LOT-SCF-CAM-01', colour: 'Camel',     hex: '#c4956a', poRef: 'PO-SS27-2201-M', ratio: '—', qty: 600, ef: '30 Sep 2027', fob: '$18.80', status: 'Confirmed' },
+                { lotNo: 'LOT-SCF-CHC-02', colour: 'Charcoal',  hex: '#3a3f4a', poRef: 'PO-SS27-2201-N', ratio: '—', qty: 600, ef: '01 Oct 2027', fob: '$18.80', status: 'Confirmed' },
+                { lotNo: 'LOT-SCF-BRG-03', colour: 'Burgundy',  hex: '#6b1a2e', poRef: 'PO-SS27-2201-O', ratio: '—', qty: 600, ef: '02 Oct 2027', fob: '$18.80', status: 'Draft'     },
+                { lotNo: 'LOT-SCF-NVY-04', colour: 'Navy',      hex: '#1b2a4a', poRef: 'PO-SS27-2201-P', ratio: '—', qty: 600, ef: '03 Oct 2027', fob: '$18.80', status: 'Draft'     },
             ],
         },
         {
-            styleNo: 'MS-AW27-BL005', styleName: 'Silk Blouse', category: 'Tops', totalQty: 4000,
+            styleNo: 'ZR-SS27-BL005', styleName: 'Silk Blouse', category: 'Tops', totalQty: 4000,
             lots: [
-                { lotNo: 'LOT-BL005-IVY-01', colour: 'Ivory',    hex: '#f5ede0', poRef: 'PO-AW27-5100-Q', ratio: '1:2:4:2:1', qty: 1200, ef: '28 Sep 2027', fob: '$28.40', status: 'Confirmed'   },
-                { lotNo: 'LOT-BL005-BLK-02', colour: 'Black',     hex: '#1a1a1a', poRef: 'PO-AW27-5100-R', ratio: '1:2:4:2:1', qty: 1000, ef: '29 Sep 2027', fob: '$28.40', status: 'In Progress' },
-                { lotNo: 'LOT-BL005-DRS-03', colour: 'Dusty Rose', hex: '#d4a0a0', poRef: 'PO-AW27-5100-S', ratio: '1:2:4:2:1', qty: 1000, ef: '30 Sep 2027', fob: '$28.40', status: 'Draft'      },
-                { lotNo: 'LOT-BL005-SGR-04', colour: 'Sage Green', hex: '#8ba888', poRef: 'PO-AW27-5100-T', ratio: '1:2:4:2:1', qty: 800,  ef: '01 Oct 2027', fob: '$28.40', status: 'Draft'      },
+                { lotNo: 'LOT-BL005-IVY-01', colour: 'Ivory',    hex: '#f5ede0', poRef: 'PO-SS27-2201-Q', ratio: '1:2:4:2:1', qty: 1200, ef: '28 Sep 2027', fob: '$28.40', status: 'Confirmed'   },
+                { lotNo: 'LOT-BL005-BLK-02', colour: 'Black',     hex: '#1a1a1a', poRef: 'PO-SS27-2201-R', ratio: '1:2:4:2:1', qty: 1000, ef: '29 Sep 2027', fob: '$28.40', status: 'In Progress' },
+                { lotNo: 'LOT-BL005-DRS-03', colour: 'Dusty Rose', hex: '#d4a0a0', poRef: 'PO-SS27-2201-S', ratio: '1:2:4:2:1', qty: 1000, ef: '30 Sep 2027', fob: '$28.40', status: 'Draft'      },
+                { lotNo: 'LOT-BL005-SGR-04', colour: 'Sage Green', hex: '#8ba888', poRef: 'PO-SS27-2201-T', ratio: '1:2:4:2:1', qty: 800,  ef: '01 Oct 2027', fob: '$28.40', status: 'Draft'      },
             ],
         },
     ],

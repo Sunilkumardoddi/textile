@@ -9,8 +9,8 @@ import { Badge } from '@/components/ui/badge';
 
 const PO_OPTIONS = [
   { id: 'PO-AW27-4812', brand: 'Zara', season: 'AW2027', qty: 12400 },
-  { id: 'PO-AW27-3991', brand: 'H&M',  season: 'AW2027', qty: 8600  },
-  { id: 'PO-AW27-5100', brand: 'M&S',  season: 'AW2027', qty: 15200 },
+  { id: 'PO-AW27-3991', brand: 'Zara', season: 'AW2027', qty: 8600  },
+  { id: 'PO-SS27-2201', brand: 'Zara', season: 'SS2027', qty: 6200  },
 ];
 
 const SUSTAINABILITY_DATA = {
@@ -64,7 +64,7 @@ const SUSTAINABILITY_DATA = {
       { num: 15, label: 'Life on Land',                color: 'bg-green-500/20 border-green-500/40 text-green-300',  score: 'Medium' },
     ],
   },
-  'PO-AW27-5100': {
+  'PO-SS27-2201': {
     kpis: { carbon: '6.8 kg CO₂e', water: '104 L', chemical: '97%', waste: '88%' },
     stages: [
       { name: 'Raw Material', score: 96 },

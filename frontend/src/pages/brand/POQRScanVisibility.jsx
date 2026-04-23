@@ -9,8 +9,8 @@ import { Badge } from '@/components/ui/badge';
 
 const PO_OPTIONS = [
   { id: 'PO-AW27-4812', brand: 'Zara', season: 'AW2027', qty: 12400 },
-  { id: 'PO-AW27-3991', brand: 'H&M',  season: 'AW2027', qty: 8600  },
-  { id: 'PO-AW27-5100', brand: 'M&S',  season: 'AW2027', qty: 15200 },
+  { id: 'PO-AW27-3991', brand: 'Zara', season: 'AW2027', qty: 8600  },
+  { id: 'PO-SS27-2201', brand: 'Zara', season: 'SS2027', qty: 6200  },
 ];
 
 const LOT_DATA = {
@@ -22,17 +22,17 @@ const LOT_DATA = {
     { lotNo: 'LOT-DRS004-EMR-01',styleNo: 'ZR-AW27-DRS004',styleName: 'Velvet Midi Dress',    colour: 'Emerald Green',     qty: 400 },
   ],
   'PO-AW27-3991': [
-    { lotNo: 'LOT-PK001-BLK-01', styleNo: 'HM-AW27-PK001', styleName: 'Quilted Puffer Jacket', colour: 'Jet Black',       qty: 800 },
-    { lotNo: 'LOT-PK001-RED-02', styleNo: 'HM-AW27-PK001', styleName: 'Quilted Puffer Jacket', colour: 'Cherry Red',      qty: 720 },
-    { lotNo: 'LOT-KN002-GRY-01', styleNo: 'HM-AW27-KN002', styleName: 'Ribbed Knit Cardigan',  colour: 'Marl Grey',       qty: 650 },
-    { lotNo: 'LOT-DN003-IND-01', styleNo: 'HM-AW27-DN003', styleName: 'Slim Fit Denim Jeans',  colour: 'Indigo Wash',     qty: 900 },
+    { lotNo: 'LOT-PK001-BLK-01', styleNo: 'ZR-AW27-PK001', styleName: 'Quilted Puffer Jacket', colour: 'Jet Black',       qty: 800 },
+    { lotNo: 'LOT-PK001-RED-02', styleNo: 'ZR-AW27-PK001', styleName: 'Quilted Puffer Jacket', colour: 'Cherry Red',      qty: 720 },
+    { lotNo: 'LOT-KN002-GRY-01', styleNo: 'ZR-AW27-KN002', styleName: 'Ribbed Knit Cardigan',  colour: 'Marl Grey',       qty: 650 },
+    { lotNo: 'LOT-DN003-IND-01', styleNo: 'ZR-AW27-DN003', styleName: 'Slim Fit Denim Jeans',  colour: 'Indigo Wash',     qty: 900 },
   ],
-  'PO-AW27-5100': [
-    { lotNo: 'LOT-CT001-CAM-01', styleNo: 'MS-AW27-CT001', styleName: 'Cashmere Blend Coat',   colour: 'Camel',           qty: 1200 },
-    { lotNo: 'LOT-CT001-BLK-02', styleNo: 'MS-AW27-CT001', styleName: 'Cashmere Blend Coat',   colour: 'Jet Black',       qty: 1000 },
-    { lotNo: 'LOT-BL002-IVY-01', styleNo: 'MS-AW27-BL002', styleName: 'Silk Blend Blouse',     colour: 'Ivory',           qty: 800 },
-    { lotNo: 'LOT-SK003-TWD-01', styleNo: 'MS-AW27-SK003', styleName: 'Tweed A-Line Skirt',    colour: 'Heritage Tweed',  qty: 600 },
-    { lotNo: 'LOT-SK003-BLK-02', styleNo: 'MS-AW27-SK003', styleName: 'Tweed A-Line Skirt',    colour: 'Jet Black',       qty: 500 },
+  'PO-SS27-2201': [
+    { lotNo: 'LOT-SS-CT001-CAM', styleNo: 'ZR-SS27-CT001', styleName: 'Linen Blend Blazer',    colour: 'Camel',           qty: 900 },
+    { lotNo: 'LOT-SS-CT001-WHT', styleNo: 'ZR-SS27-CT001', styleName: 'Linen Blend Blazer',    colour: 'White',           qty: 800 },
+    { lotNo: 'LOT-SS-BL002-SAG', styleNo: 'ZR-SS27-BL002', styleName: 'Linen Shirt',           colour: 'Sage Green',      qty: 700 },
+    { lotNo: 'LOT-SS-TR003-SND', styleNo: 'ZR-SS27-TR003', styleName: 'Wide Leg Linen Trouser',colour: 'Sand Beige',      qty: 650 },
+    { lotNo: 'LOT-SS-TR003-WHT', styleNo: 'ZR-SS27-TR003', styleName: 'Wide Leg Linen Trouser',colour: 'White',           qty: 600 },
   ],
 };
 

@@ -9,8 +9,8 @@ import { Badge } from '@/components/ui/badge';
 
 const PO_OPTIONS = [
   { id: 'PO-AW27-4812', brand: 'Zara', season: 'AW2027', qty: 12400 },
-  { id: 'PO-AW27-3991', brand: 'H&M',  season: 'AW2027', qty: 8600  },
-  { id: 'PO-AW27-5100', brand: 'M&S',  season: 'AW2027', qty: 15200 },
+  { id: 'PO-AW27-3991', brand: 'Zara', season: 'AW2027', qty: 8600  },
+  { id: 'PO-SS27-2201', brand: 'Zara', season: 'SS2027', qty: 6200  },
 ];
 
 const CHAIN_DATA = {
@@ -32,7 +32,7 @@ const CHAIN_DATA = {
     { stage: 'QC & Packing',      supplier: 'Beximco Garments',          location: 'Gazipur, Bangladesh',     certs: ['ISO 9001'],                   pct: 0,   status: 'Pending',    address: 'Bhaluka EPZ, Gazipur 1700, Bangladesh',                    contact: '+880 2 9860 4400', batchRef: 'QC-BEX-AW27-—',  batchQty: 'Not yet started' },
     { stage: 'Shipped',           supplier: 'CMA CGM Logistics',         location: 'Chittagong Port, BD',     certs: [],                             pct: 0,   status: 'Pending',    address: 'Chittagong Port Authority, Bandar, Chittagong 4100, BD',   contact: '+880 31 710 3300', batchRef: 'SH-CMA-AW27-—',  batchQty: 'Not yet dispatched' },
   ],
-  'PO-AW27-5100': [
+  'PO-SS27-2201': [
     { stage: 'Raw Material',      supplier: 'Scottish Wool Board',       location: 'Edinburgh, Scotland',     certs: ['GOTS', 'RWS'],                pct: 100, status: 'Completed',   address: 'National Wool Centre, Edinburgh EH12 9DQ, Scotland',       contact: '+44 131 335 1200', batchRef: 'RM-SWB-AW27-009', batchQty: '22,000 kg wool tops' },
     { stage: 'Spinning',          supplier: 'Zegna Baruffa Yarns',       location: 'Biella, Italy',           certs: ['OE-Tex', 'ISO 9001'],         pct: 100, status: 'Completed',   address: 'Via Vaglio Rosso 1, Biella 13900, Italy',                  contact: '+39 015 252 2200', batchRef: 'SP-ZBY-AW27-018', batchQty: '17,800 kg worsted yarn' },
     { stage: 'Weaving / Knitting',supplier: 'Abraham Moon & Sons',       location: 'Leeds, UK',               certs: ['OEKO-TEX 100', 'ISO 9001'],   pct: 100, status: 'Completed',   address: 'Netherfield Mills, Guiseley, Leeds LS20 9PD, UK',          contact: '+44 1943 872 204', batchRef: 'WV-AMS-AW27-033', batchQty: '14,600 m² woven tweed' },
