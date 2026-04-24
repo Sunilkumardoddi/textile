@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Package, AlertTriangle, CheckCircle, Clock, Search, ChevronRight, Filter, Users, Award } from 'lucide-react';
+import { Package, AlertTriangle, CheckCircle, Clock, Search, ChevronRight, Filter, Users, Award, Plus, X, Layers } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,38 @@ const ALL_CERTIFICATIONS = [
 
 const STATUS_OPTIONS = ['All', 'Active', 'Pending', 'Gap', 'Partial'];
 const TIER_OPTIONS   = ['All Tiers', 'Tier 1', 'Tier 2', 'Tier 3', 'Tier 4'];
+
+const SWATCH_PALETTE = [
+    { name: 'Ivory White',   hex: '#F5F0E8', fabric: 'Cotton Twill 200gsm' },
+    { name: 'Navy Indigo',   hex: '#1B2A4A', fabric: 'Denim Warp 12oz' },
+    { name: 'Camel Beige',   hex: '#C8A87A', fabric: 'Wool Blend 280gsm' },
+    { name: 'Slate Grey',    hex: '#6B7280', fabric: 'Polyester Knit 180gsm' },
+    { name: 'Forest Green',  hex: '#2D5016', fabric: 'Organic Cotton 240gsm' },
+    { name: 'Burgundy',      hex: '#7C2D3E', fabric: 'Viscose Blend 160gsm' },
+    { name: 'Sky Blue',      hex: '#7EC8E3', fabric: 'Chambray 140gsm' },
+    { name: 'Warm Sand',     hex: '#D4B896', fabric: 'Linen Weave 200gsm' },
+    { name: 'Charcoal',      hex: '#374151', fabric: 'Technical Fleece 320gsm' },
+    { name: 'Terracotta',    hex: '#C2714F', fabric: 'Yarn Dyed Twill 220gsm' },
+    { name: 'Dusty Rose',    hex: '#D4A3A3', fabric: 'Jersey Knit 160gsm' },
+    { name: 'Olive',         hex: '#6B7C35', fabric: 'Canvas Weave 260gsm' },
+    { name: 'Off White',     hex: '#EDE8DC', fabric: 'Muslin 120gsm' },
+    { name: 'Dark Teal',     hex: '#134E4A', fabric: 'Ponte Roma 240gsm' },
+    { name: 'Blush',         hex: '#F4C5C5', fabric: 'Chiffon 60gsm' },
+    { name: 'Midnight Blue', hex: '#1E3A5F', fabric: 'Suiting Fabric 300gsm' },
+];
+
+const generateSwatches = (supplier) => {
+    const start = (supplier.id * 5) % SWATCH_PALETTE.length;
+    const count = 5 + (supplier.id % 3);
+    return Array.from({ length: count }, (_, i) => SWATCH_PALETTE[(start + i) % SWATCH_PALETTE.length]);
+};
+
+const isLight = (hex) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 > 128;
+};
 
 const statusStyle = {
     Active:  'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
@@ -55,6 +87,7 @@ const MfrDashboardOverview = () => {
     const [tierFilter, setTierFilter]   = useState('All Tiers');
     const [selectedPO, setSelectedPO]   = useState(poDetail.poRef);
     const [page, setPage]               = useState(1);
+    const [swatchOpen, setSwatchOpen]   = useState(null);
     const PAGE_SIZE = 10;
 
     const filtered = useMemo(() => {
@@ -214,48 +247,100 @@ const MfrDashboardOverview = () => {
                                     <th className="text-left py-3 px-3 text-xs font-semibold text-white">Certifications</th>
                                     <th className="text-left py-3 px-3 text-xs font-semibold text-white">Traceability</th>
                                     <th className="text-left py-3 px-3 text-xs font-semibold text-white">Status</th>
+
                                 </tr>
                             </thead>
                             <tbody>
-                                {paginated.map((s, i) => (
-                                    <tr key={s.id} className={`border-b border-slate-700/50 hover:bg-slate-700/20 transition-colors ${i % 2 === 0 ? '' : 'bg-slate-900/20'}`}>
-                                        <td className="py-3 px-4 text-slate-500 text-xs">{s.id}</td>
-                                        <td className="py-3 px-4 text-white text-sm font-medium">{s.name}</td>
-                                        <td className="py-3 px-3 text-slate-400 text-xs">{s.location}</td>
-                                        <td className="py-3 px-3 text-slate-400 text-xs">{s.activity}</td>
-                                        <td className="py-3 px-3">
-                                            <span className={`text-xs px-2 py-0.5 rounded border ${
-                                                s.tier === 'Tier 1' ? 'bg-teal-500/20 text-teal-300 border-teal-500/40' :
-                                                s.tier === 'Tier 2' ? 'bg-blue-500/20 text-blue-300 border-blue-500/40' :
-                                                s.tier === 'Tier 3' ? 'bg-orange-500/20 text-orange-300 border-orange-500/40' :
-                                                'bg-red-500/20 text-red-300 border-red-500/40'
-                                            }`}>{s.tier}</span>
-                                        </td>
-                                        <td className="py-3 px-3">
-                                            <div className="flex flex-wrap gap-1">
-                                                {s.certs.slice(0, 3).map(c => (
-                                                    <span key={c} className="text-xs px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 border border-slate-600">{c}</span>
-                                                ))}
-                                                {s.certs.length > 3 && (
-                                                    <span className="text-xs px-1.5 py-0.5 rounded bg-slate-700 text-slate-400">+{s.certs.length - 3}</span>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="py-3 px-3">
-                                            <div className="flex items-center gap-2">
-                                                <Progress value={s.tracePercent} className="w-16 h-1.5" />
-                                                <span className={`text-xs font-semibold ${s.tracePercent >= 75 ? 'text-emerald-400' : s.tracePercent >= 50 ? 'text-orange-400' : 'text-red-400'}`}>
-                                                    {s.tracePercent}%
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="py-3 px-3">
-                                            <span className={`text-xs px-2 py-0.5 rounded border font-semibold ${statusStyle[s.status] || statusStyle.Pending}`}>
-                                                {s.status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
+                                {paginated.map((s, i) => {
+                                    const isOpen = swatchOpen === s.id;
+                                    const swatches = generateSwatches(s);
+                                    return (
+                                        <React.Fragment key={s.id}>
+                                            <tr className={`border-b border-slate-700/50 hover:bg-slate-700/20 transition-colors ${i % 2 === 0 ? '' : 'bg-slate-900/20'} ${isOpen ? 'bg-slate-700/30' : ''}`}>
+                                                <td className="py-3 px-4 text-slate-500 text-xs">{s.id}</td>
+                                                <td className="py-3 px-4 text-white text-sm font-medium">{s.name}</td>
+                                                <td className="py-3 px-3 text-slate-400 text-xs">{s.location}</td>
+                                                <td className="py-3 px-3 text-slate-400 text-xs">{s.activity}</td>
+                                                <td className="py-3 px-3">
+                                                    <span className={`text-xs px-2 py-0.5 rounded border ${
+                                                        s.tier === 'Tier 1' ? 'bg-teal-500/20 text-teal-300 border-teal-500/40' :
+                                                        s.tier === 'Tier 2' ? 'bg-blue-500/20 text-blue-300 border-blue-500/40' :
+                                                        s.tier === 'Tier 3' ? 'bg-orange-500/20 text-orange-300 border-orange-500/40' :
+                                                        'bg-red-500/20 text-red-300 border-red-500/40'
+                                                    }`}>{s.tier}</span>
+                                                </td>
+                                                <td className="py-3 px-3">
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {s.certs.slice(0, 3).map(c => (
+                                                            <span key={c} className="text-xs px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 border border-slate-600">{c}</span>
+                                                        ))}
+                                                        {s.certs.length > 3 && (
+                                                            <span className="text-xs px-1.5 py-0.5 rounded bg-slate-700 text-slate-400">+{s.certs.length - 3}</span>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="py-3 px-3">
+                                                    <div className="flex items-center gap-2">
+                                                        <Progress value={s.tracePercent} className="w-16 h-1.5" />
+                                                        <span className={`text-xs font-semibold ${s.tracePercent >= 75 ? 'text-emerald-400' : s.tracePercent >= 50 ? 'text-orange-400' : 'text-red-400'}`}>
+                                                            {s.tracePercent}%
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="py-3 px-3">
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <span className={`text-xs px-2 py-0.5 rounded border font-semibold ${statusStyle[s.status] || statusStyle.Pending}`}>
+                                                            {s.status}
+                                                        </span>
+                                                        <button
+                                                            onClick={() => setSwatchOpen(isOpen ? null : s.id)}
+                                                            title="View fabric swatches"
+                                                            className={`inline-flex items-center justify-center w-6 h-6 rounded-full border transition-all shrink-0 ${
+                                                                isOpen
+                                                                    ? 'bg-teal-600 border-teal-500 text-white'
+                                                                    : 'border-slate-600 text-slate-400 hover:border-teal-500 hover:text-teal-400 hover:bg-teal-500/10'
+                                                            }`}
+                                                        >
+                                                            {isOpen ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                            {/* Expandable swatch row */}
+                                            {isOpen && (
+                                                <tr className="border-b border-teal-500/20 bg-slate-900/60">
+                                                    <td colSpan={8} className="px-6 py-4">
+                                                        <div className="flex items-center gap-2 mb-3">
+                                                            <Layers className="h-3.5 w-3.5 text-teal-400" />
+                                                            <span className="text-xs font-semibold text-teal-400 uppercase tracking-wide">
+                                                                Fabric Swatches — {s.name}
+                                                            </span>
+                                                            <span className="text-xs text-slate-500">· {s.activity}</span>
+                                                        </div>
+                                                        <div className="flex flex-wrap gap-3">
+                                                            {swatches.map((sw, idx) => (
+                                                                <div key={idx} className="flex flex-col items-center gap-1.5 group cursor-pointer">
+                                                                    <div
+                                                                        className="w-14 h-14 rounded-lg border-2 border-slate-600 group-hover:border-teal-500 transition-all shadow-md group-hover:scale-105"
+                                                                        style={{ backgroundColor: sw.hex }}
+                                                                        title={sw.fabric}
+                                                                    />
+                                                                    <p className={`text-xs font-medium text-center leading-tight max-w-[3.5rem] ${isLight(sw.hex) ? 'text-slate-200' : 'text-slate-300'}`}>
+                                                                        {sw.name}
+                                                                    </p>
+                                                                    <p className="text-[10px] text-slate-500 text-center leading-tight max-w-[3.5rem]">
+                                                                        {sw.fabric}
+                                                                    </p>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                })}
                                 {paginated.length === 0 && (
                                     <tr>
                                         <td colSpan={8} className="py-10 text-center text-slate-500">No suppliers match the selected filters</td>
