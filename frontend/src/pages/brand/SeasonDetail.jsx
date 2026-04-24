@@ -68,6 +68,11 @@ const SeasonDetail = () => {
             setCollections(collectionsRes.data);
         } catch (error) {
             toast.error('Failed to load season data');
+            setSeason({ id: seasonId, name: `Season ${seasonId}`, season_code: seasonId, status: 'planning', target_market: 'Global', start_date: '2027-01-01', end_date: '2027-06-30', description: '', target_styles: 0 });
+            setStats({ total_designs: 0, approved_designs: 0, pending_designs: 0, rejected_designs: 0, total_collections: 0, total_swatches: 0, total_submitted: 0, total_selected: 0, designs_by_status: { selected: 0 } });
+            setMoodBoards([]);
+            setDesigns([]);
+            setCollections([]);
         } finally {
             setLoading(false);
         }

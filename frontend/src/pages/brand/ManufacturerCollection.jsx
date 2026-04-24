@@ -99,6 +99,8 @@ const ManufacturerCollection = () => {
             setAnalytics(analyticsRes.data);
         } catch (error) {
             console.error('Failed to fetch collection:', error);
+            setCollection({ id: collectionId, name: 'Collection', collection_code: collectionId, description: '' });
+            setAnalytics({ participating_suppliers: 0, total_swatches: 0, approved_swatches: 0, pending_swatches: 0 });
         }
     }, [collectionId]);
 

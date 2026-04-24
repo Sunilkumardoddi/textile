@@ -33,8 +33,8 @@ const SeasonMoodBoard = () => {
                     <p className="text-slate-400 mt-1">Configure AW2027 season using AI-assisted style workflow</p>
                 </div>
                 <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800"
-                    onClick={() => navigate('/dashboard/brand/seasons')}>
-                    <ArrowLeft className="h-4 w-4 mr-2" /> Seasons
+                    onClick={() => navigate('/dashboard/brand')}>
+                    <ArrowLeft className="h-4 w-4 mr-2" /> Dashboard
                 </Button>
             </div>
 

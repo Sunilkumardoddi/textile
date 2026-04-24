@@ -446,7 +446,7 @@ const TraceabilityDashboard = () => {
                                 <Card 
                                     key={season.id}
                                     className="bg-slate-800/50 border-slate-700 hover:border-emerald-500/50 transition-colors cursor-pointer"
-                                    onClick={() => navigate(`/dashboard/brand/traceability/season/${season.id}`)}
+                                    onClick={() => navigate(`/dashboard/brand/seasons/${season.id}`)}
                                 >
                                     <CardContent className="p-4">
                                         <div className="flex items-center justify-between mb-3">
