@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(npm start *)",
-      "Bash(npx react-scripts *)"
+      "Bash(npx react-scripts *)",
+      "Bash(sed -i 's|navigate\\('\\\\''/dashboard/brand/seasons/mood-board'\\\\''\\)|navigate\\('\\\\''/dashboard/brand'\\\\''\\)|g' c:/Users/sunil/Downloads/traceability/frontend/src/pages/brand/AIStyleEngine.jsx)",
+      "Bash(sed -i 's|navigate\\('\\\\''/dashboard/brand/ai-style'\\\\''\\)|navigate\\('\\\\''/dashboard/brand'\\\\''\\)|g' c:/Users/sunil/Downloads/traceability/frontend/src/pages/brand/SourcingCostingTracking.jsx)",
+      "Bash(sed -i 's|navigate\\('\\\\''/dashboard/brand/seasons/mood-board'\\\\''\\)|navigate\\('\\\\''/dashboard/brand'\\\\''\\)|g' c:/Users/sunil/Downloads/traceability/frontend/src/pages/brand/MoodBoardPunching.jsx)",
+      "Bash(sed -i 's|navigate\\('\\\\''/dashboard/brand/mood-punching'\\\\''\\)|navigate\\('\\\\''/dashboard/brand'\\\\''\\)|g' c:/Users/sunil/Downloads/traceability/frontend/src/pages/brand/POAutoGeneration.jsx)",
+      "Bash(sed -i 's|navigate\\('\\\\''/dashboard/brand/sustainability'\\\\''\\)|navigate\\('\\\\''/dashboard/brand'\\\\''\\)|g' c:/Users/sunil/Downloads/traceability/frontend/src/pages/brand/CertificationTracker.jsx)",
+      "Bash(git -C c:/Users/sunil/Downloads/traceability ls-files --others --ignored --exclude-standard)"
     ]
   }
 }
