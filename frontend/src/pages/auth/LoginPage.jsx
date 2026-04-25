@@ -201,9 +201,12 @@ const LoginPage = () => {
                             </div>
                         </div>
 
-                        <div className="mt-6 text-center">
-                            <Link to="/register" className="text-sm text-emerald-400 hover:underline">
+                        <div className="mt-6 text-center space-y-2">
+                            <Link to="/register" className="text-sm text-emerald-400 hover:underline block">
                                 Don't have an account? Register
+                            </Link>
+                            <Link to="/pricing" className="text-sm text-slate-500 hover:text-slate-300 block">
+                                View pricing plans
                             </Link>
                         </div>
                     </CardContent>

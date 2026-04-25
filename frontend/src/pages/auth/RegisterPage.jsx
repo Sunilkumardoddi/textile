@@ -55,10 +55,14 @@ const RegisterPage = () => {
         try {
             const { confirmPassword, ...registerData } = formData;
             await register(registerData);
-            toast.success('Registration successful! Please wait for admin approval.', {
-                description: formData.role === 'admin' ? 'Admin accounts are auto-approved.' : 'You will be notified once approved.'
+            toast.success('Account created!', {
+                description: formData.role === 'admin' ? 'Auto-approved. You can sign in now.' : 'Choose a plan to complete setup.'
             });
-            navigate('/login');
+            if (formData.role === 'brand' || formData.role === 'manufacturer') {
+                navigate('/subscribe', { state: { role: formData.role, company: formData.company_name, isNew: true } });
+            } else {
+                navigate('/login');
+            }
         } catch (error) {
             toast.error(error.message || 'Registration failed');
         } finally {
@@ -271,9 +275,12 @@ const RegisterPage = () => {
                             </p>
                         </form>
 
-                        <div className="mt-4 text-center">
-                            <Link to="/login" className="text-sm text-emerald-400 hover:underline">
+                        <div className="mt-4 text-center space-y-2">
+                            <Link to="/login" className="text-sm text-emerald-400 hover:underline block">
                                 Already have an account? Sign in
+                            </Link>
+                            <Link to="/pricing" className="text-sm text-slate-500 hover:text-slate-300 block">
+                                View pricing plans
                             </Link>
                         </div>
                     </CardContent>

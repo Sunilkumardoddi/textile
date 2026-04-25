@@ -5,6 +5,8 @@ import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 // Auth Pages
 import LoginPage from '@/pages/auth/LoginPage';
 import RegisterPage from '@/pages/auth/RegisterPage';
+import PricingPage from '@/pages/PricingPage';
+import SubscriptionPage from '@/pages/SubscriptionPage';
 
 // Layout
 import DashboardLayout from '@/components/layouts/DashboardLayout';
@@ -55,6 +57,10 @@ import ManufacturerOrders from '@/pages/manufacturer/ManufacturerOrders';
 import ManufacturerProduction from '@/pages/manufacturer/ManufacturerProduction';
 import ManufacturerShipments from '@/pages/manufacturer/ManufacturerShipments';
 import ManufacturerDocuments from '@/pages/manufacturer/ManufacturerDocuments';
+
+// Billing
+import BrandBillingDashboard from '@/pages/brand/BillingDashboard';
+import ManufacturerBillingDashboard from '@/pages/manufacturer/BillingDashboard';
 
 // Manufacturer Pages — Module B new screens
 import MfrDashboardOverview from '@/pages/manufacturer/MfrDashboardOverview';
@@ -138,6 +144,8 @@ function AppRoutes() {
             {/* Public Routes */}
             <Route path="/login"    element={<PublicRoute><LoginPage /></PublicRoute>} />
             <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+            <Route path="/pricing"  element={<PricingPage />} />
+            <Route path="/subscribe" element={<SubscriptionPage />} />
 
             {/* Admin Routes */}
             <Route path="/dashboard/admin" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><AdminDashboard /></DashboardLayout></ProtectedRoute>} />
@@ -193,6 +201,9 @@ function AppRoutes() {
             <Route path="/dashboard/brand/mood-punching"        element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><MoodBoardPunching /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/po-auto"              element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POAutoGeneration /></DashboardLayout></ProtectedRoute>} />
 
+            {/* Brand — Billing */}
+            <Route path="/dashboard/brand/billing" element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><BrandBillingDashboard /></DashboardLayout></ProtectedRoute>} />
+
             {/* Brand Routes — PO & Supply Chain Management */}
             <Route path="/dashboard/brand/po-sc-management"    element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POSCManagement /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/po-garment-costing"  element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POGarmentCosting /></DashboardLayout></ProtectedRoute>} />
@@ -201,6 +212,9 @@ function AppRoutes() {
             <Route path="/dashboard/brand/po-traceability"      element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POWiseTraceability /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/po-sustainability"    element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POWiseSustainability /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/brand/po-qr-scan"           element={<ProtectedRoute allowedRoles={['admin', 'brand']}><DashboardLayout><POQRScanVisibility /></DashboardLayout></ProtectedRoute>} />
+
+            {/* Manufacturer — Billing */}
+            <Route path="/dashboard/manufacturer/billing" element={<ProtectedRoute allowedRoles={['admin', 'manufacturer']}><DashboardLayout><ManufacturerBillingDashboard /></DashboardLayout></ProtectedRoute>} />
 
             {/* Auditor Routes */}
             <Route path="/dashboard/auditor"           element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><AuditorDashboard /></DashboardLayout></ProtectedRoute>} />

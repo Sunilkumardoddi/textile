@@ -5,7 +5,7 @@ import {
     ArrowRight, Shield, Building2, ShoppingCart, Plus, Eye,
     CheckCircle, MapPin, TrendingUp, TrendingDown, AlertTriangle,
     Clock, Activity, Target, Zap, FileText, ArrowUpRight, ArrowDownRight,
-    Leaf, Award, GitBranch, BarChart2, Bell, ChevronDown, Palette
+    Leaf, Award, GitBranch, BarChart2, Bell, ChevronDown, Palette, CreditCard
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -760,12 +760,13 @@ const BrandDashboard = () => {
                     </Card>
 
                     {/* Quick Actions */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                         {[
                             { label: 'View Traceability', sub: 'End-to-end tracking', icon: Package, color: 'hover:border-emerald-500/50', iconColor: 'text-emerald-400', path: '/dashboard/brand/traceability' },
                             { label: 'Request Audit', sub: 'Quality assurance', icon: ClipboardCheck, color: 'hover:border-purple-500/50', iconColor: 'text-purple-400', path: '/dashboard/brand/audits' },
                             { label: 'Analytics', sub: 'Insights & reports', icon: BarChart3, color: 'hover:border-blue-500/50', iconColor: 'text-blue-400', path: '/dashboard/brand/reports' },
                             { label: 'Compliance', sub: 'Certifications & docs', icon: FileText, color: 'hover:border-amber-500/50', iconColor: 'text-amber-400', path: '/dashboard/brand/compliance' },
+                            { label: 'Billing', sub: 'Plan & invoices', icon: CreditCard, color: 'hover:border-cyan-500/50', iconColor: 'text-cyan-400', path: '/dashboard/brand/billing' },
                         ].map(({ label, sub, icon: Icon, color, iconColor, path }) => (
                             <Button key={label} variant="outline"
                                 className={`h-auto py-6 flex-col border-slate-700 text-slate-300 hover:bg-slate-800 ${color}`}

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-    Package, Factory, Truck, FileText, Plus, 
+    Package, Factory, Truck, FileText, Plus,
     RefreshCw, Loader2, ArrowRight, AlertTriangle,
-    CheckCircle, Clock, TrendingUp, ShoppingCart, XCircle, DollarSign
+    CheckCircle, Clock, TrendingUp, ShoppingCart, XCircle, DollarSign, CreditCard
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -353,6 +353,10 @@ const ManufacturerDashboard = () => {
                         <Button variant="outline" className="h-auto py-4 flex-col border-slate-600 text-slate-300 hover:bg-slate-700" onClick={() => navigate('/dashboard/manufacturer/documents')}>
                             <FileText className="h-6 w-6 mb-2 text-amber-400" />
                             <span>Upload TC</span>
+                        </Button>
+                        <Button variant="outline" className="h-auto py-4 flex-col border-slate-600 text-slate-300 hover:bg-slate-700 col-span-2" onClick={() => navigate('/dashboard/manufacturer/billing')}>
+                            <CreditCard className="h-6 w-6 mb-2 text-cyan-400" />
+                            <span>Billing & Plan</span>
                         </Button>
                     </CardContent>
                 </Card>
