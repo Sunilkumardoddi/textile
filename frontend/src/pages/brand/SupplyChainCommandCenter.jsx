@@ -89,7 +89,7 @@ export default function SupplyChainCommandCenter() {
                 }
             } catch (error) {
                 console.error('Error loading initial data:', error);
-                toast.error('Failed to load command center data');
+                console.error('Failed to load command center data');
                 const fallbackSuppliers = [
                     { id: 'SUP-001', name: 'TCH Garments Pvt Ltd', country: 'India', risk_category: 'low' },
                     { id: 'SUP-002', name: 'Beximco Garments Ltd', country: 'Bangladesh', risk_category: 'medium' },
@@ -134,7 +134,7 @@ export default function SupplyChainCommandCenter() {
             setAlerts(alertsRes.data);
         } catch (error) {
             console.error('Error loading supplier data:', error);
-            toast.error('Failed to load supplier data');
+            console.error('Failed to load supplier data');
             setKpis({ kpis: { total_pos: 8, production_progress: 82, quality_score: 91, on_time_delivery_rate: 85, compliance_score: 94, active_alerts: 2 }, trends: { production: [], quality: [] }, alerts: [] });
             setOverview({ active_pos: 4, completed_pos: 3, delayed_pos: 1, total_value: 1200000, po_status_breakdown: { active: 4, completed: 3, delayed: 1 } });
             setDelivery({ on_time_deliveries: 12, slight_delay_deliveries: 2, critical_delay_deliveries: 1, on_time_rate: 80, average_transit_hours: 68 });

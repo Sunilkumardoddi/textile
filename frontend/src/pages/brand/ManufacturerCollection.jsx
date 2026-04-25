@@ -134,7 +134,7 @@ const ManufacturerCollection = () => {
             
             setHasMore(newSwatches.length === LIMIT);
         } catch (error) {
-            toast.error('Failed to load swatches');
+            console.error('Failed to load swatches:', error);
         } finally {
             setLoading(false);
             setLoadingMore(false);

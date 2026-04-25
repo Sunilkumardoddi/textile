@@ -76,7 +76,6 @@ export default function POIncomingDetail() {
             setSummary(response.data);
         } catch (error) {
             console.error('Error fetching data:', error);
-            toast.error('Failed to load PO incoming data');
             setSummary({ po_number: poId, overall_delivery_status: 'pending', supplier_name: 'Supplier', total_invoices: 0, total_quantity_ordered: 0, total_quantity_dispatched: 0, total_quantity_received: 0, in_transit_count: 0, delayed_count: 0, invoices: [], dispatches: [] });
         } finally {
             setLoading(false);

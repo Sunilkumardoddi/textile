@@ -261,7 +261,7 @@ const POReportsDashboard = () => {
             <div className="flex items-center gap-4">
                 <Button 
                     variant="ghost" 
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate('/dashboard/brand')}
                     className="text-slate-400 hover:text-white"
                 >
                     <ArrowLeft className="h-4 w-4 mr-2" />

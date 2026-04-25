@@ -48,7 +48,7 @@ const MoodBoardPunching = () => {
                     <p className="text-slate-400 mt-1">AW2027 — Select styles, enter punch data, generate season plan</p>
                 </div>
                 <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800"
-                    onClick={() => navigate('/dashboard/brand/seasons/mood-board')}>
+                    onClick={() => navigate('/dashboard/brand')}>
                     <ArrowLeft className="h-4 w-4 mr-2" /> Mood Board
                 </Button>
             </div>
