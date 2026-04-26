@@ -22,6 +22,8 @@ const PLANS = {
             color: 'blue',
             monthly: 49,
             yearly: 490,
+            originalMonthly: 79,
+            originalYearly: 948,
             commissionRate: null,
             features: ['10 POs/month', '5 supplier connections', 'Basic traceability', 'Season management'],
         },
@@ -32,6 +34,8 @@ const PLANS = {
             color: 'emerald',
             monthly: 149,
             yearly: 1490,
+            originalMonthly: 249,
+            originalYearly: 2988,
             commissionRate: null,
             badge: 'Most Popular',
             features: ['50 POs/month', '25 supplier connections', 'Full traceability suite', 'AI Style Engine', 'Command Center', 'Audit & compliance'],
@@ -43,7 +47,10 @@ const PLANS = {
             color: 'purple',
             monthly: null,
             yearly: null,
+            originalMonthly: null,
+            originalYearly: null,
             commissionRate: 1.5,
+            originalCommissionRate: 2.0,
             commissionUnit: '% of PO value',
             badge: 'Best at Scale',
             features: ['Unlimited POs', 'Unlimited suppliers', 'All Professional features', 'Custom integrations', 'Dedicated account manager', '24/7 support'],
@@ -57,6 +64,8 @@ const PLANS = {
             color: 'blue',
             monthly: 29,
             yearly: 290,
+            originalMonthly: 49,
+            originalYearly: 588,
             commissionRate: null,
             features: ['10 orders/month', 'Factory profile', 'Basic batch management', 'Document uploads'],
         },
@@ -67,6 +76,8 @@ const PLANS = {
             color: 'emerald',
             monthly: 79,
             yearly: 790,
+            originalMonthly: 129,
+            originalYearly: 1548,
             commissionRate: null,
             badge: 'Most Popular',
             features: ['Unlimited orders', 'Full production tracking', 'Traceability ESS', 'Higg FEM certifications', 'Advanced analytics'],
@@ -78,7 +89,10 @@ const PLANS = {
             color: 'amber',
             monthly: null,
             yearly: null,
+            originalMonthly: null,
+            originalYearly: null,
             commissionRate: 3,
+            originalCommissionRate: 5,
             commissionUnit: '% per accepted order',
             badge: 'Zero Risk',
             features: ['Unlimited orders', 'All Professional features', 'No monthly fee', 'Pay only when you earn'],
@@ -96,6 +110,18 @@ const COLOR_MAP = {
 function getPlanPrice(plan, cycle) {
     if (plan.commissionRate !== null) return null;
     return cycle === 'yearly' ? plan.yearly : plan.monthly;
+}
+
+function getOriginalPrice(plan, cycle) {
+    if (plan.commissionRate !== null) return null;
+    return cycle === 'yearly' ? plan.originalYearly : plan.originalMonthly;
+}
+
+function getDiscountPct(plan, cycle) {
+    const orig = getOriginalPrice(plan, cycle);
+    const offer = getPlanPrice(plan, cycle);
+    if (!orig || !offer) return null;
+    return Math.round((1 - offer / orig) * 100);
 }
 
 function formatPrice(plan, cycle) {
@@ -234,6 +260,15 @@ export default function SubscriptionPage() {
             </nav>
 
             <div className="max-w-6xl mx-auto px-4 py-10">
+                {/* Launch offer banner */}
+                <div className="flex justify-center mb-6">
+                    <div className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/30 text-amber-300 text-sm font-medium px-5 py-2 rounded-full">
+                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                        Launch Offer — Up to 40% off regular pricing. Limited time only.
+                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    </div>
+                </div>
+
                 <div className="text-center mb-10">
                     <h1 className="text-3xl font-bold text-white">
                         {isNew ? 'Choose your plan' : 'Manage Subscription'}
@@ -251,7 +286,7 @@ export default function SubscriptionPage() {
                             <div className="bg-slate-800 border border-slate-700 rounded-xl p-1 flex gap-1">
                                 {[
                                     { key: 'monthly', label: 'Monthly' },
-                                    { key: 'yearly', label: 'Yearly', note: 'Save ~17%' },
+                                    { key: 'yearly', label: 'Yearly', note: 'Save up to 50%' },
                                 ].map(({ key, label, note }) => (
                                     <button
                                         key={key}
@@ -291,8 +326,37 @@ export default function SubscriptionPage() {
                                             {selected && <Check className="h-4 w-4 text-emerald-400 ml-auto" />}
                                         </div>
                                         <div className="mb-3">
-                                            <span className="text-2xl font-bold text-white">{pObj.main}</span>
-                                            <span className="text-slate-400 text-sm ml-1">{pObj.sub}</span>
+                                            {plan.commissionRate !== null ? (
+                                                <div className="flex items-baseline gap-2 flex-wrap">
+                                                    {plan.originalCommissionRate && (
+                                                        <span className="text-slate-500 text-sm line-through">{plan.originalCommissionRate}%</span>
+                                                    )}
+                                                    <span className="text-2xl font-bold text-white">{pObj.main}</span>
+                                                    <span className="text-slate-400 text-sm">{pObj.sub}</span>
+                                                    {plan.originalCommissionRate && (
+                                                        <span className="text-xs bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded-full font-semibold">
+                                                            {Math.round((1 - plan.commissionRate / plan.originalCommissionRate) * 100)}% off
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    {getOriginalPrice(plan, cycle) && (
+                                                        <div className="flex items-center gap-2 mb-0.5">
+                                                            <span className="text-slate-500 text-sm line-through">
+                                                                ${getOriginalPrice(plan, cycle)}{cycle === 'yearly' ? '/yr' : '/mo'}
+                                                            </span>
+                                                            <span className="text-xs bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded-full font-semibold">
+                                                                {getDiscountPct(plan, cycle)}% off
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                    <div className="flex items-baseline gap-1">
+                                                        <span className="text-2xl font-bold text-white">{pObj.main}</span>
+                                                        <span className="text-slate-400 text-sm">{pObj.sub}</span>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                         <ul className="space-y-1">
                                             {plan.features.map(f => (
@@ -427,8 +491,14 @@ export default function SubscriptionPage() {
                                 <div className="space-y-3 text-sm border-t border-slate-700 pt-4">
                                     {isCommission ? (
                                         <>
+                                            {selectedPlan.originalCommissionRate && (
+                                                <div className="flex justify-between text-slate-500">
+                                                    <span>Regular rate</span>
+                                                    <span className="line-through">{selectedPlan.originalCommissionRate}% {selectedPlan.commissionUnit}</span>
+                                                </div>
+                                            )}
                                             <div className="flex justify-between text-slate-300">
-                                                <span>Rate</span>
+                                                <span>Launch offer rate</span>
                                                 <span className="text-white font-semibold">{selectedPlan.commissionRate}% {selectedPlan.commissionUnit}</span>
                                             </div>
                                             <div className="flex justify-between text-slate-300">
@@ -438,15 +508,27 @@ export default function SubscriptionPage() {
                                         </>
                                     ) : (
                                         <>
+                                            {getOriginalPrice(selectedPlan, cycle) && (
+                                                <div className="flex justify-between text-slate-500">
+                                                    <span>Regular price</span>
+                                                    <span className="line-through">${getOriginalPrice(selectedPlan, cycle)?.toLocaleString()}</span>
+                                                </div>
+                                            )}
                                             <div className="flex justify-between text-slate-300">
-                                                <span>{cycle === 'yearly' ? 'Annual total' : 'Monthly total'}</span>
+                                                <span>{cycle === 'yearly' ? 'Launch offer (annual)' : 'Launch offer (monthly)'}</span>
                                                 <span className="text-white font-semibold">
                                                     ${getPlanPrice(selectedPlan, cycle)?.toLocaleString()}
                                                 </span>
                                             </div>
+                                            {getOriginalPrice(selectedPlan, cycle) && (
+                                                <div className="flex justify-between text-rose-400 text-xs font-medium">
+                                                    <span>You save</span>
+                                                    <span>-${(getOriginalPrice(selectedPlan, cycle) - getPlanPrice(selectedPlan, cycle)).toLocaleString()} ({getDiscountPct(selectedPlan, cycle)}% off)</span>
+                                                </div>
+                                            )}
                                             {cycle === 'yearly' && selectedPlan.monthly && (
                                                 <div className="flex justify-between text-emerald-400 text-xs">
-                                                    <span>Annual savings vs monthly</span>
+                                                    <span>Extra savings vs monthly billing</span>
                                                     <span>-${(selectedPlan.monthly * 12 - selectedPlan.yearly).toLocaleString()}</span>
                                                 </div>
                                             )}

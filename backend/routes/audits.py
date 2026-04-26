@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Depends, Query
+from fastapi import APIRouter, HTTPException, status, Depends, Query, BackgroundTasks
 from datetime import datetime, timezone
 from typing import List, Optional
 import uuid
@@ -8,8 +8,10 @@ from models.audit import (
     AuditLogUpdate, AuditStatus, AuditType, AuditPriority, AuditFinding
 )
 from utils.auth import get_current_user, require_auditor, require_any_authenticated, require_brand
-from utils.database import audits_collection, batches_collection
+from utils.database import audits_collection, batches_collection, users_collection
 from utils.activity_logger import log_activity
+from utils.notification_service import notify_event
+from models.notification import NotificationEvent, NotificationPriority
 
 router = APIRouter(prefix="/audits", tags=["Audits"])
 
@@ -17,6 +19,7 @@ router = APIRouter(prefix="/audits", tags=["Audits"])
 @router.post("/", response_model=AuditLogResponse, status_code=status.HTTP_201_CREATED)
 async def create_audit(
     audit_data: AuditLogCreate,
+    background_tasks: BackgroundTasks,
     current_user: dict = Depends(require_auditor)
 ):
     """Create a new audit (Auditor only)."""
@@ -80,7 +83,20 @@ async def create_audit(
         description=f"Audit scheduled: {audit_number}",
         metadata={"batch_id": audit_data.batch_id, "audit_type": audit_data.audit_type.value}
     )
-    
+
+    # Notify manufacturer that an audit has been scheduled
+    mfr_user = await users_collection.find_one({"id": batch.get("manufacturer_id")})
+    if mfr_user:
+        background_tasks.add_task(
+            notify_event,
+            NotificationEvent.AUDIT_ASSIGNED,
+            f"Audit Scheduled: {audit_number}",
+            f"A {audit_data.audit_type.value} audit has been scheduled for batch {audit_data.batch_id}.",
+            [mfr_user["id"]],
+            NotificationPriority.HIGH,
+            {"audit_id": audit.id, "audit_number": audit_number},
+        )
+
     return AuditLogResponse(
         id=audit.id,
         audit_number=audit.audit_number,
@@ -451,6 +467,7 @@ async def add_finding(
 async def approve_audit(
     audit_id: str,
     compliance_score: float,
+    background_tasks: BackgroundTasks,
     notes: Optional[str] = None,
     current_user: dict = Depends(require_auditor)
 ):
@@ -508,7 +525,26 @@ async def approve_audit(
         description=f"Audit approved: {audit['audit_number']} with score {compliance_score}",
         metadata={"compliance_score": compliance_score, "risk_level": risk_level}
     )
-    
+
+    # Notify manufacturer and brand of audit completion
+    notify_targets = []
+    mfr_user = await users_collection.find_one({"id": audit.get("manufacturer_id")})
+    if mfr_user:
+        notify_targets.append(mfr_user["id"])
+    brand_user = await users_collection.find_one({"id": audit.get("brand_id")})
+    if brand_user:
+        notify_targets.append(brand_user["id"])
+    if notify_targets:
+        background_tasks.add_task(
+            notify_event,
+            NotificationEvent.AUDIT_COMPLETED,
+            f"Audit Completed: {audit['audit_number']}",
+            f"Audit {audit['audit_number']} completed with a compliance score of {compliance_score}% (risk: {risk_level}).",
+            notify_targets,
+            NotificationPriority.MEDIUM,
+            {"audit_id": audit_id, "compliance_score": compliance_score, "risk_level": risk_level},
+        )
+
     return await get_audit(audit_id, current_user)
 
 

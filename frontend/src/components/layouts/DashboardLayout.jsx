@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import {
-    Globe, LogOut, Bell, Menu, X,
+    Globe, LogOut, Menu, X,
     LayoutDashboard, Users, Package, Factory, Truck,
-    ClipboardCheck, BarChart3, FileText, AlertTriangle, Settings,
-    Building2, ShoppingCart, Calendar, Layers, Activity,
-    Leaf, Award, GitBranch, ChevronRight, Palette, DollarSign,
+    ClipboardCheck, BarChart3, FileText, AlertTriangle,
+    ShoppingCart, Calendar, Layers,
+    Leaf, GitBranch, ChevronRight, Palette, DollarSign,
     BarChart2, Zap, MapPin
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 const DashboardLayout = ({ children }) => {
     const location = useLocation();
@@ -227,10 +228,7 @@ const DashboardLayout = ({ children }) => {
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <Button variant="ghost" size="icon" className="relative text-slate-400 hover:text-white">
-                                <Bell className="h-5 w-5" />
-                                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-                            </Button>
+                            <NotificationBell />
                             <div className="text-right hidden sm:block">
                                 <p className="text-sm font-medium text-white">{user?.company_name}</p>
                                 <p className="text-xs text-slate-400">{user?.email}</p>

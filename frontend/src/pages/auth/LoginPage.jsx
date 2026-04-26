@@ -70,10 +70,10 @@ const LoginPage = () => {
     };
 
     const demoCredentials = [
-        { role: 'Admin', email: 'admin@textile.com', password: 'testpassword' },
-        { role: 'Manufacturer', email: 'manufacturer@textile.com', password: 'testpassword' },
-        { role: 'Brand', email: 'brand@textile.com', password: 'testpassword' },
-        { role: 'Auditor', email: 'auditor@textile.com', password: 'testpassword' },
+        { role: 'Admin', email: 'admin@textiletrace.com', password: 'Admin@123' },
+        { role: 'Brand', email: 'brand@textiletrace.com', password: 'Brand@123' },
+        { role: 'Manufacturer', email: 'manufacturer@textiletrace.com', password: 'Mfr@123' },
+        { role: 'Auditor', email: 'auditor@textiletrace.com', password: 'Audit@123' },
     ];
 
     return (

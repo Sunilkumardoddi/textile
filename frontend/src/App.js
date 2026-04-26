@@ -62,6 +62,9 @@ import ManufacturerDocuments from '@/pages/manufacturer/ManufacturerDocuments';
 import BrandBillingDashboard from '@/pages/brand/BillingDashboard';
 import ManufacturerBillingDashboard from '@/pages/manufacturer/BillingDashboard';
 
+// Notifications
+import NotificationPreferences from '@/pages/NotificationPreferences';
+
 // Manufacturer Pages — Module B new screens
 import MfrDashboardOverview from '@/pages/manufacturer/MfrDashboardOverview';
 import HiggFemCertifications from '@/pages/manufacturer/HiggFemCertifications';
@@ -222,6 +225,10 @@ function AppRoutes() {
             <Route path="/dashboard/auditor/batches"   element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><AuditorBatches /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/auditor/reports"   element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><AuditorReports /></DashboardLayout></ProtectedRoute>} />
             <Route path="/dashboard/auditor/audit/:id" element={<ProtectedRoute allowedRoles={['admin', 'auditor']}><DashboardLayout><AuditorAuditDetail /></DashboardLayout></ProtectedRoute>} />
+
+            {/* Notifications */}
+            <Route path="/dashboard/notifications/preferences" element={<ProtectedRoute><DashboardLayout><NotificationPreferences /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/dashboard/notifications"             element={<ProtectedRoute><DashboardLayout><NotificationPreferences /></DashboardLayout></ProtectedRoute>} />
 
             {/* Default redirect */}
             <Route path="/"  element={<Navigate to="/login" replace />} />

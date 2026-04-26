@@ -46,23 +46,7 @@ api.interceptors.response.use(
 // Auth API
 export const authAPI = {
     register: (data) => api.post('/auth/register', data),
-    login: async (data) => {
-        // Mock users keyed by email — each has the correct role, name, and company
-        const MOCK_USERS = {
-            'admin@textile.com':        { id: '1', role: 'admin',        name: 'Alex Admin',          company_name: 'TextileTrace HQ' },
-            'manufacturer@textile.com': { id: '2', role: 'manufacturer', name: 'TCH Garments Pvt Ltd', company_name: 'TCH Garments Pvt Ltd' },
-            'brand@textile.com':        { id: '3', role: 'brand',        name: 'Zara Brand Team',      company_name: 'Zara (Inditex)' },
-            'auditor@textile.com':      { id: '4', role: 'auditor',      name: 'SGS Auditor',          company_name: 'SGS Group' },
-        };
-        const matched = MOCK_USERS[data.email.toLowerCase()];
-        if (!matched) throw { response: { data: { detail: 'Invalid email or password' } } };
-        return {
-            data: {
-                access_token: 'mock_token_' + matched.role,
-                user: { ...matched, email: data.email },
-            }
-        };
-    },
+    login: (data) => api.post('/auth/login', data),
     logout: () => api.post('/auth/logout'),
     getMe: () => api.get('/auth/me'),
     updateMe: (data) => api.put('/auth/me', data),
@@ -373,6 +357,19 @@ export const commandCenterAPI = {
     getReports: (supplierId, seasonId) => api.get(`/command-center/supplier/${supplierId}/reports`, { params: { season_id: seasonId } }),
     getAlerts: (supplierId, seasonId) => api.get(`/command-center/supplier/${supplierId}/alerts`, { params: { season_id: seasonId } }),
     getKPIs: (supplierId, seasonId) => api.get(`/command-center/supplier/${supplierId}/kpis`, { params: { season_id: seasonId } }),
+};
+
+// Notifications API
+export const notificationsAPI = {
+    getAll: (params) => api.get('/notifications/', { params }),
+    getUnreadCount: () => api.get('/notifications/unread-count'),
+    markRead: (id) => api.put(`/notifications/${id}/read`),
+    markAllRead: () => api.put('/notifications/read-all'),
+    dismiss: (id) => api.delete(`/notifications/${id}`),
+    getPreferences: () => api.get('/notifications/preferences'),
+    updatePreferences: (data) => api.put('/notifications/preferences', data),
+    registerPushToken: (token, platform) => api.post('/notifications/push-token', null, { params: { token, platform } }),
+    sendTest: (channel) => api.post('/notifications/test', null, { params: { channel } }),
 };
 
 export default api;

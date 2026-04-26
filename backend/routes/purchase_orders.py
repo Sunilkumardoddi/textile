@@ -1,16 +1,18 @@
-from fastapi import APIRouter, HTTPException, status, Depends, Query
+from fastapi import APIRouter, HTTPException, status, Depends, Query, BackgroundTasks
 from datetime import datetime, timezone
 from typing import List, Optional
 import uuid
 
 from models.purchase_order import (
-    PurchaseOrder, PurchaseOrderCreate, PurchaseOrderResponse, 
+    PurchaseOrder, PurchaseOrderCreate, PurchaseOrderResponse,
     PurchaseOrderUpdate, POStatus, POPriority, POStatusLog
 )
 from utils.auth import get_current_user, require_admin, require_any_authenticated, require_brand
 from utils.database import db
 from utils.activity_logger import log_activity
 from utils.alerts import create_alert
+from utils.notification_service import notify_event
+from models.notification import NotificationEvent, NotificationPriority
 
 router = APIRouter(prefix="/purchase-orders", tags=["Purchase Orders"])
 
@@ -43,6 +45,7 @@ async def log_po_status_change(po_id: str, po_number: str, prev_status: str, new
 @router.post("/", response_model=PurchaseOrderResponse, status_code=status.HTTP_201_CREATED)
 async def create_purchase_order(
     po_data: PurchaseOrderCreate,
+    background_tasks: BackgroundTasks,
     current_user: dict = Depends(require_brand)
 ):
     """Create a new purchase order (Brand only)."""
@@ -139,7 +142,20 @@ async def create_purchase_order(
         description=f"PO created: {po_number} for supplier {supplier['company_name']}",
         metadata={"po_number": po_number, "supplier_id": supplier["id"], "total_amount": subtotal}
     )
-    
+
+    # Notify supplier's manufacturer user
+    supplier_user = await users_collection.find_one({"id": supplier.get("user_id")})
+    if supplier_user:
+        background_tasks.add_task(
+            notify_event,
+            NotificationEvent.PO_CREATED,
+            f"New Purchase Order: {po_number}",
+            f"{brand_name} has sent you a new PO for {po_data.product_name or 'goods'} worth {po.currency} {subtotal:,.2f}. Please review and accept.",
+            [supplier_user["id"]],
+            NotificationPriority.HIGH,
+            {"po_id": po.id, "po_number": po_number},
+        )
+
     return PurchaseOrderResponse(
         id=po.id,
         po_number=po.po_number,
@@ -359,7 +375,7 @@ async def get_purchase_order(po_id: str, current_user: dict = Depends(require_an
 
 
 @router.post("/{po_id}/accept")
-async def accept_po(po_id: str, current_user: dict = Depends(require_any_authenticated)):
+async def accept_po(po_id: str, background_tasks: BackgroundTasks, current_user: dict = Depends(require_any_authenticated)):
     """Accept a PO (Manufacturer/Supplier only)."""
     if current_user["role"] not in ["manufacturer", "admin"]:
         raise HTTPException(status_code=403, detail="Only manufacturers can accept POs")
@@ -410,12 +426,25 @@ async def accept_po(po_id: str, current_user: dict = Depends(require_any_authent
         entity_id=po["id"],
         description=f"PO accepted: {po['po_number']}"
     )
-    
+
+    # Notify brand user
+    brand_user = await users_collection.find_one({"id": po.get("brand_id")})
+    if brand_user:
+        background_tasks.add_task(
+            notify_event,
+            NotificationEvent.PO_ACCEPTED,
+            f"PO Accepted: {po['po_number']}",
+            f"Your purchase order {po['po_number']} has been accepted by the manufacturer and is now in progress.",
+            [brand_user["id"]],
+            NotificationPriority.MEDIUM,
+            {"po_id": po["id"], "po_number": po["po_number"]},
+        )
+
     return {"message": f"PO {po['po_number']} accepted successfully"}
 
 
 @router.post("/{po_id}/reject")
-async def reject_po(po_id: str, reason: str, current_user: dict = Depends(require_any_authenticated)):
+async def reject_po(po_id: str, reason: str, background_tasks: BackgroundTasks, current_user: dict = Depends(require_any_authenticated)):
     """Reject a PO (Manufacturer/Supplier only)."""
     if current_user["role"] not in ["manufacturer", "admin"]:
         raise HTTPException(status_code=403, detail="Only manufacturers can reject POs")
@@ -456,7 +485,20 @@ async def reject_po(po_id: str, reason: str, current_user: dict = Depends(requir
     )
     
     await log_po_status_change(po["id"], po["po_number"], "awaiting_acceptance", "rejected", current_user["user_id"], current_user["role"], f"Rejected: {reason}")
-    
+
+    # Notify brand user
+    brand_user = await users_collection.find_one({"id": po.get("brand_id")})
+    if brand_user:
+        background_tasks.add_task(
+            notify_event,
+            NotificationEvent.PO_REJECTED,
+            f"PO Rejected: {po['po_number']}",
+            f"Your purchase order {po['po_number']} was rejected. Reason: {reason}",
+            [brand_user["id"]],
+            NotificationPriority.HIGH,
+            {"po_id": po["id"], "po_number": po["po_number"], "reason": reason},
+        )
+
     return {"message": f"PO {po['po_number']} rejected", "reason": reason}
 
 
