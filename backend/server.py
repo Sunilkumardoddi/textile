@@ -10,7 +10,6 @@ from contextlib import asynccontextmanager
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# Configure logging early so lifespan can use it
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -37,41 +36,41 @@ from routes.incoming import router as incoming_router
 from routes.command_center import router as command_center_router
 from routes.notifications import router as notifications_router
 
-# Import database utilities
 from utils.database import create_indexes, close_connection, users_collection
 
-# Create upload directories
+# Create upload directories — skip if filesystem is read-only (serverless)
 UPLOAD_DIR = ROOT_DIR / "uploads"
-UPLOAD_DIR.mkdir(exist_ok=True)
-(UPLOAD_DIR / "mood_boards").mkdir(exist_ok=True)
-(UPLOAD_DIR / "designs").mkdir(exist_ok=True)
-(UPLOAD_DIR / "cads").mkdir(exist_ok=True)
-(UPLOAD_DIR / "documents").mkdir(exist_ok=True)
-(UPLOAD_DIR / "sustainability_docs").mkdir(exist_ok=True)
-(UPLOAD_DIR / "reports").mkdir(exist_ok=True)
-(UPLOAD_DIR / "dispatch_docs").mkdir(exist_ok=True)
+try:
+    UPLOAD_DIR.mkdir(exist_ok=True)
+    for sub in ("mood_boards", "designs", "cads", "documents",
+                "sustainability_docs", "reports", "dispatch_docs"):
+        (UPLOAD_DIR / sub).mkdir(exist_ok=True)
+except OSError:
+    pass
 
 
-# Lifespan context manager for startup/shutdown
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    # Startup
     logger.info("Starting Textile Traceability API...")
-    await create_indexes()
-    logger.info("Database indexes created")
-    count = await users_collection.count_documents({})
-    if count == 0:
-        logger.info("Database is empty — running seed...")
-        from seed_database import seed
-        await seed()
-        logger.info("Seed completed")
+    try:
+        await create_indexes()
+        logger.info("Database indexes created")
+        count = await users_collection.count_documents({})
+        if count == 0:
+            logger.info("Database is empty — running seed...")
+            from seed_database import seed
+            await seed()
+            logger.info("Seed completed")
+    except Exception as exc:
+        logger.error(f"Startup warning (non-fatal): {exc}")
     yield
-    # Shutdown
     logger.info("Shutting down...")
-    await close_connection()
+    try:
+        await close_connection()
+    except Exception:
+        pass
 
 
-# Create the main app with redirect_slashes disabled to avoid mixed content issues
 app = FastAPI(
     title="Textile Traceability Portal API",
     description="Cloud-Based Textile Traceability Portal with Multi-Role Access Control",
@@ -80,30 +79,19 @@ app = FastAPI(
     redirect_slashes=False
 )
 
-# Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
 
-# Health check endpoint
 @api_router.get("/")
 async def root():
-    return {
-        "message": "Textile Traceability API",
-        "version": "1.0.0",
-        "status": "healthy"
-    }
+    return {"message": "Textile Traceability API", "version": "1.0.0", "status": "healthy"}
 
 
 @api_router.get("/health")
 async def health_check():
-    return {
-        "status": "healthy",
-        "service": "textile-traceability-api",
-        "version": "1.0.0"
-    }
+    return {"status": "healthy", "service": "textile-traceability-api", "version": "1.0.0"}
 
 
-# Include all routers
 api_router.include_router(auth_router)
 api_router.include_router(users_router)
 api_router.include_router(batches_router)
@@ -123,24 +111,24 @@ api_router.include_router(incoming_router)
 api_router.include_router(command_center_router)
 api_router.include_router(notifications_router)
 
-# Include the router in the main app
 app.include_router(api_router)
 
-# Mount static files for uploads
-app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
+# Mount uploads only when the directory exists (skipped in serverless)
+if UPLOAD_DIR.exists():
+    try:
+        app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
+    except Exception:
+        pass
 
-# CORS middleware
+# CORS — use explicit origins so allow_credentials=True is valid
+_raw_origins = os.environ.get('CORS_ORIGINS', '')
+_origins = [o.strip() for o in _raw_origins.split(',') if o.strip()] if _raw_origins else []
+# Wildcard not allowed with credentials; fall back to allow_credentials=False
+_use_credentials = bool(_origins) and '*' not in _origins
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_credentials=_use_credentials,
+    allow_origins=_origins if _origins and '*' not in _origins else ["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
