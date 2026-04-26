@@ -1,6 +1,14 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || '';
+// Runtime detection: localhost → local backend, any other host → relative paths (same-domain Vercel function)
+const API_BASE_URL = (() => {
+    const envUrl = process.env.REACT_APP_BACKEND_URL;
+    if (envUrl) return envUrl; // explicit override wins (local dev via .env)
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+        return 'http://localhost:8000';
+    }
+    return ''; // relative paths — Vercel serverless handles /api/*
+})();
 
 // Create axios instance
 const api = axios.create({
