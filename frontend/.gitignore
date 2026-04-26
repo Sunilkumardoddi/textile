@@ -8,8 +8,8 @@
 # testing
 /coverage
 
-# production
-/build
+# production build is committed so Vercel can bundle it into the Python function
+# /build
 
 # misc
 .DS_Store
