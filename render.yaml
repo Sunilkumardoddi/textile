@@ -1,17 +1,19 @@
 services:
   - type: web
-    name: traceability-backend
+    name: textile-api
     env: python
-    buildCommand: "cd backend && pip install -r requirements.txt"
+    region: singapore
+    plan: free
+    buildCommand: "pip install -r backend/requirements.txt"
     startCommand: "cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: MONGO_URL
-        sync: false
+        value: "mongodb+srv://kishoreremalli46_db_user:jYTUiDZKPpikEp7k@cluster0.s4w3wkv.mongodb.net/?appName=Cluster0"
       - key: DB_NAME
         value: "textile_traceability"
       - key: CORS_ORIGINS
-        value: "*"
+        value: "https://textile-dynamic.vercel.app,http://localhost:3000"
       - key: JWT_SECRET_KEY
-        generateValue: true
+        value: "textile-trace-super-secret-key-2024-production-ready"
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: "480"
